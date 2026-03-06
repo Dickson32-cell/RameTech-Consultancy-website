@@ -46,37 +46,37 @@ export default function Chatbot() {
 
   const getBotResponse = (userInput: string): string => {
     const input = userInput.toLowerCase()
-    
+
     // Check for escalation triggers
     if (input.includes('speak to human') || input.includes('talk to person')) {
       return "I'll connect you with our team on WhatsApp. Click here: wa.me/2335573322615"
     }
-    
+
     // Check FAQ
     for (const [key, answer] of Object.entries(FAQ_ANSWERS)) {
       if (input.includes(key)) {
         return answer
       }
     }
-    
+
     // Default response
     return "Thank you for your question! To get more detailed information about your project, please provide your name, email, and a brief description of what you'd like to build. A team member will follow up within 24 hours. Or feel free to reach us directly on WhatsApp!"
   }
 
   const handleSend = async () => {
     if (!input.trim()) return
-    
+
     const userMessage: Message = {
       id: messages.length + 1,
       role: 'user',
       content: input,
       timestamp: new Date()
     }
-    
+
     setMessages(prev => [...prev, userMessage])
     setInput('')
     setIsTyping(true)
-    
+
     // Simulate bot response delay
     setTimeout(() => {
       const botResponse: Message = {
@@ -104,7 +104,7 @@ export default function Chatbot() {
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 w-12 h-12 md:w-14 md:h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-primaryDark transition-colors ${isOpen ? 'hidden' : ''}`}
       >
-        <FaCommentDots size={20} md:size={24} />
+        <FaCommentDots className="text-[20px] md:text-[24px]" />
       </button>
 
       {/* Chat Window */}
@@ -113,7 +113,7 @@ export default function Chatbot() {
           {/* Header */}
           <div className="bg-primary text-white p-3 md:p-4 flex items-center justify-between">
             <div className="flex items-center gap-2 md:gap-3">
-              <FaRobot size={20} md:size={24} />
+              <FaRobot className="text-[20px] md:text-[24px]" />
               <div>
                 <h3 className="font-semibold text-sm md:text-base">RAME Tech Assistant</h3>
                 <p className="text-xs text-gray-200 hidden md:block">We reply within 24 hours</p>
@@ -130,7 +130,7 @@ export default function Chatbot() {
               <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`flex gap-1 md:gap-2 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                   <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-accent' : 'bg-primary'}`}>
-                    {msg.role === 'user' ? <FaUser size={10} md:size={14} /> : <FaRobot size={10} md:size={14} />}
+                    {msg.role === 'user' ? <FaUser className="text-[10px] md:text-[14px]" /> : <FaRobot className="text-[10px] md:text-[14px]" />}
                   </div>
                   <div className={`p-2 md:p-3 rounded-lg ${msg.role === 'user' ? 'bg-primary text-white' : 'bg-white shadow-sm'}`}>
                     <p className="text-xs md:text-sm">{msg.content}</p>
@@ -142,7 +142,7 @@ export default function Chatbot() {
               <div className="flex justify-start">
                 <div className="flex gap-1 md:gap-2">
                   <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center">
-                    <FaRobot size={10} md:size={14} />
+                    <FaRobot className="text-[10px] md:text-[14px]" />
                   </div>
                   <div className="bg-white shadow-sm p-2 md:p-3 rounded-lg">
                     <div className="flex gap-1">
@@ -172,7 +172,7 @@ export default function Chatbot() {
                 onClick={handleSend}
                 className="btn-primary px-3 md:px-4"
               >
-                <FaPaperPlane size={12} md:size={14} />
+                <FaPaperPlane className="text-[12px] md:text-[14px]" />
               </button>
             </div>
           </div>
