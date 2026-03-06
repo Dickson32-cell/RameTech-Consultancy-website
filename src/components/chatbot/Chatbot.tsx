@@ -1,0 +1,183 @@
+'use client'
+
+import { useState, useRef, useEffect } from 'react'
+import { FaCommentDots, FaTimes, FaPaperPlane, FaUser, FaRobot } from 'react-icons/fa'
+
+interface Message {
+  id: number
+  role: 'user' | 'assistant'
+  content: string
+  timestamp: Date
+}
+
+const CHATBOT_SYSTEM_PROMPT = `You are the RAME Tech Consultancy virtual assistant on our website. You help visitors learn about our services (software development, hardware & IT, graphic design), provide general pricing guidance, answer FAQs, and qualify leads. Be friendly, professional, and concise. If a visitor asks about specific project pricing, collect their name, email, and project description, then tell them a team member will follow up within 24 hours. If you cannot answer a question, offer to connect them with the team via WhatsApp. Never make up information about RAME Tech's past projects or capabilities. Always respond in English.`
+
+const FAQ_ANSWERS: Record<string, string> = {
+  'how long': 'A standard business website takes 4-6 weeks. Complex applications with custom features may take 8-12 weeks. We provide a detailed timeline during our free consultation.',
+  'mobile app': 'Yes! We develop native and cross-platform mobile apps for iOS and Android using React Native and Flutter.',
+  'payment': 'We typically structure payments as 50% upfront, 30% at mid-project, and 20% upon delivery. We accept bank transfer, MTN MoMo, and card payments.',
+  'support': 'Yes, we offer monthly maintenance packages starting from basic security updates to full-service support with content updates and feature enhancements.',
+  'portfolio': 'Visit our Portfolio page to see case studies of completed projects across software, hardware, and design.',
+  'pricing': 'Basic websites start from GHS X, custom applications from GHS Y. We provide detailed quotes during consultation.',
+  'contact': 'You can reach us at +233 55 733 2615 or WhatsApp us at wa.me/233557332615',
+}
+
+export default function Chatbot() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 1,
+      role: 'assistant',
+      content: 'Hi! I\'m the RAME Tech virtual assistant. How can I help you today?',
+      timestamp: new Date()
+    }
+  ])
+  const [input, setInput] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  const getBotResponse = (userInput: string): string => {
+    const input = userInput.toLowerCase()
+    
+    // Check for escalation triggers
+    if (input.includes('speak to human') || input.includes('talk to person')) {
+      return "I'll connect you with our team on WhatsApp. Click here: wa.me/2335573322615"
+    }
+    
+    // Check FAQ
+    for (const [key, answer] of Object.entries(FAQ_ANSWERS)) {
+      if (input.includes(key)) {
+        return answer
+      }
+    }
+    
+    // Default response
+    return "Thank you for your question! To get more detailed information about your project, please provide your name, email, and a brief description of what you'd like to build. A team member will follow up within 24 hours. Or feel free to reach us directly on WhatsApp!"
+  }
+
+  const handleSend = async () => {
+    if (!input.trim()) return
+    
+    const userMessage: Message = {
+      id: messages.length + 1,
+      role: 'user',
+      content: input,
+      timestamp: new Date()
+    }
+    
+    setMessages(prev => [...prev, userMessage])
+    setInput('')
+    setIsTyping(true)
+    
+    // Simulate bot response delay
+    setTimeout(() => {
+      const botResponse: Message = {
+        id: messages.length + 2,
+        role: 'assistant',
+        content: getBotResponse(input),
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, botResponse])
+      setIsTyping(false)
+    }, 1000)
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
+  return (
+    <>
+      {/* Chat Toggle Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-primaryDark transition-colors ${isOpen ? 'hidden' : ''}`}
+      >
+        <FaCommentDots size={24} />
+      </button>
+
+      {/* Chat Window */}
+      {isOpen && (
+        <div className="fixed bottom-6 right-6 w-96 h-[500px] bg-white rounded-xl shadow-modal z-50 flex flex-col overflow-hidden">
+          {/* Header */}
+          <div className="bg-primary text-white p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <FaRobot size={24} />
+              <div>
+                <h3 className="font-semibold">RAME Tech Assistant</h3>
+                <p className="text-xs text-gray-200">We reply within 24 hours</p>
+              </div>
+            </div>
+            <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-2 rounded">
+              <FaTimes />
+            </button>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+            {messages.map((msg) => (
+              <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`flex gap-2 max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-accent' : 'bg-primary'}`}>
+                    {msg.role === 'user' ? <FaUser size={14} /> : <FaRobot size={14} />}
+                  </div>
+                  <div className={`p-3 rounded-lg ${msg.role === 'user' ? 'bg-primary text-white' : 'bg-white shadow-sm'}`}>
+                    <p className="text-sm">{msg.content}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="flex gap-2">
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                    <FaRobot size={14} />
+                  </div>
+                  <div className="bg-white shadow-sm p-3 rounded-lg">
+                    <div className="flex gap-1">
+                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
+                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input */}
+          <div className="p-4 border-t bg-white">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Type your message..."
+                className="flex-1 input-field"
+              />
+              <button
+                onClick={handleSend}
+                className="btn-primary px-4"
+              >
+                <FaPaperPlane />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}

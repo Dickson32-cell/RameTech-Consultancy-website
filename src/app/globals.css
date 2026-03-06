@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #1A5276;
+  --primary-dark: #154360;
+  --accent: #F39C12;
+  --accent-dark: #E67E22;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Component Styles */
+.btn-primary {
+  @apply bg-[#1A5276] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#154360] transition-all duration-300 transform hover:scale-105;
+}
+
+.btn-secondary {
+  @apply border-2 border-[#1A5276] text-[#1A5276] px-6 py-3 rounded-md font-semibold hover:bg-[#EBF5FB] transition-all duration-300;
+}
+
+.btn-accent {
+  @apply bg-[#F39C12] text-white px-6 py-3 rounded-md font-semibold hover:bg-[#E67E22] transition-all duration-300 transform hover:scale-105;
+}
+
+.input-field {
+  @apply border border-gray-300 rounded-md px-4 py-3 text-base focus:ring-2 focus:ring-[#1A5276] focus:border-transparent outline-none transition-all;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-card p-6 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1;
+}
+
+/* Animation Keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(243, 156, 18, 0.6);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Animation Classes */
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+.animate-fade-in-left {
+  animation: fadeInLeft 0.8s ease-out forwards;
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 0.8s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Animation Delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+
+/* Initial state for animations */
+.animate-on-load {
+  opacity: 0;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1A5276;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #154360;
+}
+
+/* Better focus states for accessibility */
+a:focus, button:focus {
+  outline: 2px solid #F39C12;
+  outline-offset: 2px;
+}
+
+/* Touch-friendly tap targets on mobile */
+@media (max-width: 768px) {
+  .btn-primary, .btn-secondary, .btn-accent {
+    @apply px-5 py-3 text-base;
+  }
+  
+  a, button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
