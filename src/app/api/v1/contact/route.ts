@@ -5,9 +5,11 @@ import { createClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServer = createClient(supabaseUrl, supabaseKey)
+function getSupabaseServer() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  return createClient(supabaseUrl, supabaseKey)
+}
 
 // Email via Resend
 async function sendEmailNotification(name: string, email: string, phone: string, service: string, message: string) {
@@ -66,7 +68,7 @@ export async function POST(request: NextRequest) {
     console.log('📝 New contact:', { name, email, phone })
 
     // Save to Supabase
-    const { data, error: supabaseError } = await supabaseServer
+    const { data, error: supabaseError } = await getSupabaseServer()
       .from('contact_messages')
       .insert([{ name, email, phone, service, message, created_at: new Date().toISOString() }])
 
@@ -89,7 +91,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const { data, error } = await supabaseServer
+    const { data, error } = await getSupabaseServer()
       .from('contact_messages')
       .select('*')
       .order('created_at', { ascending: false })
