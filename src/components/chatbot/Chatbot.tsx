@@ -102,21 +102,21 @@ export default function Chatbot() {
       {/* Chat Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-primaryDark transition-colors ${isOpen ? 'hidden' : ''}`}
+        className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 w-12 h-12 md:w-14 md:h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-primaryDark transition-colors ${isOpen ? 'hidden' : ''}`}
       >
-        <FaCommentDots size={24} />
+        <FaCommentDots size={20} md:size={24} />
       </button>
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[500px] bg-white rounded-xl shadow-modal z-50 flex flex-col overflow-hidden">
+        <div className="fixed inset-0 md:bottom-4 right-4 md:right-6 md:w-80 md:h-[450px] lg:w-96 lg:h-[500px] bg-white rounded-xl md:rounded-xl shadow-modal z-50 flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="bg-primary text-white p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <FaRobot size={24} />
+          <div className="bg-primary text-white p-3 md:p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2 md:gap-3">
+              <FaRobot size={20} md:size={24} />
               <div>
-                <h3 className="font-semibold">RAME Tech Assistant</h3>
-                <p className="text-xs text-gray-200">We reply within 24 hours</p>
+                <h3 className="font-semibold text-sm md:text-base">RAME Tech Assistant</h3>
+                <p className="text-xs text-gray-200 hidden md:block">We reply within 24 hours</p>
               </div>
             </div>
             <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-2 rounded">
@@ -125,30 +125,30 @@ export default function Chatbot() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-2 md:space-y-4 bg-gray-50">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`flex gap-2 max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-accent' : 'bg-primary'}`}>
-                    {msg.role === 'user' ? <FaUser size={14} /> : <FaRobot size={14} />}
+                <div className={`flex gap-1 md:gap-2 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                  <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-accent' : 'bg-primary'}`}>
+                    {msg.role === 'user' ? <FaUser size={10} md:size={14} /> : <FaRobot size={10} md:size={14} />}
                   </div>
-                  <div className={`p-3 rounded-lg ${msg.role === 'user' ? 'bg-primary text-white' : 'bg-white shadow-sm'}`}>
-                    <p className="text-sm">{msg.content}</p>
+                  <div className={`p-2 md:p-3 rounded-lg ${msg.role === 'user' ? 'bg-primary text-white' : 'bg-white shadow-sm'}`}>
+                    <p className="text-xs md:text-sm">{msg.content}</p>
                   </div>
                 </div>
               </div>
             ))}
             {isTyping && (
               <div className="flex justify-start">
-                <div className="flex gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                    <FaRobot size={14} />
+                <div className="flex gap-1 md:gap-2">
+                  <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center">
+                    <FaRobot size={10} md:size={14} />
                   </div>
-                  <div className="bg-white shadow-sm p-3 rounded-lg">
+                  <div className="bg-white shadow-sm p-2 md:p-3 rounded-lg">
                     <div className="flex gap-1">
-                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
-                      <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                      <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                      <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
+                      <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
                     </div>
                   </div>
                 </div>
@@ -158,7 +158,7 @@ export default function Chatbot() {
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t bg-white">
+          <div className="p-2 md:p-4 border-t bg-white">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -166,13 +166,13 @@ export default function Chatbot() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
-                className="flex-1 input-field"
+                className="flex-1 input-field text-sm"
               />
               <button
                 onClick={handleSend}
-                className="btn-primary px-4"
+                className="btn-primary px-3 md:px-4"
               >
-                <FaPaperPlane />
+                <FaPaperPlane size={12} md:size={14} />
               </button>
             </div>
           </div>
