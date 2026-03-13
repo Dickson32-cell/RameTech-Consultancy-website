@@ -1,19 +1,58 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 export default function HeroSection() {
   const [loaded, setLoaded] = useState(false)
+  const [parallaxOffset, setParallaxOffset] = useState(0)
+  const textRef = useRef<HTMLDivElement>(null)
+  const statsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setLoaded(true)
+    
+    const handleScroll = () => {
+      const scrollY = window.scrollY
+      setParallaxOffset(scrollY * 0.15)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Setup IntersectionObserver for scroll-triggered animations
+  useEffect(() => {
+    const observerOptions = { threshold: 0.2, rootMargin: '0px 0px -50px 0px' }
+    
+    const textObserver = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible')
+      }
+    }, observerOptions)
+
+    const statsObserver = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible')
+      }
+    }, observerOptions)
+
+    if (textRef.current) textObserver.observe(textRef.current)
+    if (statsRef.current) statsObserver.observe(statsRef.current)
+
+    return () => {
+      textObserver.disconnect()
+      statsObserver.disconnect()
+    }
   }, [])
 
   return (
     <section className="relative bg-gradient-to-br from-primary to-primaryDark text-white overflow-hidden">
-      {/* Animated Background Elements - Enhanced with 3D depth */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Animated Background Elements - Enhanced with 3D depth & Parallax */}
+      <div 
+        className="absolute inset-0 overflow-hidden"
+        style={{ transform: `translateY(${parallaxOffset * 0.3}px)` }}
+      >
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-float-3d"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-float-3d" style={{ animationDelay: '1.5s' }}></div>
         {/* Additional depth layers */}
@@ -24,7 +63,10 @@ export default function HeroSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32 relative z-10">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Text Content with 3D animation */}
-          <div className={`transition-all duration-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div 
+            ref={textRef}
+            className="scroll-animate scroll-animate-rotate-in"
+          >
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
               Innovative Tech{' '}
               <span className="text-accent">Solutions</span>{' '}
@@ -43,8 +85,12 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Stats Card with 3D effect */}
-          <div className={`hidden md:block transition-all duration-700 delay-300 ${loaded ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
+          {/* Stats Card with 3D effect - Scroll triggered */}
+          <div 
+            ref={statsRef}
+            className="hidden md:block scroll-animate scroll-animate-flip-in"
+            style={{ transitionDelay: '200ms' }}
+          >
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/10 shadow-3d-4">
               <div className="grid grid-cols-2 gap-4 md:gap-6">
                 <div className="bg-white/20 rounded-xl p-4 md:p-6 text-center hover:bg-white/30 transition-all duration-300 transform hover:scale-105 card-3d-tilt">

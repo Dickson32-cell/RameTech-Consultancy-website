@@ -355,10 +355,271 @@ a:focus, button:focus {
 @media (max-width: 768px) {
   .btn-primary, .btn-secondary, .btn-accent {
     @apply px-5 py-3 text-base;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   
   a, button {
     min-height: 44px;
     min-width: 44px;
+  }
+
+  /* Better text readability on mobile */
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h1 {
+    font-size: 1.75rem !important;
+  }
+
+  h2 {
+    font-size: 1.5rem !important;
+  }
+
+  h3 {
+    font-size: 1.25rem !important;
+  }
+
+  p {
+    font-size: 1rem !important;
+  }
+
+  /* Cards stack properly on mobile */
+  .card {
+    @apply p-4;
+  }
+
+  /* Ensure no horizontal scroll */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Mobile-friendly inputs */
+  .input-field {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    padding: 12px 16px;
+  }
+}
+
+/* ========================================
+   SCROLL-TRIGGERED ANIMATIONS
+   Using IntersectionObserver
+   ======================================== */
+
+/* Initial hidden state for scroll animations */
+.scroll-animate {
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Slide Up Animation */
+.scroll-animate-slide-up {
+  transform: translateY(60px);
+}
+
+.scroll-animate-slide-up.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Slide Down Animation */
+.scroll-animate-slide-down {
+  transform: translateY(-60px);
+}
+
+.scroll-animate-slide-down.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Slide Left Animation */
+.scroll-animate-slide-left {
+  transform: translateX(-60px);
+}
+
+.scroll-animate-slide-left.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* Slide Right Animation */
+.scroll-animate-slide-right {
+  transform: translateX(60px);
+}
+
+.scroll-animate-slide-right.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* Fade In Animation */
+.scroll-animate-fade {
+  transform: scale(0.95);
+}
+
+.scroll-animate-fade.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+/* 3D Rotate In - Very Noticeable */
+.scroll-animate-rotate-in {
+  transform: perspective(1000px) rotateX(-15deg) rotateY(10deg) translateY(40px);
+  transform-origin: center bottom;
+}
+
+.scroll-animate-rotate-in.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: perspective(1000px) rotateX(0) rotateY(0) translateY(0);
+}
+
+/* 3D Flip In */
+.scroll-animate-flip-in {
+  transform: perspective(1000px) rotateY(30deg) translateX(50px);
+  transform-origin: left center;
+}
+
+.scroll-animate-flip-in.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: perspective(1000px) rotateY(0) translateX(0);
+}
+
+/* Scale In with 3D effect */
+.scroll-animate-scale-3d {
+  transform: perspective(1000px) scale(0.8) translateY(30px);
+  transform-origin: center center;
+}
+
+.scroll-animate-scale-3d.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: perspective(1000px) scale(1) translateY(0);
+}
+
+/* Stagger children animations */
+.scroll-stagger > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-stagger.is-visible > *:nth-child(1) { transition-delay: 0ms; opacity: 1; transform: translateY(0); }
+.scroll-stagger.is-visible > *:nth-child(2) { transition-delay: 100ms; opacity: 1; transform: translateY(0); }
+.scroll-stagger.is-visible > *:nth-child(3) { transition-delay: 200ms; opacity: 1; transform: translateY(0); }
+.scroll-stagger.is-visible > *:nth-child(4) { transition-delay: 300ms; opacity: 1; transform: translateY(0); }
+.scroll-stagger.is-visible > *:nth-child(5) { transition-delay: 400ms; opacity: 1; transform: translateY(0); }
+.scroll-stagger.is-visible > *:nth-child(6) { transition-delay: 500ms; opacity: 1; transform: translateY(0); }
+
+/* Different animation directions for variety */
+.scroll-animate-direction-1.is-visible { animation: fadeInUp3D 0.8s ease-out forwards; }
+.scroll-animate-direction-2.is-visible { animation: fadeInLeft3D 0.8s ease-out forwards; }
+.scroll-animate-direction-3.is-visible { animation: fadeInRight3D 0.8s ease-out forwards; }
+.scroll-animate-direction-4.is-visible { animation: fadeInScale3D 0.7s ease-out forwards; }
+
+/* ========================================
+   PARALLAX EFFECTS
+   ======================================== */
+
+.parallax-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.parallax-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: -1;
+}
+
+/* Slower parallax element */
+.parallax-slow {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Faster parallax element */
+.parallax-fast {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* ========================================
+   ENHANCED MOBILE RESPONSIVENESS
+   ======================================== */
+
+/* Ensure images scale properly */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Fix for Next.js Image fill */
+[data-next-image-fill] {
+  object-fit: cover;
+}
+
+/* Mobile nav improvements */
+@media (max-width: 1023px) {
+  .mobile-nav-open {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+  }
+}
+
+/* Proper touch targets for all interactive elements */
+@media (pointer: coarse) {
+  .btn-primary, .btn-secondary, .btn-accent,
+  nav a, .card, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Tablet specific adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.5rem; }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-animate,
+  .scroll-stagger > * {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
   }
 }
