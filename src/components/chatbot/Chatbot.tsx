@@ -143,25 +143,13 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* Chat Toggle Button - Also draggable */}
-      {!isOpen && (
-        <div
-          onMouseDown={handleDragStart}
-          onTouchStart={handleDragStart}
-          className="fixed cursor-move touch-none select-none"
-          style={{ 
-            bottom: position.y > 0 ? `calc(${position.y}px + 420px)` : '1rem',
-            right: position.x > 0 ? `calc(${position.x}px + 320px)` : '1rem'
-          }}
-        >
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="w-12 h-12 md:w-14 md:h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-primaryDark transition-colors"
-          >
-            <FaCommentDots className="text-[20px] md:text-[24px]" />
-          </button>
-        </div>
-      )}
+      {/* Chat Toggle Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-12 h-12 md:w-14 md:h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-primaryDark transition-transform hover:scale-110"
+      >
+        <FaCommentDots className="text-[20px] md:text-[24px]" />
+      </button>
 
       {/* Chat Window */}
       {isOpen && (
