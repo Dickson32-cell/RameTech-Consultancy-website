@@ -141,6 +141,182 @@ body {
 .delay-700 { animation-delay: 700ms; }
 .delay-800 { animation-delay: 800ms; }
 
+/* ===============================
+   3D Effects & Scroll Animations
+   =============================== */
+
+/* 3D Keyframes */
+@keyframes fadeInUp3D {
+  from {
+    opacity: 0;
+    transform: translateY(40px) rotateX(-5deg);
+    transform-origin: center bottom;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+  }
+}
+
+@keyframes fadeInLeft3D {
+  from {
+    opacity: 0;
+    transform: translateX(-40px) rotateY(10deg);
+    transform-origin: center right;
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+  }
+}
+
+@keyframes fadeInRight3D {
+  from {
+    opacity: 0;
+    transform: translateX(40px) rotateY(-10deg);
+    transform-origin: center left;
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0);
+  }
+}
+
+@keyframes fadeInScale3D {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+    transform-origin: center center;
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes cardTilt {
+  0%, 100% {
+    transform: perspective(1000px) rotateX(0) rotateY(0);
+  }
+  25% {
+    transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+  }
+  75% {
+    transform: perspective(1000px) rotateX(-2deg) rotateY(2deg);
+  }
+}
+
+@keyframes float3D {
+  0%, 100% {
+    transform: translateY(0) rotateX(0) rotateY(0);
+  }
+  33% {
+    transform: translateY(-8px) rotateX(2deg) rotateY(1deg);
+  }
+  66% {
+    transform: translateY(-4px) rotateX(-1deg) rotateY(-2deg);
+  }
+}
+
+@keyframes depthShift {
+  0%, 100% {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  50% {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+/* 3D Animation Classes */
+.animate-fade-in-up-3d {
+  animation: fadeInUp3D 0.8s ease-out forwards;
+}
+
+.animate-fade-in-left-3d {
+  animation: fadeInLeft3D 0.8s ease-out forwards;
+}
+
+.animate-fade-in-right-3d {
+  animation: fadeInRight3D 0.8s ease-out forwards;
+}
+
+.animate-fade-in-scale-3d {
+  animation: fadeInScale3D 0.7s ease-out forwards;
+}
+
+.animate-float-3d {
+  animation: float3D 4s ease-in-out infinite;
+}
+
+.animate-depth-shift {
+  animation: depthShift 3s ease-in-out infinite;
+}
+
+/* 3D Card Tilt on Hover */
+.card-3d-tilt {
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+}
+
+.card-3d-tilt:hover {
+  transform: perspective(1000px) rotateX(2deg) rotateY(-3deg) translateZ(5px);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+/* Button 3D Press Effect */
+.btn-3d {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transform: translateY(0);
+}
+
+.btn-3d:hover {
+  transform: translateY(-2px);
+}
+
+.btn-3d:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Parallax Container */
+.parallax-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle 3D shadow layers */
+.shadow-3d-1 { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+.shadow-3d-2 { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+.shadow-3d-3 { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.shadow-3d-4 { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+
+/* Layered depth effect */
+.depth-layer {
+  position: relative;
+}
+
+.depth-layer > * {
+  position: relative;
+  z-index: 1;
+}
+
+.depth-layer::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: -8px;
+  bottom: -8px;
+  background: inherit;
+  border-radius: inherit;
+  z-index: 0;
+  opacity: 0.3;
+  filter: blur(8px);
+}
+
 /* Initial state for animations */
 .animate-on-load {
   opacity: 0;

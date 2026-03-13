@@ -28,7 +28,7 @@ export default function Header() {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="flex items-center py-2">
-            <div className="relative h-8 w-24 sm:h-10 sm:w-32">
+            <div className="relative h-12 w-36 sm:h-14 sm:w-44">
               <Image 
                 src="/logo.jpg" 
                 alt="RAME Tech Consultancy"

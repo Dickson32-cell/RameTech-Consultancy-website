@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 const projects = [
   {
@@ -22,6 +23,13 @@ const projects = [
 ]
 
 export default function PortfolioPreview() {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), 200)
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,13 +42,17 @@ export default function PortfolioPreview() {
 
         <div className="grid md:grid-cols-3 gap-8">
           {projects.map((project, index) => (
-            <div key={index} className="card group overflow-hidden p-0">
-              <div className="relative h-48 bg-gray-200">
+            <div 
+              key={index} 
+              className={`card card-3d-tilt group overflow-hidden p-0 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+              style={{ transitionDelay: `${index * 150}ms` }}
+            >
+              <div className="relative h-48 bg-gray-200 overflow-hidden">
                 <Image 
                   src={project.image}
                   alt={project.title}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
               <div className="p-6">
@@ -52,7 +64,7 @@ export default function PortfolioPreview() {
         </div>
 
         <div className="text-center mt-12">
-          <Link href="/portfolio" className="btn-primary">
+          <Link href="/portfolio" className="btn-primary btn-3d">
             View Full Portfolio
           </Link>
         </div>
