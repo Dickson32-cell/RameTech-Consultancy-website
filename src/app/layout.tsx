@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import ScrollProgress from '@/components/shared/ScrollProgress'
+import Chatbot from '@/components/chatbot/Chatbot'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         <Header />
         {children}
         <Footer />
+        <Chatbot />
       </body>
     </html>
   )
