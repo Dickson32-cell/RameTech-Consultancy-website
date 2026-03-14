@@ -106,7 +106,7 @@ export default function PortfolioPreview() {
           ))}
         </div>
 
-        <div className="text-center mt-10 md:mt-12">
+        <div className="text-center mt-12 md:mt-16 relative z-20">
           <Link href="/portfolio" className="btn-primary btn-3d">
             View Full Portfolio
           </Link>
