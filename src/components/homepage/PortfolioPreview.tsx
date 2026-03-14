@@ -69,7 +69,7 @@ export default function PortfolioPreview() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-16 bg-white overflow-hidden">
+    <section ref={sectionRef} className="py-16 bg-white overflow-visible">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header with GSAP animation */}
         <div ref={headerRef} className="text-center mb-12">
@@ -82,11 +82,12 @@ export default function PortfolioPreview() {
         </div>
 
         {/* Portfolio items with GSAP staggered animation */}
-        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 relative z-10">
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {projects.map((project, index) => (
             <div 
               key={index} 
               className="card card-3d-tilt group overflow-hidden p-0 transition-all duration-700 hover:-translate-y-2"
+              style={{ position: 'relative', zIndex: 1 }}
             >
               <div className="relative h-48 sm:h-56 bg-gray-200 overflow-hidden">
                 <Image 

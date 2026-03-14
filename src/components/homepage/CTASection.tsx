@@ -59,7 +59,7 @@ export default function CTASection() {
   return (
     <section 
       ref={sectionRef}
-      className="py-16 md:py-20 bg-accent relative overflow-hidden"
+      className="py-16 md:py-20 bg-accent relative overflow-visible"
     >
       {/* Floating decorative elements with GSAP animation */}
       <div 

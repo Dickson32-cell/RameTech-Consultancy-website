@@ -72,8 +72,8 @@ export default function ServicesOverview() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-12 md:py-16 bg-gray-50 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={sectionRef} className="py-12 md:py-16 bg-gray-50 overflow-visible">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header with GSAP animation */}
         <div ref={headerRef} className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4">
@@ -87,13 +87,14 @@ export default function ServicesOverview() {
         {/* Service Cards with GSAP staggered animation */}
         <div 
           ref={cardsContainerRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 relative z-10"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
           {services.map((service, index) => (
             <Link 
               href={service.link} 
               key={index} 
-              className="card card-3d-tilt group transform transition-all duration-500 hover:-translate-y-2"
+              className="card card-3d-tilt group block transform transition-all duration-500 hover:-translate-y-2"
+              style={{ position: 'relative', zIndex: 1 }}
             >
               <div className="w-14 h-14 md:w-16 md:h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-all duration-300 transform group-hover:scale-110">
                 <service.icon className="w-6 h-6 md:w-8 md:h-8 text-primary group-hover:text-white" />
@@ -108,7 +109,7 @@ export default function ServicesOverview() {
           ))}
         </div>
 
-        <div className="text-center mt-8 md:mt-12">
+        <div className="text-center mt-10 md:mt-12 relative z-20">
           <Link href="/services" className="btn-secondary btn-3d inline-block">
             View All Services
           </Link>
