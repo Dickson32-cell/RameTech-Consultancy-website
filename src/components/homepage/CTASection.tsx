@@ -1,46 +1,64 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export default function CTASection() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [parallaxOffset, setParallaxOffset] = useState(0)
   const sectionRef = useRef<HTMLElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const decor1Ref = useRef<HTMLDivElement>(null)
+  const decor2Ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.unobserve(entry.target)
+    const ctx = gsap.context(() => {
+      // Content entrance animation
+      gsap.from(contentRef.current, {
+        duration: 1,
+        y: 50,
+        opacity: 0,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: contentRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none none'
         }
-      },
-      { threshold: 0.2, rootMargin: '0px 0px -50px 0px' }
-    )
+      })
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
+      // Button hover scale animation
+      gsap.utils.toArray('.btn-3d').forEach((btn: any) => {
+        gsap.to(btn, {
+          scale: 1.05,
+          duration: 0.3,
+          ease: 'power2.out',
+          paused: true,
+          reversed: true
+        })
+      })
 
-    return () => observer.disconnect()
-  }, [])
+      // Floating decorative elements with continuous animation
+      gsap.to(decor1Ref.current, {
+        y: 20,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut'
+      })
 
-  // Parallax effect for decorative elements
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY
-      const section = sectionRef.current
-      if (!section) return
-      
-      const rect = section.getBoundingClientRect()
-      const sectionTop = rect.top + scrollY
-      const relativeScroll = scrollY - sectionTop
-      setParallaxOffset(relativeScroll * 0.1)
-    }
+      gsap.to(decor2Ref.current, {
+        y: -20,
+        duration: 3.5,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: 0.5
+      })
+    })
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => ctx.revert()
   }, [])
 
   return (
@@ -48,21 +66,17 @@ export default function CTASection() {
       ref={sectionRef}
       className="py-16 md:py-20 bg-accent relative overflow-hidden"
     >
-      {/* Floating decorative elements with parallax */}
+      {/* Floating decorative elements with GSAP animation */}
       <div 
+        ref={decor1Ref}
         className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 bg-white/10 rounded-full -translate-x-16 -translate-y-16 animate-float-3d"
-        style={{ transform: `translateY(${parallaxOffset * 0.5}px)` }}
       ></div>
       <div 
+        ref={decor2Ref}
         className="absolute bottom-0 right-0 w-40 h-40 md:w-64 md:h-64 bg-white/10 rounded-full translate-x-20 translate-y-20 animate-float-3d"
-        style={{ animationDelay: '2s', transform: `translateY(${parallaxOffset * -0.3}px)` }}
       ></div>
       
-      <div 
-        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-700 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}
-      >
+      <div ref={contentRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 md:mb-6">
           Ready to Transform Your Business?
         </h2>

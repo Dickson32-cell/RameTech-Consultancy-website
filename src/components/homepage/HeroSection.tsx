@@ -1,57 +1,68 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export default function HeroSection() {
-  const [loaded, setLoaded] = useState(false)
-  const [parallaxOffset, setParallaxOffset] = useState(0)
   const textRef = useRef<HTMLDivElement>(null)
   const statsRef = useRef<HTMLDivElement>(null)
+  const bgRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setLoaded(true)
-    
-    const handleScroll = () => {
-      const scrollY = window.scrollY
-      setParallaxOffset(scrollY * 0.15)
-    }
+    const ctx = gsap.context(() => {
+      // Text entrance animation with stagger
+      gsap.from(textRef.current?.children, {
+        duration: 1,
+        y: 50,
+        opacity: 0,
+        stagger: 0.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: textRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none none'
+        }
+      })
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+      // Stats cards flip animation
+      gsap.from(statsRef.current, {
+        duration: 1.2,
+        rotationY: 45,
+        opacity: 0,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: statsRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none none'
+        }
+      })
 
-  // Setup IntersectionObserver for scroll-triggered animations
-  useEffect(() => {
-    const observerOptions = { threshold: 0.2, rootMargin: '0px 0px -50px 0px' }
-    
-    const textObserver = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible')
-      }
-    }, observerOptions)
+      // Parallax background on scroll
+      gsap.to(bgRef.current, {
+        yPercent: 30,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: bgRef.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      })
+    })
 
-    const statsObserver = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible')
-      }
-    }, observerOptions)
-
-    if (textRef.current) textObserver.observe(textRef.current)
-    if (statsRef.current) statsObserver.observe(statsRef.current)
-
-    return () => {
-      textObserver.disconnect()
-      statsObserver.disconnect()
-    }
+    return () => ctx.revert()
   }, [])
 
   return (
     <section className="relative bg-gradient-to-br from-primary to-primaryDark text-white overflow-hidden">
       {/* Animated Background Elements - Enhanced with 3D depth & Parallax */}
       <div 
+        ref={bgRef}
         className="absolute inset-0 overflow-hidden"
-        style={{ transform: `translateY(${parallaxOffset * 0.3}px)` }}
       >
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-float-3d"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-float-3d" style={{ animationDelay: '1.5s' }}></div>
@@ -62,11 +73,8 @@ export default function HeroSection() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32 relative z-10">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-          {/* Text Content with 3D animation */}
-          <div 
-            ref={textRef}
-            className="scroll-animate scroll-animate-rotate-in"
-          >
+          {/* Text Content with GSAP animation */}
+          <div ref={textRef}>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
               Innovative Tech{' '}
               <span className="text-accent">Solutions</span>{' '}
@@ -85,11 +93,10 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Stats Card with 3D effect - Scroll triggered */}
+          {/* Stats Card with GSAP flip animation */}
           <div 
             ref={statsRef}
-            className="hidden md:block scroll-animate scroll-animate-flip-in"
-            style={{ transitionDelay: '200ms' }}
+            className="hidden md:block"
           >
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/10 shadow-3d-4">
               <div className="grid grid-cols-2 gap-4 md:gap-6">

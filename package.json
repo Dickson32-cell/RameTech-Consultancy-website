@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "gsap": "^3.12.5",
     "@prisma/client": "^5.22.0",
     "@supabase/supabase-js": "^2.98.0",
     "@types/nodemailer": "^7.0.11",

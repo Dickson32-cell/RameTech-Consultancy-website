@@ -2,7 +2,11 @@
 
 import Link from 'next/link'
 import { FaCode, FaLaptopCode, FaPalette } from 'react-icons/fa'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const services = [
   {
@@ -26,37 +30,48 @@ const services = [
 ]
 
 export default function ServicesOverview() {
-  const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
-  const cardsRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const cardsContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const sectionObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          sectionObserver.unobserve(entry.target)
+    const ctx = gsap.context(() => {
+      // Header slide-up animation
+      gsap.from(headerRef.current, {
+        duration: 1,
+        y: 50,
+        opacity: 0,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: headerRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none none'
         }
-      },
-      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
-    )
+      })
 
-    if (sectionRef.current) {
-      sectionObserver.observe(sectionRef.current)
-    }
+      // Service cards staggered entrance
+      gsap.from(cardsContainerRef.current?.children, {
+        duration: 0.8,
+        y: 60,
+        opacity: 0,
+        stagger: 0.2,
+        ease: 'back.out(1.7)',
+        scrollTrigger: {
+          trigger: cardsContainerRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none none'
+        }
+      })
+    })
 
-    return () => sectionObserver.disconnect()
+    return () => ctx.revert()
   }, [])
 
   return (
     <section ref={sectionRef} className="py-12 md:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header with 3D scroll animation */}
-        <div 
-          className={`text-center mb-8 md:mb-12 transition-all duration-700 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
+        {/* Section Header with GSAP animation */}
+        <div ref={headerRef} className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4">
             Our Services
           </h2>
@@ -65,12 +80,10 @@ export default function ServicesOverview() {
           </p>
         </div>
 
-        {/* Service Cards with staggered 3D animations */}
+        {/* Service Cards with GSAP staggered animation */}
         <div 
-          ref={cardsRef}
-          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 scroll-stagger ${
-            isVisible ? 'is-visible' : ''
-          }`}
+          ref={cardsContainerRef}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
           {services.map((service, index) => (
             <Link 

@@ -2,7 +2,11 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const projects = [
   {
@@ -23,36 +27,48 @@ const projects = [
 ]
 
 export default function PortfolioPreview() {
-  const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const cardsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.unobserve(entry.target)
+    const ctx = gsap.context(() => {
+      // Header animation
+      gsap.from(headerRef.current, {
+        duration: 1,
+        y: 50,
+        opacity: 0,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: headerRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none none'
         }
-      },
-      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
-    )
+      })
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
+      // Portfolio cards staggered entrance
+      gsap.from(cardsRef.current?.children, {
+        duration: 0.8,
+        y: 60,
+        opacity: 0,
+        stagger: 0.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: cardsRef.current,
+          start: 'top 75%',
+          toggleActions: 'play none none none'
+        }
+      })
+    })
 
-    return () => observer.disconnect()
+    return () => ctx.revert()
   }, [])
 
   return (
     <section ref={sectionRef} className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header with 3D animation */}
-        <div 
-          className={`text-center mb-12 transition-all duration-700 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
+        {/* Section Header with GSAP animation */}
+        <div ref={headerRef} className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
             Our Portfolio
           </h2>
@@ -61,8 +77,8 @@ export default function PortfolioPreview() {
           </p>
         </div>
 
-        {/* Portfolio items with scroll-triggered animations */}
-        <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 scroll-stagger ${isVisible ? 'is-visible' : ''}`}>
+        {/* Portfolio items with GSAP staggered animation */}
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {projects.map((project, index) => (
             <div 
               key={index} 
