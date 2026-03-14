@@ -52,13 +52,13 @@ export default function PortfolioPreview() {
       if (cardsRef.current) {
         gsap.from(cardsRef.current.children, {
           duration: 0.8,
-          y: 60,
+          y: 40,
           opacity: 0,
-          stagger: 0.2,
+          stagger: 0.15,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: cardsRef.current,
-            start: 'top 75%',
+            start: 'top 80%',
             toggleActions: 'play none none none'
           }
         })
@@ -69,7 +69,7 @@ export default function PortfolioPreview() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-16 bg-white">
+    <section ref={sectionRef} className="py-16 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header with GSAP animation */}
         <div ref={headerRef} className="text-center mb-12">
@@ -82,7 +82,7 @@ export default function PortfolioPreview() {
         </div>
 
         {/* Portfolio items with GSAP staggered animation */}
-        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 relative z-10">
           {projects.map((project, index) => (
             <div 
               key={index} 

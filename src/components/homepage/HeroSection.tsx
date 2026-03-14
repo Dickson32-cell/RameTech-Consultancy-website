@@ -18,9 +18,9 @@ export default function HeroSection() {
       if (textRef.current) {
         gsap.from(textRef.current.children, {
           duration: 1,
-          y: 50,
+          y: 40,
           opacity: 0,
-          stagger: 0.2,
+          stagger: 0.15,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: textRef.current,
@@ -30,16 +30,16 @@ export default function HeroSection() {
         })
       }
 
-      // Stats cards flip animation
+      // Stats cards slide-in animation
       if (statsRef.current) {
         gsap.from(statsRef.current, {
-          duration: 1.2,
-          rotationY: 45,
+          duration: 1,
+          x: 50,
           opacity: 0,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: statsRef.current,
-            start: 'top 75%',
+            start: 'top 80%',
             toggleActions: 'play none none none'
           }
         })
