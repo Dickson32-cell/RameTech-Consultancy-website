@@ -37,31 +37,35 @@ export default function ServicesOverview() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Header slide-up animation
-      gsap.from(headerRef.current, {
-        duration: 1,
-        y: 50,
-        opacity: 0,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: headerRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none'
-        }
-      })
+      if (headerRef.current) {
+        gsap.from(headerRef.current, {
+          duration: 1,
+          y: 50,
+          opacity: 0,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+          }
+        })
+      }
 
       // Service cards staggered entrance
-      gsap.from(cardsContainerRef.current?.children, {
-        duration: 0.8,
-        y: 60,
-        opacity: 0,
-        stagger: 0.2,
-        ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: cardsContainerRef.current,
-          start: 'top 75%',
-          toggleActions: 'play none none none'
-        }
-      })
+      if (cardsContainerRef.current) {
+        gsap.from(cardsContainerRef.current.children, {
+          duration: 0.8,
+          y: 60,
+          opacity: 0,
+          stagger: 0.2,
+          ease: 'back.out(1.7)',
+          scrollTrigger: {
+            trigger: cardsContainerRef.current,
+            start: 'top 75%',
+            toggleActions: 'play none none none'
+          }
+        })
+      }
     })
 
     return () => ctx.revert()

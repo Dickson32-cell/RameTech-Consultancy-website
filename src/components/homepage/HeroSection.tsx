@@ -15,43 +15,49 @@ export default function HeroSection() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Text entrance animation with stagger
-      gsap.from(textRef.current?.children, {
-        duration: 1,
-        y: 50,
-        opacity: 0,
-        stagger: 0.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: textRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none'
-        }
-      })
+      if (textRef.current) {
+        gsap.from(textRef.current.children, {
+          duration: 1,
+          y: 50,
+          opacity: 0,
+          stagger: 0.2,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: textRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+          }
+        })
+      }
 
       // Stats cards flip animation
-      gsap.from(statsRef.current, {
-        duration: 1.2,
-        rotationY: 45,
-        opacity: 0,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: statsRef.current,
-          start: 'top 75%',
-          toggleActions: 'play none none none'
-        }
-      })
+      if (statsRef.current) {
+        gsap.from(statsRef.current, {
+          duration: 1.2,
+          rotationY: 45,
+          opacity: 0,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: statsRef.current,
+            start: 'top 75%',
+            toggleActions: 'play none none none'
+          }
+        })
+      }
 
       // Parallax background on scroll
-      gsap.to(bgRef.current, {
-        yPercent: 30,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: bgRef.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: true
-        }
-      })
+      if (bgRef.current) {
+        gsap.to(bgRef.current, {
+          yPercent: 30,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: bgRef.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true
+          }
+        })
+      }
     })
 
     return () => ctx.revert()

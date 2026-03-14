@@ -16,46 +16,41 @@ export default function CTASection() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Content entrance animation
-      gsap.from(contentRef.current, {
-        duration: 1,
-        y: 50,
-        opacity: 0,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: contentRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none'
-        }
-      })
-
-      // Button hover scale animation
-      gsap.utils.toArray('.btn-3d').forEach((btn: any) => {
-        gsap.to(btn, {
-          scale: 1.05,
-          duration: 0.3,
-          ease: 'power2.out',
-          paused: true,
-          reversed: true
+      if (contentRef.current) {
+        gsap.from(contentRef.current, {
+          duration: 1,
+          y: 50,
+          opacity: 0,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: contentRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+          }
         })
-      })
+      }
 
       // Floating decorative elements with continuous animation
-      gsap.to(decor1Ref.current, {
-        y: 20,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut'
-      })
+      if (decor1Ref.current) {
+        gsap.to(decor1Ref.current, {
+          y: 20,
+          duration: 3,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut'
+        })
+      }
 
-      gsap.to(decor2Ref.current, {
-        y: -20,
-        duration: 3.5,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        delay: 0.5
-      })
+      if (decor2Ref.current) {
+        gsap.to(decor2Ref.current, {
+          y: -20,
+          duration: 3.5,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+          delay: 0.5
+        })
+      }
     })
 
     return () => ctx.revert()

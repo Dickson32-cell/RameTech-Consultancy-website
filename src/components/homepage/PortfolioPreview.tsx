@@ -34,31 +34,35 @@ export default function PortfolioPreview() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Header animation
-      gsap.from(headerRef.current, {
-        duration: 1,
-        y: 50,
-        opacity: 0,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: headerRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none'
-        }
-      })
+      if (headerRef.current) {
+        gsap.from(headerRef.current, {
+          duration: 1,
+          y: 50,
+          opacity: 0,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none none'
+          }
+        })
+      }
 
       // Portfolio cards staggered entrance
-      gsap.from(cardsRef.current?.children, {
-        duration: 0.8,
-        y: 60,
-        opacity: 0,
-        stagger: 0.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: 'top 75%',
-          toggleActions: 'play none none none'
-        }
-      })
+      if (cardsRef.current) {
+        gsap.from(cardsRef.current.children, {
+          duration: 0.8,
+          y: 60,
+          opacity: 0,
+          stagger: 0.2,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: cardsRef.current,
+            start: 'top 75%',
+            toggleActions: 'play none none none'
+          }
+        })
+      }
     })
 
     return () => ctx.revert()
