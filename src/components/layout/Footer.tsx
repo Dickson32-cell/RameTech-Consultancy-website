@@ -26,7 +26,7 @@ const getIcon = (icon: string) => {
 
 export default function Footer() {
   const [socials, setSocials] = useState<SocialLink[]>([
-    { id: '1', name: 'LinkedIn', url: 'https://linkedin.com/company/rametech', icon: 'FaLinkedin' }
+    { id: '1', name: 'Instagram', url: 'https://www.instagram.com/rametech_consultancy?igsh=MTJyOXhic2F4Z2Fhcw%3D%3D&utm_source=qr', icon: 'FaInstagram' }
   ])
 
   useEffect(() => {
