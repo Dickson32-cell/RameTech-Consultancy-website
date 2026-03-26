@@ -30,7 +30,7 @@ export default function Header() {
           <Link href="/" className="flex items-center py-2 -ml-2 cursor-pointer">
             <div className="relative h-12 w-36 sm:h-14 sm:w-44">
               <Image 
-                src="/logo_transparent.png" 
+                src="/logo.png" 
                 alt="RAME Tech Consultancy"
                 fill
                 className="object-contain"

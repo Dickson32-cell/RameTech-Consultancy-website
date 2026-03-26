@@ -48,7 +48,7 @@ export default function Footer() {
           <div>
             <div className="relative h-12 w-40">
               <Image 
-                src="/logo_transparent.png" 
+                src="/logo.png" 
                 alt="RAME Tech Consultancy"
                 fill
                 className="object-contain"
