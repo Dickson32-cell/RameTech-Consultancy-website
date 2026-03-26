@@ -25,15 +25,20 @@ const getIcon = (icon: string) => {
 }
 
 export default function Footer() {
-  const [socials, setSocials] = useState<SocialLink[]>([])
+  const [socials, setSocials] = useState<SocialLink[]>([
+    { id: '1', name: 'LinkedIn', url: 'https://linkedin.com/company/rametech', icon: 'FaLinkedin' }
+  ])
 
   useEffect(() => {
+    // Try to fetch from API, fallback to hardcoded if fails
     fetch('/api/v1/socials')
       .then(res => res.json())
       .then(data => {
-        if (data.success) setSocials(data.data)
+        if (data.success && data.data.length > 0) setSocials(data.data)
       })
-      .catch(() => {})
+      .catch(() => {
+        // Keep hardcoded fallback
+      })
   }, [])
 
   return (
