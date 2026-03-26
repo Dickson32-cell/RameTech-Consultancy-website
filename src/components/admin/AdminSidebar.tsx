@@ -150,12 +150,12 @@ export default function AdminSidebar() {
         </div>
       </aside>
 
-      {/* Mobile menu toggle - fixed position below header on mobile */}
+      {/* Mobile menu toggle - fixed position top right on mobile */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className="fixed top-16 left-4 z-50 p-2 bg-primary text-white rounded-lg shadow-lg md:hidden"
+        className="fixed top-4 right-4 z-50 p-2.5 bg-primary text-white rounded-lg shadow-lg md:hidden"
       >
-        <FaBars />
+        <FaBars className="w-5 h-5" />
       </button>
     </>
   )
