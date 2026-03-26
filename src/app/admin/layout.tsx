@@ -8,7 +8,8 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-100">
       <AdminSidebar />
-      <main className="ml-64 p-8">
+      {/* Responsive: full width on mobile, ml-64 on desktop */}
+      <main className="md:ml-64 p-4 md:p-8 transition-all duration-300">
         {children}
       </main>
     </div>
