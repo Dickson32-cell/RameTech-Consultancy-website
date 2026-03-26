@@ -1,0 +1,246 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// PUBLIC TABLES
+// ============================================
+
+model TeamMember {
+  id          String   @id @default(uuid())
+  name        String
+  role        String
+  bio         String   @db.Text
+  email       String   @unique
+  phone       String?
+  photoUrl    String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([order])
+  @@index([isActive])
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String   @db.Text
+  icon        String?
+  features    String[] // Stored as JSON array
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([slug])
+  @@index([order])
+  @@index([isActive])
+}
+
+model PortfolioProject {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  category    String
+  description String   @db.Text
+  imageUrl    String?
+  technologies String[] // Stored as JSON array
+  clientName  String?
+  projectUrl  String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([slug])
+  @@index([category])
+  @@index([order])
+  @@index([isActive])
+}
+
+model BlogPost {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  excerpt     String   @db.Text
+  content     String   @db.Text
+  category    String
+  imageUrl    String?
+  author      String?
+  readTime    String?
+  isPublished Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+  publishedAt DateTime? @db.Timestamptz()
+
+  @@index([slug])
+  @@index([category])
+  @@index([isPublished])
+  @@index([isFeatured])
+}
+
+model FAQ {
+  id          String   @id @default(uuid())
+  question    String   @unique
+  answer      String   @db.Text
+  category    String   @default("general")
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([category])
+  @@index([order])
+  @@index([isActive])
+}
+
+model QuoteRequest {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  phone       String?
+  company     String?
+  service     String
+  budget      String?
+  description String   @db.Text
+  status      String   @default("pending") // pending, contacted, quoted, accepted, rejected
+  source      String   @default("website")
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([status])
+  @@index([email])
+  @@index([createdAt])
+}
+
+model ContactMessage {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  phone       String?
+  subject     String?
+  message     String   @db.Text
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([isRead])
+  @@index([email])
+  @@index([createdAt])
+}
+
+model NewsletterSubscriber {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  name        String?
+  isActive    Boolean  @default(true)
+  subscribedAt DateTime @default(now()) @db.Timestamptz()
+  unsubscribedAt DateTime? @db.Timestamptz()
+
+  @@index([email])
+  @@index([isActive])
+}
+
+// ============================================
+// CLIENT PORTAL TABLES
+// ============================================
+
+model PortalUser {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  name          String
+  company       String?
+  phone         String?
+  role          String    @default("client") // client, admin
+  isActive      Boolean   @default(true)
+  emailVerified DateTime? @db.Timestamptz()
+  createdAt     DateTime  @default(now()) @db.Timestamptz()
+  updatedAt     DateTime  @updatedAt @db.Timestamptz()
+
+  projects      Project[]
+  invoices     Invoice[]
+
+  @@index([email])
+  @@index([role])
+  @@index([isActive])
+}
+
+model Project {
+  id            String    @id @default(uuid())
+  title         String
+  description   String    @db.Text
+  status        String    @default("planning") // planning, in_progress, review, completed, on_hold
+  progress      Int       @default(0) // 0-100
+  startDate     DateTime? @db.Timestamptz()
+  endDate       DateTime? @db.Timestamptz()
+  budget        Decimal?  @db.Decimal(12, 2)
+  currency      String    @default("GHS")
+  
+  // Relations
+  userId        String    @map("user_id")
+  user          PortalUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime  @default(now()) @db.Timestamptz()
+  updatedAt     DateTime  @updatedAt @db.Timestamptz()
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Invoice {
+  id            String    @id @default(uuid())
+  invoiceNumber String    @unique
+  amount        Decimal   @db.Decimal(12, 2)
+  currency      String    @default("GHS")
+  description   String    @db.Text
+  
+  // Invoice stages: draft, sent, paid, overdue, cancelled
+  status        String    @default("draft")
+  
+  dueDate       DateTime  @db.Timestamptz()
+  paidDate      DateTime? @db.Timestamptz()
+  
+  // Relations
+  userId        String    @map("user_id")
+  user          PortalUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt     DateTime  @default(now()) @db.Timestamptz()
+  updatedAt     DateTime  @updatedAt @db.Timestamptz()
+
+  @@index([userId])
+  @@index([invoiceNumber])
+  @@index([status])
+  @@index([dueDate])
+}
+
+// ============================================
+// CHATBOT TABLES
+// ============================================
+
+model ChatbotLead {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  phone       String?
+  projectDescription String? @db.Text
+  source      String   @default("chatbot")
+  status      String   @default("new") // new, contacted, qualified, lost
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([email])
+  @@index([status])
+}
