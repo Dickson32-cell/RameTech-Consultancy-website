@@ -8,9 +8,11 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-100">
       <AdminSidebar />
-      {/* On mobile, sidebar overlays; on desktop, it pushes content */}
-      <main className="md:ml-64 p-4 md:p-8 transition-all duration-300">
-        {children}
+      {/* Main content - full width on mobile, shifted right on desktop */}
+      <main className="w-full min-h-screen md:ml-64 pt-14 md:pt-0 px-4 pb-8 md:p-8 transition-all duration-300">
+        <div className="overflow-x-auto">
+          {children}
+        </div>
       </main>
     </div>
   )

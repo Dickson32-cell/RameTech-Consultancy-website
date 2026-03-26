@@ -97,7 +97,7 @@ export default function AdminSidebar() {
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="text-white/80 hover:text-white p-1 md:hidden flex-shrink-0"
+                className="text-white/80 hover:text-white p-1 md:p-0 md:hidden flex-shrink-0"
               >
                 <FaTimes />
               </button>
@@ -150,11 +150,10 @@ export default function AdminSidebar() {
         </div>
       </aside>
 
-      {/* Mobile menu toggle */}
+      {/* Mobile menu toggle - fixed position below header on mobile */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className="fixed top-3 left-3 md:hidden z-50 p-2 bg-primary text-white rounded-lg shadow-lg"
-        style={{ top: '12px', left: '12px' }}
+        className="fixed top-16 left-4 z-50 p-2 bg-primary text-white rounded-lg shadow-lg md:hidden"
       >
         <FaBars />
       </button>
