@@ -1,69 +1,35 @@
+// Seed team members, services, portfolio, and admin user
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 
-export async function GET() {
-  return NextResponse.json({ 
-    message: 'Use POST to seed. Send {secret: "rametech-seed-2026"}',
-    endpoints: {
-      seed: 'POST with secret',
-      socialLinks: 'GET /api/v1/social-links',
-      createSocialLink: 'POST /api/v1/admin/social-links with {platform, url, icon}'
-    }
-  })
-}
+const TEAM_MEMBERS = [
+  { name: 'Abdul Rashid Dickson', role: 'CEO', bio: 'Leading RAME Tech with vision and expertise.', email: 'dickson@rametech.com', photoUrl: '/images/team/abdul-rashid-dickson.jpg', order: 1, isActive: true },
+  { name: 'Harriet Emefa Asonkey', role: 'Administrator', bio: 'Keeping operations smooth and efficient.', email: 'harriet@rametech.com', photoUrl: '/images/team/harriet-emefa-asonkey.jpg', order: 2, isActive: true },
+  { name: 'Dickson Abdul-Wahab', role: 'Researcher', bio: 'Driving innovation through research.', email: 'wahab@rametech.com', photoUrl: '/images/team/dickson-abdul-wahab.jpg', order: 3, isActive: true },
+  { name: 'Anyetei Sowah Joseph', role: 'Graphic Designer', bio: 'Creative designer bringing brands to life.', email: 'joseph@rametech.com', photoUrl: '/images/team/anyetei-sowah-joseph.jpg', order: 4, isActive: true },
+  { name: 'David Tetteh', role: 'Hardware Technician', bio: 'Expert in hardware and IT infrastructure.', email: 'david@rametech.com', photoUrl: '/images/team/david-tetteh.jpg', order: 5, isActive: true },
+]
+
+const SERVICES = [
+  { name: 'Software Development', slug: 'software-development', description: 'Custom web applications, mobile apps, and enterprise software.', icon: 'FaCode', features: ['Web Apps', 'Mobile Apps', 'API Development'], order: 1, isActive: true },
+  { name: 'Hardware & IT', slug: 'hardware-it', description: 'Complete IT infrastructure solutions.', icon: 'FaLaptopCode', features: ['Network Setup', 'Server Management', 'IT Support'], order: 2, isActive: true },
+  { name: 'Graphic Design', slug: 'graphic-design', description: 'Professional design services.', icon: 'FaPalette', features: ['Logo Design', 'Marketing Materials', 'Social Media Graphics'], order: 3, isActive: true },
+]
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.text()
-    let data
-    try {
-      data = JSON.parse(body)
-    } catch {
-      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
-    }
-    
-    const { secret, action } = data
-    
-    // Handle direct social link creation
-    if (action === 'createLink' && secret === 'rametech-seed-2026') {
-      const { platform, url, icon, order, isActive } = data
-      if (!platform || !url || !icon) {
-        return NextResponse.json({ success: false, error: 'Platform, URL, and icon are required' }, { status: 400 })
-      }
-      try {
-        const link = await prisma.socialLink.upsert({
-          where: { platform },
-          update: { url, icon, order: order ?? 0, isActive: isActive ?? true },
-          create: { platform, url, icon, order: order ?? 0, isActive: isActive ?? true }
-        })
-        return NextResponse.json({ success: true, data: link })
-      } catch (e: any) {
-        return NextResponse.json({ success: false, error: e.message }, { status: 500 })
-      }
-    }
-    
-    // Original seed logic
+    const { secret } = await request.json()
     if (secret !== 'rametech-seed-2026') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Fix existing SocialLink table - add missing columns
-    try {
-      await prisma.$executeRawUnsafe(`ALTER TABLE "SocialLink" ADD COLUMN IF NOT EXISTS "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP`)
-      await prisma.$executeRawUnsafe(`ALTER TABLE "SocialLink" ADD COLUMN IF NOT EXISTS "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP`)
-    } catch (e) {
-      // Ignore if columns exist
-    }
-
-    const results = { admin: false, team: [] as string[], services: [] as string[], portfolio: [] as string[], socialLinks: [] as string[] }
+    const results = { admin: false, team: [] as string[], services: [] as string[], socialLinks: [] as string[] }
 
     // Seed admin user
     const ADMIN_HASH = '$2b$10$G0I6Tn55ISLRpfs7JpkNM.DBtPTtHM/XUyCwr0UqmaGRPEDll.csq'
     const adminExists = await prisma.portalUser.findUnique({ where: { email: 'admin@rametech.com' } })
     if (!adminExists) {
-      await prisma.portalUser.create({
-        data: { email: 'admin@rametech.com', passwordHash: ADMIN_HASH, name: 'Admin User', role: 'admin', isActive: true }
-      })
+      await prisma.portalUser.create({ data: { email: 'admin@rametech.com', passwordHash: ADMIN_HASH, name: 'Admin User', role: 'admin', isActive: true } })
       results.admin = true
     }
 
@@ -85,29 +51,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Seed Portfolio
-    for (const project of PORTFOLIO_PROJECTS) {
-      const existing = await prisma.portfolioProject.findUnique({ where: { slug: project.slug } })
-      if (!existing) {
-        await prisma.portfolioProject.create({ data: project })
-        results.portfolio.push(project.title)
-      }
-    }
-
     // Seed Social Links
+    const SOCIAL_LINKS = [
+      { platform: 'instagram', url: 'https://www.instagram.com/rametech_consultancy', icon: 'FaInstagram', order: 1, isActive: true },
+      { platform: 'linkedin', url: 'https://www.linkedin.com/company/rametech-consultancy', icon: 'FaLinkedin', order: 2, isActive: true },
+    ]
     for (const link of SOCIAL_LINKS) {
-      const existing = await prisma.socialLink.findFirst({ where: { platform: link.platform } })
+      const existing = await prisma.socialLink.findUnique({ where: { platform: link.platform } })
       if (!existing) {
         await prisma.socialLink.create({ data: link })
         results.socialLinks.push(link.platform)
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      message: `Seeded: ${results.admin ? '1 admin, ' : ''}${results.team.length} team, ${results.services.length} services, ${results.portfolio.length} portfolio, ${results.socialLinks.length} social links`,
-      created: results
-    })
+    return NextResponse.json({ success: true, message: `Seeded: admin=${results.admin}, team=${results.team.length}, services=${results.services.length}, socials=${results.socialLinks.length}`, created: results })
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
