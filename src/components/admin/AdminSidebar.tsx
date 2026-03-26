@@ -12,7 +12,7 @@ const navigation = [
   { name: 'Portfolio', href: '/admin/portfolio', icon: FaProjectDiagram },
   { name: 'Blog', href: '/admin/blogs', icon: FaBlog },
   { name: 'Social Links', href: '/admin/social-links', icon: FaShareAlt },
-  { name: 'Messages', href: '/admin/messages', icon: FaEnvelope },
+  { name: 'Messages', href: '/admin/messages', icon: FaEnvelope, badge: true },
 ]
 
 export default function AdminSidebar() {
@@ -20,6 +20,7 @@ export default function AdminSidebar() {
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token')
@@ -32,6 +33,29 @@ export default function AdminSidebar() {
     }
     setIsAuthenticated(true)
   }, [pathname, router])
+
+  // Fetch unread message count
+  useEffect(() => {
+    if (!isAuthenticated) return
+    
+    const fetchUnreadCount = async () => {
+      try {
+        const res = await fetch('/api/v1/contact')
+        const data = await res.json()
+        if (data.success && data.data) {
+          const unread = data.data.filter((msg: any) => !msg.isRead).length
+          setUnreadCount(unread)
+        }
+      } catch (error) {
+        console.error('Failed to fetch unread count:', error)
+      }
+    }
+    
+    fetchUnreadCount()
+    // Poll every 30 seconds for new messages
+    const interval = setInterval(fetchUnreadCount, 30000)
+    return () => clearInterval(interval)
+  }, [isAuthenticated])
 
   // Don't show sidebar on login page
   if (pathname === '/admin/login') {
@@ -84,6 +108,11 @@ export default function AdminSidebar() {
                 >
                   <item.icon />
                   <span>{item.name}</span>
+                  {item.badge && unreadCount > 0 && (
+                    <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
               )
             })}
