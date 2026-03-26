@@ -89,6 +89,24 @@ export async function POST(request: NextRequest) {
 
     const results = { admin: false, team: [] as string[], services: [] as string[], portfolio: [] as string[], socialLinks: [] as string[] }
 
+    // Create SocialLink table if it doesn't exist (runtime migration)
+    try {
+      await prisma.$executeRawUnsafe(`
+        CREATE TABLE IF NOT EXISTS "SocialLink" (
+          id TEXT PRIMARY KEY DEFAULT 'sl_' || gen_random_uuid(),
+          platform TEXT NOT NULL UNIQUE,
+          url TEXT NOT NULL,
+          icon TEXT NOT NULL,
+          "order" INTEGER NOT NULL DEFAULT 0,
+          "isActive" BOOLEAN NOT NULL DEFAULT true,
+          createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `)
+    } catch (e) {
+      // Table might already exist, continue
+    }
+
     // Seed admin user (pre-computed bcrypt hash for password: admin123)
     const ADMIN_HASH = '$2b$10$G0I6Tn55ISLRpfs7JpkNM.DBtPTtHM/XUyCwr0UqmaGRPEDll.csq'
     const adminExists = await prisma.portalUser.findUnique({ where: { email: 'admin@rametech.com' } })
