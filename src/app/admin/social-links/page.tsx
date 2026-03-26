@@ -114,12 +114,12 @@ export default function AdminSocialLinksPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Social Links</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Social Links</h1>
           <p className="text-gray-500 mt-1">{links.length} links</p>
         </div>
-        <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primaryDark transition-colors">
+        <button onClick={openCreate} className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primaryDark transition-colors whitespace-nowrap">
           <FaPlus /> Add Link
         </button>
       </div>
@@ -133,45 +133,84 @@ export default function AdminSocialLinksPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Platform</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">URL</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Icon</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {links.map((link) => (
-                <tr key={link.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-500">{link.order}</td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center gap-2 capitalize font-medium text-gray-900">{link.platform}</span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-blue-600 max-w-xs truncate">
-                    <a href={link.url} target="_blank" rel="noopener noreferrer">{link.url}</a>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{link.icon}</td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center gap-1 text-sm ${link.isActive ? 'text-green-600' : 'text-red-500'}`}>
-                      {link.isActive ? <FaCheck /> : <FaTimes />} {link.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => openEdit(link)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><FaEdit /></button>
-                      <button onClick={() => deleteLink(link.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg"><FaTrash /></button>
-                    </div>
-                  </td>
+        <>
+          {/* Desktop Table View */}
+          <div className="hidden md:block bg-white rounded-xl shadow-sm overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Platform</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">URL</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Icon</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {links.map((link) => (
+                  <tr key={link.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm text-gray-500">{link.order}</td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex items-center gap-2 capitalize font-medium text-gray-900">{link.platform}</span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-blue-600 max-w-xs truncate">
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">{link.url}</a>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{link.icon}</td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center gap-1 text-sm ${link.isActive ? 'text-green-600' : 'text-red-500'}`}>
+                        {link.isActive ? <FaCheck /> : <FaTimes />} {link.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button onClick={() => openEdit(link)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><FaEdit /></button>
+                        <button onClick={() => deleteLink(link.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg"><FaTrash /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4">
+            {links.map((link) => (
+              <div key={link.id} className="bg-white rounded-xl shadow-sm p-4">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <FaShareAlt className="text-primary text-xl flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-medium text-gray-900 capitalize">{link.platform}</h3>
+                      <p className="text-xs text-gray-400">{link.icon}</p>
+                    </div>
+                  </div>
+                  <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded flex-shrink-0">
+                    #{link.order}
+                  </span>
+                </div>
+                <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 truncate block mb-3">
+                  {link.url}
+                </a>
+                <div className="flex items-center justify-between mb-4">
+                  <span className={`inline-flex items-center gap-1 text-sm ${link.isActive ? 'text-green-600' : 'text-red-500'}`}>
+                    {link.isActive ? <FaCheck /> : <FaTimes />} {link.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+                <div className="flex gap-2 pt-3 border-t">
+                  <button onClick={() => openEdit(link)} className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                    <FaEdit /> Edit
+                  </button>
+                  <button onClick={() => deleteLink(link.id)} className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+                    <FaTrash /> Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Modal */}

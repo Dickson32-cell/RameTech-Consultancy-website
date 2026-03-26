@@ -71,9 +71,9 @@ export default function MessagesPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Contact Messages</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Contact Messages</h1>
           <p className="text-gray-500 text-sm mt-1">
             {unreadCount} unread · {messages.length} total
           </p>
@@ -81,19 +81,19 @@ export default function MessagesPage() {
         <div className="flex bg-gray-200 rounded-lg p-1">
           <button
             onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 transition-colors ${
               filter === 'all' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            <FaMailBulk /> All ({messages.length})
+            <FaMailBulk className="flex-shrink-0" /> <span className="hidden xs:inline">All</span> ({messages.length})
           </button>
           <button
             onClick={() => setFilter('unread')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-1 sm:gap-2 transition-colors ${
               filter === 'unread' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            <FaEnvelope /> Unread ({unreadCount})
+            <FaEnvelope className="flex-shrink-0" /> <span className="hidden xs:inline">Unread</span> ({unreadCount})
           </button>
         </div>
       </div>
@@ -118,11 +118,11 @@ export default function MessagesPage() {
               msg.isRead ? 'border-gray-200' : 'border-primary/30 ring-1 ring-primary/10'
             }`}
           >
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {/* Header Row */}
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                     msg.isRead ? 'bg-gray-100' : 'bg-primary/10'
                   }`}>
                     {msg.isRead ? (
@@ -131,19 +131,24 @@ export default function MessagesPage() {
                       <FaEnvelope className="text-primary" />
                     )}
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-gray-900">{msg.name}</h3>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-semibold text-gray-900 truncate">{msg.name}</h3>
                       {!msg.isRead && (
-                        <span className="px-2 py-0.5 bg-primary text-white text-xs rounded-full font-medium">New</span>
+                        <span className="px-2 py-0.5 bg-primary text-white text-xs rounded-full font-medium flex-shrink-0">New</span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500">{msg.email}</p>
+                    <p className="text-sm text-gray-500 truncate">{msg.email}</p>
+                    <span className="text-xs text-gray-400 sm:hidden">
+                      {new Date(msg.createdAt).toLocaleDateString('en-US', {
+                        month: 'short', day: 'numeric', year: 'numeric'
+                      })}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-gray-400">
+                <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                  <span className="text-xs text-gray-400 hidden sm:inline">
                     {new Date(msg.createdAt).toLocaleDateString('en-US', {
                       month: 'short', day: 'numeric', year: 'numeric'
                     })}
@@ -152,7 +157,7 @@ export default function MessagesPage() {
                     <button
                       onClick={() => markAsRead(msg.id)}
                       disabled={updating === msg.id}
-                      className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors disabled:opacity-50"
+                      className="text-xs px-2 sm:px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors disabled:opacity-50 whitespace-nowrap"
                     >
                       Mark Read
                     </button>
