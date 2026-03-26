@@ -28,7 +28,7 @@ export default function Footer() {
   const [socials, setSocials] = useState<SocialLink[]>([])
 
   useEffect(() => {
-    fetch('/api/v1/social')
+    fetch('/api/v1/socials')
       .then(res => res.json())
       .then(data => {
         if (data.success) setSocials(data.data)

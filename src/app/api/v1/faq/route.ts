@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/api-response'
 
+// Force change to trigger rebuild
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
