@@ -18,7 +18,7 @@ const navigation = [
 export default function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter()
-  const [sidebarOpen, setSidebarOpen] = useState(false) // Start closed on mobile
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -33,7 +33,6 @@ export default function AdminSidebar() {
     setIsAuthenticated(true)
   }, [pathname, router])
 
-  // Fetch unread message count
   useEffect(() => {
     if (!isAuthenticated) return
     
@@ -55,14 +54,12 @@ export default function AdminSidebar() {
     return () => clearInterval(interval)
   }, [isAuthenticated])
 
-  // Close sidebar when clicking a link on mobile
   const handleNavClick = () => {
     if (window.innerWidth < 768) {
       setSidebarOpen(false)
     }
   }
 
-  // Don't show sidebar on login page
   if (pathname === '/admin/login') {
     return null
   }
@@ -86,22 +83,21 @@ export default function AdminSidebar() {
         />
       )}
 
-      {/* Sidebar - hidden on mobile by default, slides in when open */}
+      {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 w-64 bg-primary text-white transition-transform duration-300 z-40 ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } md:translate-x-0`}>
-        <div className="flex flex-col h-full">
+      } md:translate-x-0 md:shadow-2xl`}>
+        <div className="flex flex-col h-full overflow-y-auto">
           {/* Logo */}
-          <div className="p-6 border-b border-white/20">
+          <div className="p-4 md:p-6 border-b border-white/20 flex-shrink-0">
             <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-xl font-bold">RAME Tech</h1>
-                <p className="text-sm text-gray-300">Admin Panel</p>
+              <div className="min-w-0">
+                <h1 className="text-lg md:text-xl font-bold truncate">RAME Tech</h1>
+                <p className="text-xs md:text-sm text-white/80">Admin Panel</p>
               </div>
-              {/* Close button - only show on mobile */}
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="text-white/70 hover:text-white md:hidden"
+                className="text-white/80 hover:text-white p-1 md:hidden flex-shrink-0"
               >
                 <FaTimes />
               </button>
@@ -109,7 +105,7 @@ export default function AdminSidebar() {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 p-3 md:p-4 space-y-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href))
               return (
@@ -117,16 +113,16 @@ export default function AdminSidebar() {
                   key={item.name}
                   href={item.href}
                   onClick={handleNavClick}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  className={`flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base ${
                     isActive
-                      ? 'bg-white/20 text-white'
-                      : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                      ? 'bg-white/25 text-white font-semibold'
+                      : 'text-white/90 hover:bg-white/15 hover:text-white'
                   }`}
                 >
-                  <item.icon />
-                  <span>{item.name}</span>
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  <span className="truncate">{item.name}</span>
                   {item.badge && unreadCount > 0 && (
-                    <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    <span className="ml-auto bg-red-500 text-white text-xs font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded-full flex-shrink-0">
                       {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                   )}
@@ -136,17 +132,17 @@ export default function AdminSidebar() {
           </nav>
 
           {/* Logout */}
-          <div className="p-4 border-t border-white/20 space-y-2">
+          <div className="p-3 md:p-4 border-t border-white/20 space-y-1 flex-shrink-0">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-4 py-3 text-red-300 hover:bg-red-500/20 hover:text-red-200 rounded-lg transition-colors"
+              className="flex items-center gap-3 w-full px-3 md:px-4 py-2.5 md:py-3 text-red-200 hover:bg-red-500/30 hover:text-red-100 rounded-lg transition-all duration-200 text-sm md:text-base"
             >
-              <FaSignOutAlt />
+              <FaSignOutAlt className="w-5 h-5 flex-shrink-0" />
               <span>Logout</span>
             </button>
             <Link
               href="/"
-              className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-colors"
+              className="flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 text-white/90 hover:bg-white/15 hover:text-white rounded-lg transition-all duration-200 text-sm md:text-base"
             >
               <span>Back to Site</span>
             </Link>
@@ -154,10 +150,11 @@ export default function AdminSidebar() {
         </div>
       </aside>
 
-      {/* Mobile menu toggle - always visible on mobile */}
+      {/* Mobile menu toggle */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className="fixed top-4 left-4 z-50 p-2 bg-primary text-white rounded-lg md:hidden"
+        className="fixed top-3 left-3 md:hidden z-50 p-2 bg-primary text-white rounded-lg shadow-lg"
+        style={{ top: '12px', left: '12px' }}
       >
         <FaBars />
       </button>
