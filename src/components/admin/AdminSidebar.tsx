@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FaHome, FaBriefcase, FaUsers, FaProjectDiagram, FaSignOutAlt, FaBars, FaBlog, FaEnvelope } from 'react-icons/fa'
+import { FaHome, FaBriefcase, FaUsers, FaProjectDiagram, FaSignOutAlt, FaBars, FaBlog, FaEnvelope, FaShareAlt } from 'react-icons/fa'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: FaHome },
@@ -11,6 +11,7 @@ const navigation = [
   { name: 'Team', href: '/admin/team', icon: FaUsers },
   { name: 'Portfolio', href: '/admin/portfolio', icon: FaProjectDiagram },
   { name: 'Blog', href: '/admin/blogs', icon: FaBlog },
+  { name: 'Social Links', href: '/admin/social-links', icon: FaShareAlt },
   { name: 'Messages', href: '/admin/messages', icon: FaEnvelope },
 ]
 

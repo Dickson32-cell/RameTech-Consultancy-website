@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 
 interface SocialLink {
   id: string
-  name: string
+  platform: string
   url: string
   icon: string
 }
@@ -25,19 +25,24 @@ const getIcon = (icon: string) => {
 }
 
 export default function Footer() {
-  const [socials, setSocials] = useState<SocialLink[]>([
-    { id: '1', name: 'Instagram', url: 'https://www.instagram.com/rametech_consultancy?igsh=MTJyOXhic2F4Z2Fhcw%3D%3D&utm_source=qr', icon: 'FaInstagram' }
-  ])
+  const [socials, setSocials] = useState<SocialLink[]>([])
 
   useEffect(() => {
-    // Try to fetch from API, fallback to hardcoded if fails
-    fetch('/api/v1/socials')
+    fetch('/api/v1/social-links')
       .then(res => res.json())
       .then(data => {
-        if (data.success && data.data.length > 0) setSocials(data.data)
+        if (data.success && data.data.length > 0) {
+          // Map platform to name for the existing getIcon compatibility
+          setSocials(data.data.map((link: any) => ({
+            id: link.id,
+            name: link.platform,
+            url: link.url,
+            icon: link.icon
+          })))
+        }
       })
       .catch(() => {
-        // Keep hardcoded fallback
+        // Keep empty - no hardcoded fallback
       })
   }, [])
 
@@ -58,6 +63,7 @@ export default function Footer() {
             <p className="text-gray-400 mb-4">
               Professional tech consultancy delivering innovative solutions in software development, hardware & IT, and graphic design.
             </p>
+
             {/* Social Media Icons */}
             {socials.length > 0 && (
               <div className="flex items-center gap-3 mt-4">

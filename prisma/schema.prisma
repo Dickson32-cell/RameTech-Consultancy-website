@@ -227,19 +227,20 @@ model Invoice {
 }
 
 // ============================================
-// SOCIAL MEDIA
+// SETTINGS TABLES
 // ============================================
 
-model SocialMedia {
+model SocialLink {
   id        String   @id @default(uuid())
-  name      String   // e.g., "LinkedIn", "Twitter", "Facebook", "Instagram"
+  platform  String   // instagram, linkedin, twitter, facebook, youtube, tiktok, github, etc.
   url       String
-  icon      String   // e.g., "FaLinkedin", "FaTwitter", "FaFacebook", "FaInstagram"
+  icon      String   // react-icons icon name (e.g., FaInstagram, FaLinkedin)
   isActive  Boolean  @default(true)
   order     Int      @default(0)
   createdAt DateTime @default(now()) @db.Timestamptz()
   updatedAt DateTime @updatedAt @db.Timestamptz()
 
+  @@index([platform])
   @@index([order])
   @@index([isActive])
 }

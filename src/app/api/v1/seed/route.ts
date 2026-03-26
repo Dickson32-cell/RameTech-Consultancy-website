@@ -72,7 +72,8 @@ const PORTFOLIO_PROJECTS = [
 ]
 
 const SOCIAL_LINKS = [
-  { name: 'LinkedIn', url: 'https://linkedin.com/company/rametech', icon: 'FaLinkedin', order: 1, isActive: true }
+  { platform: 'instagram', url: 'https://www.instagram.com/rametech_consultancy', icon: 'FaInstagram', order: 1, isActive: true },
+  { platform: 'linkedin', url: 'https://www.linkedin.com/company/rametech-consultancy', icon: 'FaLinkedin', order: 2, isActive: true },
 ]
 
 export async function GET(request: NextRequest) {
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const results = { admin: false, team: [] as string[], services: [] as string[], portfolio: [] as string[] }
+    const results = { admin: false, team: [] as string[], services: [] as string[], portfolio: [] as string[], socialLinks: [] as string[] }
 
     // Seed admin user (pre-computed bcrypt hash for password: admin123)
     const ADMIN_HASH = '$2b$10$G0I6Tn55ISLRpfs7JpkNM.DBtPTtHM/XUyCwr0UqmaGRPEDll.csq'
@@ -125,20 +126,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Seed Social Media
-    const socialResults: string[] = []
-    for (const social of SOCIAL_LINKS) {
-      const existing = await prisma.socialMedia.findFirst({ where: { name: social.name } })
+    // Seed Social Links
+    for (const link of SOCIAL_LINKS) {
+      const existing = await prisma.socialLink.findFirst({ where: { platform: link.platform } })
       if (!existing) {
-        await prisma.socialMedia.create({ data: social })
-        socialResults.push(social.name)
+        await prisma.socialLink.create({ data: link })
+        results.socialLinks.push(link.platform)
       }
     }
-    if (socialResults.length > 0) results.portfolio.push(...socialResults)
 
     return NextResponse.json({
       success: true,
-      message: `Seeded: ${results.admin ? '1 admin, ' : ''}${results.team.length} team, ${results.services.length} services, ${results.portfolio.length} portfolio`,
+      message: `Seeded: ${results.admin ? '1 admin, ' : ''}${results.team.length} team, ${results.services.length} services, ${results.portfolio.length} portfolio, ${results.socialLinks.length} social links`,
       created: results
     })
   } catch (error: any) {
