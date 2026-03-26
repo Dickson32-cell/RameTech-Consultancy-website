@@ -42,6 +42,11 @@ export default function AdminSidebar() {
     return null
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token')
+    router.push('/admin/login')
+  }
+
   return (
     <>
       {/* Sidebar */}
@@ -85,12 +90,18 @@ export default function AdminSidebar() {
           </nav>
 
           {/* Logout */}
-          <div className="p-4 border-t border-white/20">
+          <div className="p-4 border-t border-white/20 space-y-2">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 w-full px-4 py-3 text-red-300 hover:bg-red-500/20 hover:text-red-200 rounded-lg transition-colors"
+            >
+              <FaSignOutAlt />
+              <span>Logout</span>
+            </button>
             <Link
               href="/"
               className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-colors"
             >
-              <FaSignOutAlt />
               <span>Back to Site</span>
             </Link>
           </div>
