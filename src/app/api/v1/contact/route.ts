@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
         name, 
         email, 
         phone, 
-        service, 
+        subject: service, 
         message,
         createdAt: new Date()
       }
