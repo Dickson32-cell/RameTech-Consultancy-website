@@ -18,7 +18,7 @@ const navigation = [
 export default function AdminSidebar() {
   const pathname = usePathname()
   const router = useRouter()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
@@ -97,11 +97,11 @@ export default function AdminSidebar() {
         </div>
       </aside>
 
-      {/* Mobile sidebar toggle - only show on mobile */}
+      {/* Mobile sidebar toggle */}
       {!sidebarOpen && (
         <button
           onClick={() => setSidebarOpen(true)}
-          className="md:hidden fixed top-4 left-4 z-50 p-2 bg-primary text-white rounded-lg"
+          className="fixed top-4 left-4 z-50 p-2 bg-primary text-white rounded-lg"
         >
           <FaBars />
         </button>
