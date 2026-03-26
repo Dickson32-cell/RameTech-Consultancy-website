@@ -8,12 +8,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <div className="relative h-12 w-40 mb-4">
+            <div className="relative h-12 w-40">
               <Image 
                 src="/logo.jpg" 
                 alt="RAME Tech Consultancy"
                 fill
-                className="object-contain brightness-0 invert"
+                className="object-contain"
               />
             </div>
             <p className="text-gray-400 mb-4">
