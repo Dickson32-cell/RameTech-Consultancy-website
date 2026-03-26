@@ -1,7 +1,7 @@
 // GET /api/v1/social - Get all active social media links
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
-import { successResponse, errorResponse } from '@/lib/api-response'
+import { successResponse } from '@/lib/api-response'
 
 export async function GET() {
   try {
