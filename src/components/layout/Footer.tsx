@@ -9,6 +9,8 @@ interface SocialLink {
   platform: string
   url: string
   icon: string
+  isActive: boolean
+  order: number
 }
 
 const getIcon = (icon: string) => {
@@ -32,18 +34,10 @@ export default function Footer() {
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data.length > 0) {
-          // Map platform to name for the existing getIcon compatibility
-          setSocials(data.data.map((link: any) => ({
-            id: link.id,
-            name: link.platform,
-            url: link.url,
-            icon: link.icon
-          })))
+          setSocials(data.data)
         }
       })
-      .catch(() => {
-        // Keep empty - no hardcoded fallback
-      })
+      .catch(() => {})
   }, [])
 
   return (
@@ -74,7 +68,7 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 bg-white/10 hover:bg-primary rounded-lg flex items-center justify-center transition-all duration-200 cursor-pointer"
-                    title={social.name}
+                    title={social.platform}
                   >
                     {getIcon(social.icon)}
                   </a>
