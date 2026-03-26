@@ -308,6 +308,28 @@ async function main() {
   }
   console.log(`✅ ${blogPosts.length} blog posts seeded`)
 
+  // ============================================
+  // SOCIAL MEDIA
+  // ============================================
+  const socialLinks = [
+    {
+      name: 'LinkedIn',
+      url: 'https://linkedin.com/company/rametech',
+      icon: 'FaLinkedin',
+      order: 1,
+      isActive: true
+    }
+  ]
+
+  for (const social of socialLinks) {
+    await prisma.socialMedia.upsert({
+      where: { id: social.name.toLowerCase().replace(/\s+/g, '-') },
+      update: {},
+      create: social
+    })
+  }
+  console.log(`✅ ${socialLinks.length} social media links seeded`)
+
   console.log('\n🎉 Database seeding completed successfully!')
 }
 
