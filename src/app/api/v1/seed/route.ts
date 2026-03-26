@@ -99,12 +99,18 @@ export async function POST(request: NextRequest) {
           icon TEXT NOT NULL,
           "order" INTEGER NOT NULL DEFAULT 0,
           "isActive" BOOLEAN NOT NULL DEFAULT true,
-          createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
       `)
     } catch (e) {
-      // Table might already exist, continue
+      // Table might already exist, try to add missing columns
+      try {
+        await prisma.$executeRawUnsafe(`ALTER TABLE "SocialLink" ADD COLUMN IF NOT EXISTS "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP`)
+        await prisma.$executeRawUnsafe(`ALTER TABLE "SocialLink" ADD COLUMN IF NOT EXISTS "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP`)
+      } catch (e2) {
+        // Columns might already exist
+      }
     }
 
     // Seed admin user (pre-computed bcrypt hash for password: admin123)
