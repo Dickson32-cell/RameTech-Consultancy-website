@@ -71,6 +71,14 @@ const PORTFOLIO_PROJECTS = [
   { title: 'Corporate Branding', slug: 'corporate-branding', category: 'Graphic Design', description: 'Complete brand identity package including logo design and brand guidelines.', imageUrl: 'https://ui-avatars.com/api/?name=Branding&size=400x300&background=154360&color=fff', technologies: ['Adobe Illustrator', 'Photoshop', 'Figma'], clientName: 'Corporate Client', order: 3, isActive: true }
 ]
 
+const SOCIAL_LINKS = [
+  { name: 'LinkedIn', url: 'https://linkedin.com/company/rametech', icon: 'FaLinkedin', order: 1, isActive: true }
+]
+
+export async function GET(request: NextRequest) {
+  return POST(request)
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { secret } = await request.json()
@@ -116,6 +124,17 @@ export async function POST(request: NextRequest) {
         results.portfolio.push(project.title)
       }
     }
+
+    // Seed Social Media
+    const socialResults: string[] = []
+    for (const social of SOCIAL_LINKS) {
+      const existing = await prisma.socialMedia.findFirst({ where: { name: social.name } })
+      if (!existing) {
+        await prisma.socialMedia.create({ data: social })
+        socialResults.push(social.name)
+      }
+    }
+    if (socialResults.length > 0) results.portfolio.push(...socialResults)
 
     return NextResponse.json({
       success: true,
