@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     await prisma.portfolioProject.deleteMany().catch(() => {})
     await prisma.service.deleteMany().catch(() => {})
     await prisma.teamMember.deleteMany().catch(() => {})
-    await prisma.socialMedia.deleteMany().catch(() => {})
+    await prisma.socialLink.deleteMany().catch(() => {})
     await prisma.portalUser.deleteMany().catch(() => {})
 
     // Pre-computed hash for 'admin123' (cost 10)
@@ -71,10 +71,11 @@ export async function POST(request: NextRequest) {
     ]
     for (const f of faqs) await prisma.fAQ.create({ data: f })
 
-    // Seed Social Media
-    await prisma.socialMedia.create({ data: { name: 'LinkedIn', url: 'https://linkedin.com/company/rametech', icon: 'FaLinkedin', order: 1, isActive: true } })
+    // Seed Social Links
+    await prisma.socialLink.create({ data: { platform: 'instagram', url: 'https://www.instagram.com/rametech_consultancy', icon: 'FaInstagram', order: 1, isActive: true } })
+    await prisma.socialLink.create({ data: { platform: 'linkedin', url: 'https://www.linkedin.com/company/rametech-consultancy', icon: 'FaLinkedin', order: 2, isActive: true } })
 
-    return NextResponse.json({ success: true, message: 'Database fully reset and seeded: admin, 5 team, 12 services, 3 portfolio, 5 FAQs, 1 social' })
+    return NextResponse.json({ success: true, message: 'Database fully reset and seeded: admin, 5 team, 12 services, 3 portfolio, 5 FAQs, 2 social links' })
 
   } catch (error: any) {
     return NextResponse.json({ error: error.message, code: error.code }, { status: 500 })
