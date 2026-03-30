@@ -77,15 +77,23 @@ export default function ServicesOverview() {
   }, [])
 
   return (
-    <section className="py-16 md:py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-16 md:py-24 bg-background overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-cyan/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple/5 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 tech-grid-pattern opacity-20"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
-          <span className="text-accent font-semibold text-sm uppercase tracking-wider">What We Offer</span>
+          <div className="inline-flex items-center gap-2 glass-tech neon-border rounded-full px-5 py-2 mb-4">
+            <div className="w-2 h-2 bg-cyan rounded-full animate-pulse"></div>
+            <span className="text-primary font-semibold text-sm uppercase tracking-wider">What We Offer</span>
+          </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-text mt-3 mb-4">
-            Our Services
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan to-purple">Services</span>
           </h2>
-          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+          <p className="text-base md:text-lg text-text-light max-w-2xl mx-auto px-4">
             We offer comprehensive tech solutions to help your business grow and succeed in the digital age.
           </p>
         </div>
@@ -93,32 +101,44 @@ export default function ServicesOverview() {
         {/* Bento Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => (
-            <Link 
-              href={service.link || '/services'} 
+            <Link
+              href={service.link || '/services'}
               key={service.id}
-              className={`bento-card group cursor-pointer ${index === 0 || index === 3 ? 'sm:col-span-2 lg:col-span-1' : ''}`}
+              className={`group relative bg-white rounded-2xl p-6 border border-gray-200 hover:border-primary/30 shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer overflow-hidden ${
+                index === 0 || index === 3 ? 'sm:col-span-2 lg:col-span-1' : ''
+              }`}
             >
-              {/* Icon */}
-              <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-5 group-hover:bg-primary transition-all duration-200 group-hover:scale-110">
-                <div className="text-primary group-hover:text-white transition-colors duration-200">
-                  {iconSvgs[service.icon || 'FaCode'] || iconSvgs['FaCode']}
-                </div>
-              </div>
-              
-              <h3 className="text-xl font-heading font-semibold text-text mb-3 group-hover:text-primary transition-colors duration-200">
-                {service.name}
-              </h3>
-              
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {service.description}
-              </p>
+              {/* Gradient Overlay on Hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-cyan/0 to-purple/0 group-hover:from-primary/5 group-hover:via-cyan/5 group-hover:to-purple/5 transition-all duration-500"></div>
 
-              {/* Arrow Indicator */}
-              <div className="mt-4 flex items-center text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                <span className="text-sm font-medium mr-2">Learn more</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+              {/* Tech Corner Accent */}
+              <div className="absolute top-0 right-0 w-20 h-20 border-t-2 border-r-2 border-transparent group-hover:border-cyan/20 rounded-tr-2xl transition-all duration-300"></div>
+
+              <div className="relative z-10">
+                {/* Icon */}
+                <div className="relative w-16 h-16 bg-gradient-to-br from-primary/10 to-cyan/10 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:shadow-glow transition-all duration-300">
+                  <div className="text-primary group-hover:text-cyan transition-colors duration-300">
+                    {iconSvgs[service.icon || 'FaCode'] || iconSvgs['FaCode']}
+                  </div>
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-cyan/20 to-purple/20 opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-300"></div>
+                </div>
+
+                <h3 className="text-xl font-heading font-semibold text-text mb-3 group-hover:text-primary transition-colors duration-300">
+                  {service.name}
+                </h3>
+
+                <p className="text-text-light text-sm leading-relaxed mb-4">
+                  {service.description}
+                </p>
+
+                {/* Arrow Indicator */}
+                <div className="flex items-center text-primary gap-2 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-2 transition-all duration-300">
+                  <span className="text-sm font-semibold">Learn more</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
               </div>
             </Link>
           ))}
@@ -126,9 +146,9 @@ export default function ServicesOverview() {
 
         {/* View All Button */}
         <div className="text-center mt-12 md:mt-16">
-          <Link href="/services" className="btn-secondary inline-flex items-center gap-2">
-            <span>View All Services</span>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <Link href="/services" className="group inline-flex items-center gap-3 glass-tech neon-border px-8 py-4 rounded-lg font-semibold hover:shadow-neon transition-all duration-300">
+            <span className="text-primary">View All Services</span>
+            <svg className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </Link>

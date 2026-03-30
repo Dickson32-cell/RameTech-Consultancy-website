@@ -17,11 +17,11 @@ export default function Header() {
   }, [])
 
   return (
-    <header 
+    <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'glass shadow-lg py-2' 
-          : 'bg-white shadow-sm py-0'
+        scrolled
+          ? 'glass-tech shadow-lg border-b border-primary/10 py-2'
+          : 'bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 py-0'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,26 +40,33 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-1">
-            <Link href="/" className="px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-primary/5">
-              Home
+            <Link href="/" className="relative px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-cyan/5 group">
+              <span className="relative z-10">Home</span>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-3/4 transition-all duration-300"></div>
             </Link>
-            <Link href="/services" className="px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-primary/5">
-              Services
+            <Link href="/services" className="relative px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-cyan/5 group">
+              <span className="relative z-10">Services</span>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-3/4 transition-all duration-300"></div>
             </Link>
-            <Link href="/portfolio" className="px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-primary/5">
-              Portfolio
+            <Link href="/portfolio" className="relative px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-cyan/5 group">
+              <span className="relative z-10">Portfolio</span>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-3/4 transition-all duration-300"></div>
             </Link>
-            <Link href="/team" className="px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-primary/5">
-              Team
+            <Link href="/team" className="relative px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-cyan/5 group">
+              <span className="relative z-10">Team</span>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-3/4 transition-all duration-300"></div>
             </Link>
-            <Link href="/blog" className="px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-primary/5">
-              Blog
+            <Link href="/blog" className="relative px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-cyan/5 group">
+              <span className="relative z-10">Blog</span>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-3/4 transition-all duration-300"></div>
             </Link>
-            <Link href="/faq" className="px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-primary/5">
-              FAQ
+            <Link href="/faq" className="relative px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-cyan/5 group">
+              <span className="relative z-10">FAQ</span>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-3/4 transition-all duration-300"></div>
             </Link>
-            <Link href="/contact" className="ml-2 btn-primary text-sm py-2.5 px-5">
-              Get a Quote
+            <Link href="/contact" className="ml-2 group relative btn-primary text-sm py-2.5 px-5 overflow-hidden">
+              <span className="relative z-10">Get a Quote</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary via-cyan to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
           </nav>
 

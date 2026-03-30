@@ -41,8 +41,13 @@ export default function Footer() {
   }, [])
 
   return (
-    <footer className="bg-text text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="relative bg-gradient-to-br from-background-dark via-text to-background-dark text-white overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan/5 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 tech-grid-pattern opacity-5"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
@@ -67,10 +72,12 @@ export default function Footer() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 bg-white/10 hover:bg-primary rounded-lg flex items-center justify-center transition-all duration-200 cursor-pointer"
+                    className="group w-10 h-10 bg-white/5 hover:bg-gradient-to-br hover:from-primary hover:to-cyan rounded-lg flex items-center justify-center transition-all duration-300 cursor-pointer border border-white/10 hover:border-cyan/50 hover:shadow-glow"
                     title={social.platform}
                   >
-                    {getIcon(social.icon)}
+                    <div className="group-hover:scale-110 transition-transform">
+                      {getIcon(social.icon)}
+                    </div>
                   </a>
                 ))}
               </div>
