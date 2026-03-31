@@ -45,11 +45,17 @@ export async function POST(request: NextRequest) {
       staticUrl,
       apiUrl,
       filepath,
-      fileSize: buffer.length
+      fileSize: buffer.length,
+      fileExists: existsSync(filepath)
     })
 
-    // Use API route for serving videos (more reliable on cloud platforms)
-    return NextResponse.json({ success: true, url: apiUrl, staticUrl })
+    // Return both URLs - frontend can try static first, then API fallback
+    return NextResponse.json({
+      success: true,
+      url: staticUrl,  // Try static URL first for better performance
+      apiUrl,
+      staticUrl
+    })
 
   } catch (error: any) {
     console.error('Upload error:', error)

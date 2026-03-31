@@ -103,15 +103,38 @@ export default function PortfolioPage() {
                   {/* Image or Video */}
                   <div className="relative h-56 bg-gray-200 overflow-hidden group/video">
                     {project.videoUrl ? (
-                      <div className="relative w-full h-full">
+                      <div className="relative w-full h-full bg-gray-900 flex items-center justify-center">
                         <video
-                          src={project.videoUrl}
+                          key={project.videoUrl}
                           className="w-full h-full object-cover"
                           controls
                           controlsList="nodownload"
                           loop
                           playsInline
                           preload="metadata"
+                          onError={(e) => {
+                            console.error('Video load error:', {
+                              url: project.videoUrl,
+                              error: e,
+                              networkState: e.currentTarget.networkState,
+                              readyState: e.currentTarget.readyState
+                            })
+                            // Show error message
+                            const container = e.currentTarget.parentElement
+                            if (container) {
+                              container.innerHTML = `
+                                <div class="flex flex-col items-center justify-center h-full text-white p-4">
+                                  <svg class="w-16 h-16 mb-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                  </svg>
+                                  <p class="text-sm text-center">Video cannot be loaded</p>
+                                  <p class="text-xs text-gray-400 mt-2 text-center">The video file may not be available</p>
+                                </div>
+                              `
+                            }
+                          }}
+                          onLoadStart={() => console.log('Video loading:', project.videoUrl)}
+                          onCanPlay={() => console.log('Video ready:', project.videoUrl)}
                           style={{
                             display: 'block',
                             maxWidth: '100%',
@@ -119,6 +142,7 @@ export default function PortfolioPage() {
                           }}
                         >
                           <source src={project.videoUrl} type="video/mp4" />
+                          <source src={project.videoUrl.replace('/api/v1/videos/', '/uploads/')} type="video/mp4" />
                           Your browser does not support the video tag.
                         </video>
                       </div>

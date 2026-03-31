@@ -6,15 +6,22 @@ import { existsSync } from 'fs'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
-    const videoPath = params.path.join('/')
+    const resolvedParams = await params
+    const videoPath = resolvedParams.path.join('/')
     const filepath = path.join(process.cwd(), 'public', 'uploads', 'portfolio-videos', videoPath)
+
+    console.log('Video request:', {
+      videoPath,
+      filepath,
+      exists: existsSync(filepath)
+    })
 
     // Check if file exists
     if (!existsSync(filepath)) {
-      console.log('Video not found:', filepath)
+      console.error('Video not found:', filepath)
       return NextResponse.json({ error: 'Video not found' }, { status: 404 })
     }
 
