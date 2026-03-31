@@ -101,16 +101,27 @@ export default function PortfolioPage() {
                   className="bento-card p-0 overflow-hidden group"
                 >
                   {/* Image or Video */}
-                  <div className="relative h-56 bg-gray-200 overflow-hidden">
+                  <div className="relative h-56 bg-gray-200 overflow-hidden group/video">
                     {project.videoUrl ? (
-                      <video
-                        src={project.videoUrl}
-                        className="w-full h-full object-cover"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                      />
+                      <div className="relative w-full h-full">
+                        <video
+                          src={project.videoUrl}
+                          className="w-full h-full object-cover"
+                          controls
+                          controlsList="nodownload"
+                          loop
+                          playsInline
+                          preload="metadata"
+                          style={{
+                            display: 'block',
+                            maxWidth: '100%',
+                            maxHeight: '100%'
+                          }}
+                        >
+                          <source src={project.videoUrl} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
                     ) : (
                       <img
                         src={project.imageUrl || placeholderImages[index % placeholderImages.length]}

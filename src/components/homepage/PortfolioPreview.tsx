@@ -59,16 +59,27 @@ export default function PortfolioPreview() {
               className="group relative overflow-hidden rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300"
             >
               {/* Image/Video Container */}
-              <div className="relative h-56 md:h-64 bg-gray-200 overflow-hidden">
+              <div className="relative h-56 md:h-64 bg-gray-200 overflow-hidden group/video">
                 {project.videoUrl ? (
-                  <video
-                    src={project.videoUrl}
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                  />
+                  <div className="relative w-full h-full">
+                    <video
+                      src={project.videoUrl}
+                      className="w-full h-full object-cover"
+                      controls
+                      controlsList="nodownload"
+                      loop
+                      playsInline
+                      preload="metadata"
+                      style={{
+                        display: 'block',
+                        maxWidth: '100%',
+                        maxHeight: '100%'
+                      }}
+                    >
+                      <source src={project.videoUrl} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
                 ) : project.imageUrl ? (
                   <Image
                     src={project.imageUrl}

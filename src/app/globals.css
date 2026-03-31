@@ -446,3 +446,46 @@ img {
     min-width: 44px;
   }
 }
+
+/* ===============================
+   Video Player Styles
+   =============================== */
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+video::-webkit-media-controls {
+  display: flex !important;
+  opacity: 1 !important;
+}
+
+video::-webkit-media-controls-panel {
+  display: flex !important;
+  opacity: 1 !important;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls-volume-slider,
+video::-webkit-media-controls-timeline,
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display,
+video::-webkit-media-controls-fullscreen-button {
+  display: flex !important;
+  opacity: 1 !important;
+}
+
+/* Ensure video controls are always visible */
+.bento-card video,
+.group video {
+  position: relative;
+  z-index: 1;
+}
+
+.bento-card video::-webkit-media-controls-panel,
+.group video::-webkit-media-controls-panel {
+  display: flex !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
