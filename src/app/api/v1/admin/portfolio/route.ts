@@ -17,6 +17,8 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+    console.log('Received portfolio creation request:', body)
+
     const { title, slug, category, description, imageUrl, videoUrl, technologies, clientName, projectUrl, order, isActive } = body
 
     if (!title || !slug || !category || !description) {
@@ -32,25 +34,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(errorResponse('A project with this slug already exists'), { status: 400 })
     }
 
+    const projectData = {
+      title,
+      slug,
+      category,
+      description,
+      imageUrl: imageUrl || null,
+      videoUrl: videoUrl || null,
+      technologies: technologies || [],
+      clientName: clientName || null,
+      projectUrl: projectUrl || null,
+      order: order ?? 0,
+      isActive: isActive ?? true
+    }
+
+    console.log('Creating project with data:', projectData)
+
     const project = await prisma.portfolioProject.create({
-      data: {
-        title,
-        slug,
-        category,
-        description,
-        imageUrl: imageUrl || null,
-        videoUrl: videoUrl || null,
-        technologies: technologies || [],
-        clientName: clientName || null,
-        projectUrl: projectUrl || null,
-        order: order ?? 0,
-        isActive: isActive ?? true
-      }
+      data: projectData
     })
 
+    console.log('Project created successfully:', project.id)
     return NextResponse.json(successResponse(project), { status: 201 })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating portfolio project:', error)
-    return NextResponse.json(errorResponse('Failed to create portfolio project'), { status: 500 })
+    console.error('Error details:', error.message, error.stack)
+    return NextResponse.json(errorResponse(`Failed to create portfolio project: ${error.message}`), { status: 500 })
   }
 }

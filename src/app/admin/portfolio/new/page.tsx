@@ -109,20 +109,25 @@ export default function NewPortfolioPage() {
     setIsLoading(true)
 
     try {
+      const payload = {
+        ...formData,
+        technologies: formData.technologies.split(',').map(t => t.trim()).filter(Boolean),
+        imageUrl: formData.imageUrl || null,
+        videoUrl: formData.videoUrl || null,
+        clientName: formData.clientName || null,
+        projectUrl: formData.projectUrl || null
+      }
+
+      console.log('Submitting portfolio project:', payload)
+
       const res = await fetch('/api/v1/admin/portfolio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          technologies: formData.technologies.split(',').map(t => t.trim()).filter(Boolean),
-          imageUrl: formData.imageUrl || null,
-          videoUrl: formData.videoUrl || null,
-          clientName: formData.clientName || null,
-          projectUrl: formData.projectUrl || null
-        })
+        body: JSON.stringify(payload)
       })
 
       const data = await res.json()
+      console.log('Response:', data)
 
       if (!data.success) {
         setError(data.error || 'Failed to create project')
@@ -131,7 +136,8 @@ export default function NewPortfolioPage() {
       }
 
       router.push('/admin/portfolio')
-    } catch {
+    } catch (err) {
+      console.error('Error creating portfolio project:', err)
       setError('An error occurred. Please try again.')
       setIsLoading(false)
     }

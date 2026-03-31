@@ -7,7 +7,10 @@
       "Bash(git push:*)",
       "Bash(\"public/uploads/portfolio/.gitkeep\")",
       "Bash(\"public/uploads/blog/.gitkeep\")",
-      "Bash(\"public/uploads/team/.gitkeep\")"
+      "Bash(\"public/uploads/team/.gitkeep\")",
+      "Bash(npx prisma migrate:*)",
+      "Bash(test:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
