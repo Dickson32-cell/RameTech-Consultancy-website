@@ -104,6 +104,10 @@ export default function PortfolioPage() {
                       src={project.imageUrl || placeholderImages[index % placeholderImages.length]}
                       alt={project.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = placeholderImages[index % placeholderImages.length];
+                      }}
                     />
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-text/90 via-text/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">

@@ -4,7 +4,10 @@
       "Bash(npm run build:*)",
       "Bash(npm install)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(\"public/uploads/portfolio/.gitkeep\")",
+      "Bash(\"public/uploads/blog/.gitkeep\")",
+      "Bash(\"public/uploads/team/.gitkeep\")"
     ],
     "deny": [],
     "ask": []
