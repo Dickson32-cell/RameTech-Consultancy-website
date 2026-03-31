@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 
 interface PortfolioProject {
   id: string
@@ -101,20 +100,11 @@ export default function PortfolioPage() {
                 >
                   {/* Image */}
                   <div className="relative h-56 bg-gray-200 overflow-hidden">
-                    {project.imageUrl ? (
-                      <Image 
-                        src={project.imageUrl}
-                        alt={project.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    ) : (
-                      <img 
-                        src={placeholderImages[index % placeholderImages.length]}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    )}
+                    <img
+                      src={project.imageUrl || placeholderImages[index % placeholderImages.length]}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-text/90 via-text/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                       <div className="text-white">
