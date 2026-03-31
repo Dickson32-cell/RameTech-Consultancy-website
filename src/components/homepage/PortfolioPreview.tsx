@@ -3,18 +3,24 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import PortfolioModal from '@/components/shared/PortfolioModal'
 
 interface PortfolioProject {
   id: string
   title: string
   category: string
+  description: string
   imageUrl: string | null
   videoUrl: string | null
   projectUrl: string | null
+  technologies?: string[]
+  clientName?: string | null
 }
 
 export default function PortfolioPreview() {
   const [projects, setProjects] = useState<PortfolioProject[]>([])
+  const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -30,6 +36,16 @@ export default function PortfolioPreview() {
     }
     fetchProjects()
   }, [])
+
+  const handleProjectClick = (project: PortfolioProject) => {
+    setSelectedProject(project)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedProject(null)
+  }
 
   const placeholderImages = [
     'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop',
@@ -56,12 +72,13 @@ export default function PortfolioPreview() {
           {projects.map((project, index) => (
             <div
               key={project.id}
-              className="group relative overflow-hidden rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300"
+              className="group relative overflow-hidden rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+              onClick={() => handleProjectClick(project)}
             >
               {/* Image/Video Container */}
               <div className="relative h-56 md:h-64 bg-gray-200 overflow-hidden group/video">
                 {project.videoUrl ? (
-                  <div className="relative w-full h-full">
+                  <div className="relative w-full h-full" onClick={(e) => e.stopPropagation()}>
                     <video
                       src={project.videoUrl}
                       className="w-full h-full object-cover"
@@ -143,6 +160,13 @@ export default function PortfolioPreview() {
           </Link>
         </div>
       </div>
+
+      {/* Portfolio Modal */}
+      <PortfolioModal
+        project={selectedProject}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </section>
   )
 }

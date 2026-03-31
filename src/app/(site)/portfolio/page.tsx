@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import PortfolioModal from '@/components/shared/PortfolioModal'
 
 interface PortfolioProject {
   id: string
@@ -12,12 +13,15 @@ interface PortfolioProject {
   videoUrl: string | null
   projectUrl: string | null
   technologies?: string[]
+  clientName?: string | null
 }
 
 export default function PortfolioPage() {
   const [projects, setProjects] = useState<PortfolioProject[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [isLoading, setIsLoading] = useState(true)
+  const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     fetch('/api/v1/portfolio')
@@ -33,9 +37,19 @@ export default function PortfolioPage() {
 
   const categories = ['All', ...Array.from(new Set(projects.map(p => p.category)))]
 
-  const filteredProjects = selectedCategory === 'All' 
-    ? projects 
+  const filteredProjects = selectedCategory === 'All'
+    ? projects
     : projects.filter(p => p.category === selectedCategory)
+
+  const handleProjectClick = (project: PortfolioProject) => {
+    setSelectedProject(project)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedProject(null)
+  }
 
   const placeholderImages = [
     'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop',
@@ -98,12 +112,13 @@ export default function PortfolioPage() {
               {filteredProjects.map((project, index) => (
                 <div
                   key={project.id}
-                  className="bento-card p-0 overflow-hidden group"
+                  className="bento-card p-0 overflow-hidden group cursor-pointer"
+                  onClick={() => handleProjectClick(project)}
                 >
                   {/* Image or Video */}
                   <div className="relative h-56 bg-gray-200 overflow-hidden group/video">
                     {project.videoUrl ? (
-                      <div className="relative w-full h-full bg-gray-900 flex items-center justify-center">
+                      <div className="relative w-full h-full bg-gray-900 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
                         <video
                           key={project.videoUrl}
                           className="w-full h-full object-cover"
@@ -200,6 +215,7 @@ export default function PortfolioPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 text-sm text-primary hover:text-primaryDark font-medium transition-colors"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <span>View Live Project</span>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -227,6 +243,13 @@ export default function PortfolioPage() {
           </Link>
         </div>
       </section>
+
+      {/* Portfolio Modal */}
+      <PortfolioModal
+        project={selectedProject}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   )
 }
