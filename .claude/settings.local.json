@@ -10,7 +10,8 @@
       "Bash(\"public/uploads/team/.gitkeep\")",
       "Bash(npx prisma migrate:*)",
       "Bash(test:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

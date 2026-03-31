@@ -1,8 +1,6 @@
-// Portfolio project video upload
+// Portfolio project video upload to Cloudinary
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
-import { existsSync } from 'fs'
+import cloudinary from '@/lib/cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,42 +21,48 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File size must be under 50MB' }, { status: 400 })
     }
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'portfolio-videos')
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true })
-    }
-
-    const ext = file.name.split('.').pop() || 'mp4'
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-    const filepath = path.join(uploadDir, filename)
-
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filepath, buffer)
-
-    // Return both static and API URLs for flexibility
-    const staticUrl = `/uploads/portfolio-videos/${filename}`
-    const apiUrl = `/api/v1/videos/portfolio/${filename}`
-
-    console.log('Video uploaded successfully:', {
-      filename,
-      staticUrl,
-      apiUrl,
-      filepath,
-      fileSize: buffer.length,
-      fileExists: existsSync(filepath)
+    console.log('Uploading video to Cloudinary...', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type
     })
 
-    // Return both URLs - frontend can try static first, then API fallback
+    // Convert file to base64 for Cloudinary upload
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    const base64Data = buffer.toString('base64')
+    const dataURI = `data:${file.type};base64,${base64Data}`
+
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(dataURI, {
+      resource_type: 'video',
+      folder: 'rametech/portfolio/videos',
+      use_filename: true,
+      unique_filename: true,
+    })
+
+    console.log('Video uploaded to Cloudinary successfully:', {
+      publicId: result.public_id,
+      url: result.secure_url,
+      format: result.format,
+      duration: result.duration,
+      bytes: result.bytes
+    })
+
+    // Return Cloudinary URL
     return NextResponse.json({
       success: true,
-      url: staticUrl,  // Try static URL first for better performance
-      apiUrl,
-      staticUrl
+      url: result.secure_url,
+      publicId: result.public_id,
+      format: result.format,
+      duration: result.duration
     })
 
   } catch (error: any) {
-    console.error('Upload error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error('Cloudinary upload error:', error)
+    return NextResponse.json({
+      error: error.message || 'Failed to upload video to Cloudinary',
+      details: error.error?.message
+    }, { status: 500 })
   }
 }

@@ -1,17 +1,15 @@
-# ⚠️ IMPORTANT: File Storage on Render
+# ✅ File Storage - Cloudinary Integration
 
-## Current Limitation
+## Status: IMPLEMENTED ✅
 
-**Uploaded files (images and videos) are NOT persistent on Render's free tier!**
+**All file uploads (images and videos) now use Cloudinary for persistent storage!**
 
-### The Problem:
-- Files uploaded to `public/uploads/` are stored on the container's filesystem
-- Render's containers are **ephemeral** - they get rebuilt/restarted
-- When this happens, ALL uploaded files are **deleted**
-- This means videos and images will disappear after:
-  - New deployments
-  - Service restarts
-  - Container rebuilds
+### What Changed:
+- Files are uploaded directly to Cloudinary (cloud storage)
+- URLs are saved in PostgreSQL database
+- Files persist permanently across deployments
+- Automatic image/video optimization
+- CDN delivery for fast loading worldwide
 
 ### Solution Options:
 

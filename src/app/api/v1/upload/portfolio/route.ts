@@ -1,8 +1,6 @@
-// Portfolio project image upload
+// Portfolio project image upload to Cloudinary
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
-import { existsSync } from 'fs'
+import cloudinary from '@/lib/cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,36 +20,53 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File size must be under 5MB' }, { status: 400 })
     }
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'portfolio')
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true })
-    }
-
-    const ext = file.name.split('.').pop() || 'jpg'
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-    const filepath = path.join(uploadDir, filename)
-
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filepath, buffer)
-
-    // Return both static and API URLs for flexibility
-    const staticUrl = `/uploads/portfolio/${filename}`
-    const apiUrl = `/api/v1/images/portfolio/${filename}`
-
-    console.log('Image uploaded successfully:', {
-      filename,
-      staticUrl,
-      apiUrl,
-      filepath,
-      fileSize: buffer.length
+    console.log('Uploading image to Cloudinary...', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type
     })
 
-    // Use API route for serving images (more reliable on cloud platforms)
-    return NextResponse.json({ success: true, url: apiUrl, staticUrl })
+    // Convert file to base64 for Cloudinary upload
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+    const base64Data = buffer.toString('base64')
+    const dataURI = `data:${file.type};base64,${base64Data}`
+
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(dataURI, {
+      resource_type: 'image',
+      folder: 'rametech/portfolio/images',
+      use_filename: true,
+      unique_filename: true,
+      transformation: [
+        { width: 1200, height: 800, crop: 'limit' },
+        { quality: 'auto', fetch_format: 'auto' }
+      ]
+    })
+
+    console.log('Image uploaded to Cloudinary successfully:', {
+      publicId: result.public_id,
+      url: result.secure_url,
+      format: result.format,
+      width: result.width,
+      height: result.height,
+      bytes: result.bytes
+    })
+
+    // Return Cloudinary URL
+    return NextResponse.json({
+      success: true,
+      url: result.secure_url,
+      publicId: result.public_id,
+      width: result.width,
+      height: result.height
+    })
 
   } catch (error: any) {
-    console.error('Upload error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error('Cloudinary upload error:', error)
+    return NextResponse.json({
+      error: error.message || 'Failed to upload image to Cloudinary',
+      details: error.error?.message
+    }, { status: 500 })
   }
 }

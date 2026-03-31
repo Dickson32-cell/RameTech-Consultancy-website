@@ -1,8 +1,6 @@
-// Team member photo upload
+// Team member photo upload to Cloudinary
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
-import { existsSync } from 'fs'
+import cloudinary from '@/lib/cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,36 +24,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File size must be under 5MB' }, { status: 400 })
     }
 
-    // Create upload directory
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'team')
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true })
-    }
+    console.log('Uploading team photo to Cloudinary...')
 
-    // Generate unique filename
-    const ext = file.name.split('.').pop() || 'jpg'
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-    const filepath = path.join(uploadDir, filename)
-
-    // Save file
+    // Convert file to base64
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    await writeFile(filepath, buffer)
+    const base64Data = buffer.toString('base64')
+    const dataURI = `data:${file.type};base64,${base64Data}`
 
-    // Return both static and API URLs for flexibility
-    const staticUrl = `/uploads/team/${filename}`
-    const apiUrl = `/api/v1/images/team/${filename}`
-
-    console.log('Team photo uploaded successfully:', {
-      filename,
-      staticUrl,
-      apiUrl,
-      filepath,
-      fileSize: buffer.length
+    // Upload to Cloudinary
+    const result = await cloudinary.uploader.upload(dataURI, {
+      resource_type: 'image',
+      folder: 'rametech/team/photos',
+      use_filename: true,
+      unique_filename: true,
+      transformation: [
+        { width: 800, height: 800, crop: 'limit', gravity: 'face' },
+        { quality: 'auto', fetch_format: 'auto' }
+      ]
     })
 
-    // Use API route for serving images (more reliable on cloud platforms)
-    return NextResponse.json({ success: true, url: apiUrl, staticUrl })
+    console.log('Team photo uploaded to Cloudinary successfully:', result.secure_url)
+
+    return NextResponse.json({
+      success: true,
+      url: result.secure_url,
+      publicId: result.public_id
+    })
 
   } catch (error: any) {
     console.error('Team upload error:', error)
