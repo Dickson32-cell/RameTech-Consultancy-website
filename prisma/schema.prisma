@@ -55,6 +55,7 @@ model PortfolioProject {
   category    String
   description String   @db.Text
   imageUrl    String?
+  videoUrl    String?
   technologies String[] // Stored as JSON array
   clientName  String?
   projectUrl  String?

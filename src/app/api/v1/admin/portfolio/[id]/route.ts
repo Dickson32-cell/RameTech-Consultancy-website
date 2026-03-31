@@ -30,7 +30,7 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { title, slug, category, description, imageUrl, technologies, clientName, projectUrl, order, isActive } = body
+    const { title, slug, category, description, imageUrl, videoUrl, technologies, clientName, projectUrl, order, isActive } = body
 
     if (!title || !slug || !category || !description) {
       return NextResponse.json(errorResponse('Title, slug, category, and description are required'), { status: 400 })
@@ -56,6 +56,7 @@ export async function PUT(
         category,
         description,
         imageUrl: imageUrl || null,
+        videoUrl: videoUrl || null,
         technologies: technologies || [],
         clientName: clientName || null,
         projectUrl: projectUrl || null,

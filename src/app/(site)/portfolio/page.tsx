@@ -9,6 +9,8 @@ interface PortfolioProject {
   category: string
   description: string
   imageUrl: string | null
+  videoUrl: string | null
+  projectUrl: string | null
   technologies?: string[]
 }
 
@@ -94,43 +96,81 @@ export default function PortfolioPage() {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProjects.map((project, index) => (
-                <div 
+                <div
                   key={project.id}
-                  className="bento-card p-0 overflow-hidden group cursor-pointer"
+                  className="bento-card p-0 overflow-hidden group"
                 >
-                  {/* Image */}
+                  {/* Image or Video */}
                   <div className="relative h-56 bg-gray-200 overflow-hidden">
-                    <img
-                      src={project.imageUrl || placeholderImages[index % placeholderImages.length]}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = placeholderImages[index % placeholderImages.length];
-                      }}
-                    />
+                    {project.videoUrl ? (
+                      <video
+                        src={project.videoUrl}
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={project.imageUrl || placeholderImages[index % placeholderImages.length]}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = placeholderImages[index % placeholderImages.length];
+                        }}
+                      />
+                    )}
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-text/90 via-text/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                       <div className="text-white">
                         <p className="text-sm text-accent font-medium mb-1">{project.category}</p>
                         <h3 className="text-xl font-heading font-semibold">{project.title}</h3>
+                        {project.projectUrl && (
+                          <a
+                            href={project.projectUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-sm text-white hover:text-accent mt-2 transition-colors"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <span>View Project</span>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </a>
+                        )}
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Content */}
                   <div className="p-6">
                     <p className="text-sm text-accent font-medium mb-2">{project.category}</p>
                     <h3 className="text-xl font-heading font-semibold text-text mb-2">{project.title}</h3>
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">{project.description}</p>
                     {project.technologies && project.technologies.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 mb-3">
                         {project.technologies.slice(0, 3).map((tech, idx) => (
                           <span key={idx} className="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">
                             {tech}
                           </span>
                         ))}
                       </div>
+                    )}
+                    {project.projectUrl && (
+                      <a
+                        href={project.projectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-primary hover:text-primaryDark font-medium transition-colors"
+                      >
+                        <span>View Live Project</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
                     )}
                   </div>
                 </div>

@@ -22,6 +22,7 @@ interface PortfolioProject {
   category: string
   description: string
   imageUrl: string | null
+  videoUrl: string | null
   technologies: string[]
   clientName: string | null
   projectUrl: string | null
@@ -40,6 +41,7 @@ export default function EditPortfolioPage() {
     category: 'Web Development',
     description: '',
     imageUrl: '',
+    videoUrl: '',
     technologies: '',
     clientName: '',
     projectUrl: '',
@@ -50,7 +52,9 @@ export default function EditPortfolioPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [uploadingVideo, setUploadingVideo] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const videoInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -71,6 +75,7 @@ export default function EditPortfolioPage() {
           category: project.category,
           description: project.description,
           imageUrl: project.imageUrl || '',
+          videoUrl: project.videoUrl || '',
           technologies: project.technologies?.join(', ') || '',
           clientName: project.clientName || '',
           projectUrl: project.projectUrl || '',
@@ -107,6 +112,33 @@ export default function EditPortfolioPage() {
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
+  const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingVideo(true)
+    setError('')
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/v1/upload/portfolio-video', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (data.success && data.url) {
+        setFormData({ ...formData, videoUrl: data.url })
+      } else {
+        setError(data.error || 'Video upload failed')
+      }
+    } catch {
+      setError('Video upload failed. Please try again.')
+    } finally {
+      setUploadingVideo(false)
+    }
+  }
+
+  const removeVideo = () => {
+    setFormData({ ...formData, videoUrl: '' })
+    if (videoInputRef.current) videoInputRef.current.value = ''
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -120,6 +152,7 @@ export default function EditPortfolioPage() {
           ...formData,
           technologies: formData.technologies.split(',').map(t => t.trim()).filter(Boolean),
           imageUrl: formData.imageUrl || null,
+          videoUrl: formData.videoUrl || null,
           clientName: formData.clientName || null,
           projectUrl: formData.projectUrl || null
         })
@@ -259,6 +292,7 @@ export default function EditPortfolioPage() {
                 <label className={`flex flex-col items-center justify-center w-full max-w-md h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-gray-50 transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                   <FaUpload className="text-gray-400 mb-2" size={24} />
                   <span className="text-sm text-gray-500">{uploading ? 'Uploading...' : 'Click to upload image'}</span>
+                  <span className="text-xs text-gray-400 mt-1">JPG, PNG, GIF, WebP (max 5MB)</span>
                   <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/gif,image/webp" onChange={handleFileChange} className="hidden" />
                 </label>
               )}
@@ -266,15 +300,42 @@ export default function EditPortfolioPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Project URL
+                Project Video (Optional)
               </label>
-              <input
-                type="url"
-                value={formData.projectUrl}
-                onChange={(e) => setFormData({ ...formData, projectUrl: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-              />
+              {formData.videoUrl ? (
+                <div className="relative w-full max-w-md h-48 rounded-lg overflow-hidden border border-gray-200">
+                  <video src={formData.videoUrl} className="w-full h-full object-cover" controls />
+                  <button type="button" onClick={removeVideo} className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow">
+                    <FaTimes size={12} />
+                  </button>
+                  <button type="button" onClick={() => videoInputRef.current?.click()} className="absolute bottom-2 right-2 px-2 py-1 bg-black/60 text-white text-xs rounded hover:bg-black/80">
+                    Change
+                  </button>
+                  <input ref={videoInputRef} type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime" onChange={handleVideoChange} className="hidden" />
+                </div>
+              ) : (
+                <label className={`flex flex-col items-center justify-center w-full max-w-md h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary hover:bg-gray-50 transition-colors ${uploadingVideo ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <FaUpload className="text-gray-400 mb-2" size={24} />
+                  <span className="text-sm text-gray-500">{uploadingVideo ? 'Uploading video...' : 'Click to upload video'}</span>
+                  <span className="text-xs text-gray-400 mt-1">MP4, WebM, OGG, MOV (max 50MB)</span>
+                  <input ref={videoInputRef} type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime" onChange={handleVideoChange} className="hidden" />
+                </label>
+              )}
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Project URL
+            </label>
+            <input
+              type="url"
+              value={formData.projectUrl}
+              onChange={(e) => setFormData({ ...formData, projectUrl: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+              placeholder="https://..."
+            />
+            <p className="text-xs text-gray-500 mt-1">Link to the live project or demo</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

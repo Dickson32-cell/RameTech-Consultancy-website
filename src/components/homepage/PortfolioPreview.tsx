@@ -9,6 +9,8 @@ interface PortfolioProject {
   title: string
   category: string
   imageUrl: string | null
+  videoUrl: string | null
+  projectUrl: string | null
 }
 
 export default function PortfolioPreview() {
@@ -52,14 +54,23 @@ export default function PortfolioPreview() {
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {projects.map((project, index) => (
-            <div 
-              key={project.id} 
-              className="group relative overflow-hidden rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer"
+            <div
+              key={project.id}
+              className="group relative overflow-hidden rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300"
             >
-              {/* Image Container */}
+              {/* Image/Video Container */}
               <div className="relative h-56 md:h-64 bg-gray-200 overflow-hidden">
-                {project.imageUrl ? (
-                  <Image 
+                {project.videoUrl ? (
+                  <video
+                    src={project.videoUrl}
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                ) : project.imageUrl ? (
+                  <Image
                     src={project.imageUrl}
                     alt={project.title}
                     fill
@@ -67,7 +78,7 @@ export default function PortfolioPreview() {
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 ) : (
-                  <Image 
+                  <Image
                     src={placeholderImages[index] || placeholderImages[0]}
                     alt={project.title}
                     fill
@@ -75,7 +86,7 @@ export default function PortfolioPreview() {
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 )}
-                
+
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-text/80 via-text/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
@@ -84,6 +95,20 @@ export default function PortfolioPreview() {
                   <div className="text-white">
                     <p className="text-sm text-accent font-medium mb-1">{project.category}</p>
                     <h3 className="text-xl font-heading font-semibold">{project.title}</h3>
+                    {project.projectUrl && (
+                      <a
+                        href={project.projectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-white hover:text-accent mt-2 transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span>View Project</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
