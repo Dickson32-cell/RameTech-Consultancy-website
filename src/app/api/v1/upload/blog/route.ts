@@ -40,10 +40,23 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
     await writeFile(filepath, buffer)
 
-    const url = `/uploads/blog/${filename}`
-    return NextResponse.json({ success: true, url })
+    // Return both static and API URLs for flexibility
+    const staticUrl = `/uploads/blog/${filename}`
+    const apiUrl = `/api/v1/images/blog/${filename}`
+
+    console.log('Blog image uploaded successfully:', {
+      filename,
+      staticUrl,
+      apiUrl,
+      filepath,
+      fileSize: buffer.length
+    })
+
+    // Use API route for serving images (more reliable on cloud platforms)
+    return NextResponse.json({ success: true, url: apiUrl, staticUrl })
 
   } catch (error: any) {
+    console.error('Blog upload error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
