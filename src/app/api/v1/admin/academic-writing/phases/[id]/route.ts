@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from '@/lib/db'
+import { successResponse, errorResponse } from '@/lib/api-response'
 
 // GET /api/v1/admin/academic-writing/phases/[id] - Get a single phase
 export async function GET(

@@ -45,6 +45,8 @@ export default function AcademicWritingPage() {
   const [documents, setDocuments] = useState<Document[]>([])
   const [uploadingDocument, setUploadingDocument] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [uploadError, setUploadError] = useState('')
+  const [testingSystem, setTestingSystem] = useState(false)
 
   // Phase form state
   const [showPhaseForm, setShowPhaseForm] = useState(false)
@@ -326,6 +328,41 @@ export default function AcademicWritingPage() {
     }
   }
 
+  const testSystem = async () => {
+    setTestingSystem(true)
+    try {
+      const token = localStorage.getItem('admin_token')
+      const response = await fetch('/api/v1/admin/academic-writing/test', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      const result = await response.json()
+      console.log('System test results:', result)
+
+      const message = `
+System Diagnostics:
+
+Database: ${result.diagnostics?.checks?.database?.status || 'Unknown'}
+${result.diagnostics?.checks?.database?.error ? 'Error: ' + result.diagnostics.checks.database.error : ''}
+
+Cloudinary Config: ${result.diagnostics?.checks?.cloudinary?.configured ? 'OK' : 'MISSING'}
+Cloud Name: ${result.diagnostics?.checks?.cloudinary?.cloud_name || 'NOT SET'}
+
+Cloudinary Upload Test: ${result.diagnostics?.checks?.cloudinaryUpload?.status || 'Unknown'}
+${result.diagnostics?.checks?.cloudinaryUpload?.error ? 'Error: ' + result.diagnostics.checks.cloudinaryUpload.error : ''}
+      `.trim()
+
+      alert(message)
+    } catch (err) {
+      console.error('Test failed:', err)
+      alert('Test failed: ' + err)
+    } finally {
+      setTestingSystem(false)
+    }
+  }
+
   const uploadDocument = async () => {
     if (!selectedFile) {
       alert('Please select a file first')
@@ -333,13 +370,18 @@ export default function AcademicWritingPage() {
     }
 
     setUploadingDocument(true)
+    setUploadError('')
 
     try {
       const token = localStorage.getItem('admin_token')
       const formData = new FormData()
       formData.append('file', selectedFile)
 
-      console.log('Uploading file:', selectedFile.name, selectedFile.size, selectedFile.type)
+      console.log('Uploading file:', {
+        name: selectedFile.name,
+        size: selectedFile.size,
+        type: selectedFile.type
+      })
 
       const response = await fetch('/api/v1/admin/academic-writing/document', {
         method: 'POST',
@@ -355,18 +397,21 @@ export default function AcademicWritingPage() {
       if (result.success) {
         alert('Document uploaded successfully!')
         setSelectedFile(null)
+        setUploadError('')
         // Reset file input
         const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
         if (fileInput) fileInput.value = ''
         fetchDocuments()
       } else {
-        // Show detailed error
-        const errorDetails = result.details ? `\n\nDetails: ${result.details}` : ''
-        alert(`Upload failed: ${result.error}${errorDetails}`)
+        const errorMsg = result.error || 'Unknown error occurred'
+        setUploadError(errorMsg)
+        alert(`Upload failed: ${errorMsg}`)
         console.error('Upload error:', result)
       }
     } catch (err: any) {
-      alert(`An error occurred while uploading document: ${err.message || err}`)
+      const errorMsg = err.message || 'Network error occurred'
+      setUploadError(errorMsg)
+      alert(`Upload exception: ${errorMsg}`)
       console.error('Upload exception:', err)
     } finally {
       setUploadingDocument(false)
@@ -429,14 +474,33 @@ export default function AcademicWritingPage() {
 
       {/* Document Upload Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-          <FaFileWord className="text-blue-600" />
-          Price List Document
-        </h2>
-        <p className="text-gray-600 text-sm mb-4">
-          Upload a Word document (.doc or .docx) containing the Academic Writing service price list.
-          Only one document can be active at a time.
-        </p>
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <FaFileWord className="text-blue-600" />
+              Price List Document
+            </h2>
+            <p className="text-gray-600 text-sm mt-2">
+              Upload a Word document (.doc or .docx) containing the Academic Writing service price list.
+              Only one document can be active at a time.
+            </p>
+          </div>
+          <button
+            onClick={testSystem}
+            disabled={testingSystem}
+            className="flex items-center gap-2 bg-purple-600 text-white px-3 py-2 rounded-lg hover:bg-purple-700 text-sm disabled:bg-gray-400"
+          >
+            {testingSystem ? 'Testing...' : '🔍 Test System'}
+          </button>
+        </div>
+
+        {/* Error Display */}
+        {uploadError && (
+          <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg mb-4">
+            <p className="font-semibold text-sm">Upload Error:</p>
+            <p className="text-sm mt-1">{uploadError}</p>
+          </div>
+        )}
 
         {/* Upload Form */}
         <div className="bg-gray-50 rounded-lg p-4 mb-4">
@@ -451,7 +515,7 @@ export default function AcademicWritingPage() {
             <button
               onClick={uploadDocument}
               disabled={!selectedFile || uploadingDocument}
-              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap"
             >
               {uploadingDocument ? (
                 <>
@@ -466,9 +530,14 @@ export default function AcademicWritingPage() {
             </button>
           </div>
           {selectedFile && (
-            <p className="text-sm text-gray-600 mt-2">
-              Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
-            </p>
+            <div className="mt-2">
+              <p className="text-sm text-gray-600">
+                Selected: <span className="font-medium">{selectedFile.name}</span>
+              </p>
+              <p className="text-xs text-gray-500">
+                Size: {(selectedFile.size / 1024).toFixed(2)} KB | Type: {selectedFile.type}
+              </p>
+            </div>
           )}
         </div>
 

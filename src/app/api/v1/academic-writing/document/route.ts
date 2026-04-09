@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from '@/lib/db'
+import { successResponse, errorResponse } from '@/lib/api-response'
 
 // GET /api/v1/academic-writing/document - Get active document
 export async function GET(request: NextRequest) {
@@ -11,14 +10,11 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     })
 
-    return NextResponse.json({
-      success: true,
-      data: document
-    })
+    return NextResponse.json(successResponse(document))
   } catch (error) {
     console.error('Error fetching document:', error)
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch document' },
+      errorResponse('Failed to fetch document'),
       { status: 500 }
     )
   }

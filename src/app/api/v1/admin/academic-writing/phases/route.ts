@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from '@/lib/db'
+import { successResponse, errorResponse } from '@/lib/api-response'
 
 // GET /api/v1/admin/academic-writing/phases - Get all phases
 export async function GET(request: NextRequest) {
@@ -15,16 +14,10 @@ export async function GET(request: NextRequest) {
       orderBy: { order: 'asc' }
     })
 
-    return NextResponse.json({
-      success: true,
-      data: phases
-    })
+    return NextResponse.json(successResponse(phases))
   } catch (error) {
     console.error('Error fetching phases:', error)
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch phases' },
-      { status: 500 }
-    )
+    return NextResponse.json(errorResponse('Failed to fetch phases'), { status: 500 })
   }
 }
 
@@ -36,10 +29,7 @@ export async function POST(request: NextRequest) {
 
     // Validation
     if (!name) {
-      return NextResponse.json(
-        { success: false, error: 'Phase name is required' },
-        { status: 400 }
-      )
+      return NextResponse.json(errorResponse('Phase name is required'), { status: 400 })
     }
 
     const phase = await prisma.academicWritingPhase.create({
@@ -51,16 +41,9 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    return NextResponse.json({
-      success: true,
-      data: phase,
-      message: 'Phase created successfully'
-    }, { status: 201 })
+    return NextResponse.json(successResponse(phase), { status: 201 })
   } catch (error) {
     console.error('Error creating phase:', error)
-    return NextResponse.json(
-      { success: false, error: 'Failed to create phase' },
-      { status: 500 }
-    )
+    return NextResponse.json(errorResponse('Failed to create phase'), { status: 500 })
   }
 }

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from '@/lib/db'
+import { successResponse, errorResponse } from '@/lib/api-response'
 
 // GET /api/v1/academic-writing - Get all phases with service items
 export async function GET(request: NextRequest) {
@@ -17,14 +16,11 @@ export async function GET(request: NextRequest) {
       orderBy: { order: 'asc' }
     })
 
-    return NextResponse.json({
-      success: true,
-      data: phases
-    })
+    return NextResponse.json(successResponse(phases))
   } catch (error) {
     console.error('Error fetching academic writing services:', error)
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch academic writing services' },
+      errorResponse('Failed to fetch academic writing services'),
       { status: 500 }
     )
   }

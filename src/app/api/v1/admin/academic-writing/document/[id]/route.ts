@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import prisma from '@/lib/db'
 import cloudinary from '@/lib/cloudinary'
-
-const prisma = new PrismaClient()
+import { successResponse, errorResponse } from '@/lib/api-response'
 
 // DELETE /api/v1/admin/academic-writing/document/[id] - Delete a document
 export async function DELETE(
@@ -10,6 +9,8 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    console.log('Deleting document:', params.id)
+
     // Get document info
     const document = await prisma.academicWritingDocument.findUnique({
       where: { id: params.id }
@@ -17,22 +18,23 @@ export async function DELETE(
 
     if (!document) {
       return NextResponse.json(
-        { success: false, error: 'Document not found' },
+        errorResponse('Document not found'),
         { status: 404 }
       )
     }
 
-    // Extract public_id from Cloudinary URL
-    const urlParts = document.fileUrl.split('/')
-    const publicIdWithExtension = urlParts[urlParts.length - 1]
-    const publicId = `academic-writing/${publicIdWithExtension.split('.')[0]}`
-
-    // Delete from Cloudinary
+    // Extract public_id from Cloudinary URL for deletion
     try {
+      const urlParts = document.fileUrl.split('/')
+      const fileName = urlParts[urlParts.length - 1]
+      const publicId = `rametech/academic-writing/${fileName.split('.')[0]}`
+
+      console.log('Deleting from Cloudinary:', publicId)
       await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' })
-    } catch (cloudinaryError) {
-      console.error('Error deleting from Cloudinary:', cloudinaryError)
-      // Continue with database deletion even if Cloudinary deletion fails
+      console.log('Cloudinary deletion successful')
+    } catch (cloudinaryError: any) {
+      console.error('Cloudinary deletion failed:', cloudinaryError)
+      // Continue with database deletion even if Cloudinary fails
     }
 
     // Delete from database
@@ -40,14 +42,15 @@ export async function DELETE(
       where: { id: params.id }
     })
 
-    return NextResponse.json({
-      success: true,
-      message: 'Document deleted successfully'
-    })
-  } catch (error) {
+    console.log('Document deleted successfully')
+
+    return NextResponse.json(
+      successResponse({ message: 'Document deleted successfully' })
+    )
+  } catch (error: any) {
     console.error('Error deleting document:', error)
     return NextResponse.json(
-      { success: false, error: 'Failed to delete document' },
+      errorResponse(`Delete failed: ${error.message || 'Unknown error'}`),
       { status: 500 }
     )
   }
