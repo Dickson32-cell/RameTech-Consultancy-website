@@ -46,9 +46,9 @@ export default function PublicationsPage() {
   }
 
   // Get unique types and tags
-  const types = ['all', ...new Set(publications.map(p => p.type))]
+  const types = ['all', ...Array.from(new Set(publications.map(p => p.type)))]
   const allTags = publications.flatMap(p => p.tags)
-  const tags = ['all', ...new Set(allTags)]
+  const tags = ['all', ...Array.from(new Set(allTags))]
 
   // Filter publications
   const filteredPublications = publications.filter(pub => {
