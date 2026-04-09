@@ -60,17 +60,27 @@ export default function ServicesPage() {
   const fetchAcademicWriting = async () => {
     setLoadingAcademic(true)
     try {
+      console.log('Services page: Fetching academic writing data...')
+
       // First check if there's an uploaded document
       const docResponse = await fetch('/api/v1/academic-writing/document')
       const docResult = await docResponse.json()
 
-      if (docResult.success && docResult.data) {
+      console.log('Services page - Document response:', docResult)
+
+      if (docResult.success && docResult.data && docResult.data.fileUrl) {
+        console.log('Services page: Document found, setting state')
         setAcademicWritingDocument(docResult.data)
       } else {
+        console.log('Services page: No document, fetching phases...')
         // Fallback to database phases if no document
         const phasesResponse = await fetch('/api/v1/academic-writing')
         const phasesResult = await phasesResponse.json()
-        if (phasesResult.success) {
+
+        console.log('Services page - Phases response:', phasesResult)
+
+        if (phasesResult.success && phasesResult.data) {
+          console.log('Services page: Phases found, setting state')
           setAcademicWritingPhases(phasesResult.data)
         }
       }
@@ -162,11 +172,20 @@ export default function ServicesPage() {
                     className={`overflow-hidden transition-all duration-300 ${activeService === service.id ? 'max-h-[2000px] mt-4' : 'max-h-0'}`}
                   >
                     <div className="pt-4 border-t border-gray-100">
+                      {/* Debug - shows what data was loaded */}
+                      {!loadingAcademic && !academicWritingDocument && academicWritingPhases.length === 0 && (
+                        <div className="bg-yellow-50 border border-yellow-300 p-3 rounded mb-3">
+                          <p className="text-xs text-yellow-800">
+                            Debug: No document or phases loaded. Check console for API responses.
+                          </p>
+                        </div>
+                      )}
+
                       {loadingAcademic ? (
                         <div className="flex justify-center py-4">
                           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                         </div>
-                      ) : academicWritingDocument ? (
+                      ) : academicWritingDocument && academicWritingDocument.fileUrl ? (
                         // Show document download if available
                         <>
                           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">

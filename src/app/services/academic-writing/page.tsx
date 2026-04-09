@@ -42,19 +42,29 @@ export default function AcademicWritingPage() {
   const fetchData = async () => {
     try {
       // First check for uploaded document
+      console.log('Fetching Academic Writing document...')
       const docResponse = await fetch('/api/v1/academic-writing/document')
       const docResult = await docResponse.json()
 
+      console.log('Document API response:', docResult)
+
       if (docResult.success && docResult.data) {
+        console.log('Document found:', docResult.data)
         setDocument(docResult.data)
+      } else {
+        console.log('No document found or API error')
       }
 
       // Also fetch phases for fallback display
+      console.log('Fetching Academic Writing phases...')
       const phasesResponse = await fetch('/api/v1/academic-writing')
       const phasesResult = await phasesResponse.json()
 
+      console.log('Phases API response:', phasesResult)
+
       if (phasesResult.success) {
-        setPhases(phasesResult.data)
+        console.log('Phases found:', phasesResult.data?.length || 0)
+        setPhases(phasesResult.data || [])
       }
     } catch (error) {
       console.error('Error fetching academic writing services:', error)
@@ -97,6 +107,18 @@ export default function AcademicWritingPage() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Debug Info - Remove after testing */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="bg-yellow-100 border border-yellow-400 p-4 rounded-lg mb-4">
+            <p className="font-semibold">Debug Info:</p>
+            <p className="text-sm">Document state: {document ? 'EXISTS' : 'NULL'}</p>
+            <p className="text-sm">Phases count: {phases.length}</p>
+            {document && (
+              <p className="text-sm truncate">Document URL: {document.fileUrl}</p>
+            )}
+          </div>
+        )}
+
         {/* Introduction */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Service Item Price List</h2>
@@ -124,7 +146,7 @@ export default function AcademicWritingPage() {
         </div>
 
         {/* Document Download (Priority Display) */}
-        {document ? (
+        {document && document.fileUrl ? (
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-8 mb-8">
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
