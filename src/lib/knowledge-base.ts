@@ -299,6 +299,115 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
       })
     }
 
+    // Fetch Departments with Services and Sub-Departments
+    const departments = await prisma.department.findMany({
+      where: { isActive: true },
+      include: {
+        services: {
+          where: { isActive: true },
+          orderBy: { order: 'asc' }
+        },
+        subDepartments: {
+          where: { isActive: true },
+          include: {
+            services: {
+              where: { isActive: true },
+              orderBy: { order: 'asc' }
+            }
+          },
+          orderBy: { order: 'asc' }
+        },
+        projects: {
+          where: { isActive: true },
+          take: 3,
+          orderBy: { order: 'asc' }
+        }
+      },
+      orderBy: { order: 'asc' }
+    })
+
+    if (departments.length > 0) {
+      for (const dept of departments) {
+        // Main department services
+        const deptServices = dept.services.map(s => `${s.title}: ${s.description}`).join('\n')
+
+        // Sub-department services (like Paper Craft)
+        const subDeptContent = dept.subDepartments.map(subDept => {
+          const subServices = subDept.services.map(s => `  - ${s.title}: ${s.description}`).join('\n')
+          return `${subDept.name}:\n${subServices}`
+        }).join('\n\n')
+
+        // Department projects
+        const projects = dept.projects.length > 0
+          ? `\n\nRecent Projects:\n${dept.projects.map(p => `- ${p.title}`).join('\n')}`
+          : ''
+
+        const fullContent = `Department: ${dept.name}\n${dept.description || ''}\n\nServices:\n${deptServices}${subDeptContent ? `\n\nSub-Departments:\n${subDeptContent}` : ''}${projects}`
+
+        chunks.push({
+          id: `department-${dept.slug}`,
+          category: 'Departments',
+          content: fullContent,
+          keywords: [dept.name.toLowerCase(), dept.slug, 'department', 'services', ...dept.services.map(s => s.title.toLowerCase())]
+        })
+      }
+    }
+
+    // Fetch Team Members (Department Heads)
+    const team = await prisma.teamMember.findMany({
+      where: { isActive: true },
+      orderBy: { order: 'asc' },
+      take: 10
+    })
+
+    if (team.length > 0) {
+      const teamContent = team.map(member =>
+        `${member.name} - ${member.role}\n${member.bio}\nEmail: ${member.email}${member.phone ? ` | Phone: ${member.phone}` : ''}`
+      ).join('\n\n')
+
+      chunks.push({
+        id: 'team-dynamic',
+        category: 'Team',
+        content: `Our Team:\n${teamContent}`,
+        keywords: ['team', 'staff', 'member', 'who', 'people', 'ceo', 'director', 'head', 'lead', 'specialist']
+      })
+    }
+
+    // Fetch Blog Posts
+    const blogs = await prisma.blogPost.findMany({
+      where: { isPublished: true },
+      orderBy: { publishedAt: 'desc' },
+      take: 5
+    })
+
+    if (blogs.length > 0) {
+      const blogContent = blogs.map(blog =>
+        `"${blog.title}" - ${blog.excerpt}`
+      ).join('\n')
+
+      chunks.push({
+        id: 'blog-dynamic',
+        category: 'Blog',
+        content: `Recent Blog Posts:\n${blogContent}\n\nVisit our blog for more articles.`,
+        keywords: ['blog', 'article', 'post', 'news', 'update', 'insights']
+      })
+    }
+
+    // Fetch Academic Writing Document if exists
+    const academicDoc = await prisma.academicWritingDocument.findFirst({
+      where: { isActive: true },
+      orderBy: { createdAt: 'desc' }
+    })
+
+    if (academicDoc) {
+      chunks.push({
+        id: 'academic-doc-dynamic',
+        category: 'Academic Writing',
+        content: `Academic Writing Price List: Download our complete price list document "${academicDoc.fileName}". Available at /services/academic-writing`,
+        keywords: ['academic', 'writing', 'price', 'pricing', 'cost', 'document', 'download', 'thesis', 'dissertation']
+      })
+    }
+
     return chunks
   } catch (error) {
     console.error('Error fetching dynamic knowledge:', error)

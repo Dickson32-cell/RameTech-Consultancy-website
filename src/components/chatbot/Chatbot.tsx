@@ -17,6 +17,8 @@ const INTENT_PATTERNS = {
   pricing: /(price|pricing|cost|how much|charge|fee|quote|estimate|budget|afford|expensive|cheap)/i,
   timeline: /(how long|time|weeks|days|when|schedule|timeline|deadline|turnaround|duration)/i,
   services: /(service|services|what do you do|offer|provide|help with|specialize|capabilities)/i,
+  departments: /(department|departments|division|divisions|organized|structure)/i,
+  papercraft: /(paper|bag|bags|craft|gift bag|shopping bag|paper bag|promotional bag|custom bag)/i,
   web: /(web|website|site|webpage|landing page|frontend|backend|fullstack|wordpress|shopify)/i,
   mobile: /(mobile|app|iphone|android|ios|android|react native|flutter|native app)/i,
   design: /(design|logo|brand|graphic|visual|ui|ux|interface|aesthetic|artwork|banner|brochure)/i,
@@ -51,8 +53,8 @@ const RESPONSES: Record<string, { response: string; followUp?: string }> = {
     followUp: 'Ready to start? Let\'s discuss your project timeline!'
   },
   services: {
-    response: '📦 RAME Tech Services:\n\n🌐 **Software Development**\nWeb apps, mobile apps, e-commerce, APIs\n\n📱 **Mobile Development**\niOS, Android, React Native, Flutter\n\n🎨 **Graphic Design**\nLogos, branding, UI/UX, marketing materials\n\n☁️ **Cloud Services**\nAWS, Azure, migration, DevOps\n\n📊 **Advanced Analytics**\nBI dashboards, predictive analytics, ML\n\n🤖 **AI & Automation**\nChatbots, process automation, NLP\n\n🔒 **Cybersecurity**\nAudits, penetration testing, compliance\n\n📈 **Marketing Research**\nMarket analysis, competitor research\n\nWhich service interests you?',
-    followUp: 'Click a service above or ask me for more details!'
+    response: '📦 RAME Tech Services:\n\n🌐 **Technology Solutions**\nSoftware, Mobile Apps, Database, Cloud, Cybersecurity, AI\n\n🔧 **IT Solutions**\nHardware, Network Setup, IT Support\n\n🎨 **Creative Services**\nGraphic Design, Branding, UI/UX\n📦 Paper Craft: Custom bags, Gift bags, Shopping bags\n\n📊 **Data & Research Services**\nMarketing Research, Digital Marketing, Analytics, Academic Writing\n\nWe also have organized departments! Visit /departments to explore.\n\nWhich service interests you?',
+    followUp: 'Ask about any department or service for details!'
   },
   web: {
     response: '🌐 Web Development Services:\n\n• Custom Websites: From GHS 5,000\n• E-commerce Platforms: From GHS 12,000\n• Web Applications: From GHS 20,000\n• CMS Integration\n• SEO Optimization\n• API Integration\n\nWe use modern technologies like Next.js, React, and Node.js.',
@@ -114,6 +116,14 @@ const RESPONSES: Record<string, { response: string; followUp?: string }> = {
     response: '👤 I\'ll connect you with our team!\n\n💬 WhatsApp: wa.me/233204249540\n📱 Call: +233 55 733 2615\n\nA human will respond within 24 hours!',
     followUp: 'Click WhatsApp for the fastest response!'
   },
+  departments: {
+    response: '🏢 RAME Tech Departments:\n\n🌐 **Technology Solutions** (CEO)\nSoftware, Mobile, Database, Cloud, Cybersecurity, AI\n\n🔧 **IT Solutions** (IT Specialist)\nHardware & IT Support\n\n🎨 **Creative Services** (Creative Director)\nGraphic Design + Paper Craft\n\n📊 **Data & Research** (Lead Researcher)\nMarketing, Analytics, Academic Writing\n\nVisit /departments to explore each!',
+    followUp: 'Which department interests you?'
+  },
+  papercraft: {
+    response: '📦 Paper Craft Services:\n\nWe offer custom paper bags and craft solutions:\n\n• **Custom Paper Bags** - Full color printing, custom sizes\n• **Gift Bags** - Weddings, birthdays, corporate events\n• **Shopping Bags** - Reinforced handles, bulk orders\n• **Promotional Bags** - Trade shows, marketing campaigns\n\nAll eco-friendly with logo branding available!\n\nPart of our Creative Services department.',
+    followUp: 'Need custom bags for your business or event? Let\'s talk!'
+  },
 }
 
 const QUICK_REPLIES = [
@@ -161,7 +171,7 @@ export default function Chatbot() {
     
     // Check intents in order of specificity
     const intentOrder = [
-      'human', 'contact', 'pricing', 'timeline', 'services',
+      'human', 'contact', 'pricing', 'timeline', 'papercraft', 'departments', 'services',
       'web', 'mobile', 'design', 'cloud', 'analytics', 'ai',
       'security', 'marketing', 'payment', 'support', 'portfolio',
       'company', 'location'
