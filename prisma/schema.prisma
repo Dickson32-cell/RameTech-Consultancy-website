@@ -70,6 +70,122 @@ model PortfolioProject {
   @@index([isActive])
 }
 
+// ============================================
+// DEPARTMENTS SYSTEM
+// ============================================
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?  @db.Text
+  icon        String?  // Icon or image for department
+  imageUrl    String?  // Department hero image
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  subDepartments SubDepartment[]
+  services       DepartmentService[]
+  projects       DepartmentProject[]
+  pricingTables  PricingTable[]
+
+  @@index([slug])
+  @@index([order])
+  @@index([isActive])
+}
+
+model SubDepartment {
+  id           String   @id @default(uuid())
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  name         String
+  slug         String   @unique
+  description  String?  @db.Text
+  order        Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now()) @db.Timestamptz()
+  updatedAt    DateTime @updatedAt @db.Timestamptz()
+
+  services     DepartmentService[]
+  projects     DepartmentProject[]
+
+  @@index([departmentId])
+  @@index([slug])
+  @@index([order])
+}
+
+model DepartmentService {
+  id              String   @id @default(uuid())
+  departmentId    String
+  department      Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  subDepartmentId String?
+  subDepartment   SubDepartment? @relation(fields: [subDepartmentId], references: [id], onDelete: Cascade)
+
+  title           String
+  slug            String   @unique
+  description     String   @db.Text
+  price           String?  // Can be a fixed price or range
+  features        String[] // List of features/benefits
+  imageUrl        String?
+  order           Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now()) @db.Timestamptz()
+  updatedAt       DateTime @updatedAt @db.Timestamptz()
+
+  @@index([departmentId])
+  @@index([subDepartmentId])
+  @@index([slug])
+  @@index([order])
+}
+
+model DepartmentProject {
+  id              String   @id @default(uuid())
+  departmentId    String
+  department      Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  subDepartmentId String?
+  subDepartment   SubDepartment? @relation(fields: [subDepartmentId], references: [id], onDelete: Cascade)
+
+  title           String
+  slug            String   @unique
+  description     String   @db.Text
+  imageUrl        String?
+  videoUrl        String?
+  technologies    String[] // For software projects
+  clientName      String?
+  projectUrl      String?
+  completedDate   DateTime? @db.Timestamptz()
+  order           Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now()) @db.Timestamptz()
+  updatedAt       DateTime @updatedAt @db.Timestamptz()
+
+  @@index([departmentId])
+  @@index([subDepartmentId])
+  @@index([slug])
+  @@index([order])
+  @@index([isActive])
+}
+
+model PricingTable {
+  id           String   @id @default(uuid())
+  departmentId String
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  name         String   // e.g., "Academic Writing Pricing"
+  description  String?  @db.Text
+  tableType    String   @default("simple") // simple, academic, custom
+  data         Json     // Flexible structure for pricing data
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now()) @db.Timestamptz()
+  updatedAt    DateTime @updatedAt @db.Timestamptz()
+
+  @@index([departmentId])
+  @@index([tableType])
+}
+
 model BlogPost {
   id          String   @id @default(uuid())
   title       String

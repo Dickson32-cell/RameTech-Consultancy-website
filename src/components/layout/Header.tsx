@@ -48,8 +48,8 @@ export default function Header() {
               <span className="relative z-10">Services</span>
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-3/4 transition-all duration-300"></div>
             </Link>
-            <Link href="/portfolio" className="relative px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-cyan/5 group">
-              <span className="relative z-10">Portfolio</span>
+            <Link href="/departments" className="relative px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-cyan/5 group">
+              <span className="relative z-10">Departments</span>
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-3/4 transition-all duration-300"></div>
             </Link>
             <Link href="/team" className="relative px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-cyan/5 group">
@@ -73,7 +73,7 @@ export default function Header() {
           {/* Tablet Nav */}
           <nav className="hidden md:flex lg:hidden items-center space-x-2">
             <Link href="/services" className="px-3 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer">Services</Link>
-            <Link href="/portfolio" className="px-3 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer">Portfolio</Link>
+            <Link href="/departments" className="px-3 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer">Departments</Link>
             <Link href="/team" className="px-3 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer">Team</Link>
             <Link href="/contact" className="btn-primary text-sm py-2 px-4">
               Quote
@@ -105,7 +105,7 @@ export default function Header() {
           <nav className="flex flex-col space-y-1 pt-2">
             <Link href="/" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Home</Link>
             <Link href="/services" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Services</Link>
-            <Link href="/portfolio" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Portfolio</Link>
+            <Link href="/departments" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Departments</Link>
             <Link href="/team" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Team</Link>
             <Link href="/blog" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Blog</Link>
             <Link href="/faq" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>FAQ</Link>

@@ -11,7 +11,12 @@
       "Bash(npx prisma migrate:*)",
       "Bash(test:*)",
       "Bash(git add:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout 10 bash:*)",
+      "Bash(dir:*)",
+      "Bash(npx prisma db push)",
+      "Bash(npx prisma generate:*)"
     ],
     "deny": [],
     "ask": []
