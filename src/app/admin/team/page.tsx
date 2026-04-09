@@ -34,11 +34,29 @@ export default function AdminTeamPage() {
 
   const fetchMembers = async () => {
     try {
-      const res = await fetch('/api/v1/admin/team')
+      console.log('Fetching team members...')
+      const token = localStorage.getItem('admin_token')
+      const res = await fetch(`/api/v1/admin/team?t=${Date.now()}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        cache: 'no-store'
+      })
       const data = await res.json()
-      if (data.success) setMembers(data.data)
-    } catch (e) { console.error(e) }
-    finally { setIsLoading(false) }
+      console.log('Team API response:', data)
+      if (data.success) {
+        setMembers(data.data || [])
+        console.log('Team members loaded:', data.data?.length || 0)
+      } else {
+        console.error('Team API error:', data.error)
+        alert(`Failed to load team members: ${data.error || 'Unknown error'}`)
+      }
+    } catch (e: any) {
+      console.error('Team fetch error:', e)
+      alert(`Error loading team: ${e.message}`)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const deleteMember = async (id: string) => {
