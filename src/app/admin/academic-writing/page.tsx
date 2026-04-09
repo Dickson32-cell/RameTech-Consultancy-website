@@ -93,15 +93,20 @@ export default function AcademicWritingPage() {
       })
 
       const result = await response.json()
+      console.log('Fetch phases response:', result)
 
       if (result.success) {
-        setPhases(result.data)
+        setPhases(result.data || [])
+        setError('')
       } else {
-        setError(result.error || 'Failed to fetch phases')
+        const errorMsg = result.error || 'Failed to fetch phases'
+        setError(`API Error: ${errorMsg}`)
+        console.error('Fetch phases error:', result)
       }
-    } catch (err) {
-      setError('An error occurred while fetching phases')
-      console.error(err)
+    } catch (err: any) {
+      const errorMsg = `Network error: ${err.message || 'Unknown error'}`
+      setError(errorMsg)
+      console.error('Fetch phases exception:', err)
     } finally {
       setLoading(false)
     }
@@ -301,9 +306,12 @@ export default function AcademicWritingPage() {
       })
 
       const result = await response.json()
+      console.log('Fetch documents response:', result)
 
       if (result.success) {
-        setDocuments(result.data)
+        setDocuments(result.data || [])
+      } else {
+        console.error('Failed to fetch documents:', result.error)
       }
     } catch (err) {
       console.error('Error fetching documents:', err)
@@ -468,7 +476,22 @@ ${result.diagnostics?.checks?.cloudinaryUpload?.error ? 'Error: ' + result.diagn
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+          <p className="font-semibold mb-2">Error Loading Data</p>
+          <p className="text-sm">{error}</p>
+          {error.includes('Database tables not created') && (
+            <div className="mt-3 bg-white/50 p-3 rounded text-sm">
+              <p className="font-semibold mb-2">To fix this issue:</p>
+              <ol className="list-decimal ml-5 space-y-1">
+                <li>Go to your Render dashboard</li>
+                <li>Open your web service</li>
+                <li>Click "Shell" tab</li>
+                <li>Run: <code className="bg-gray-800 text-white px-2 py-1 rounded">npm run db:push</code></li>
+                <li>Wait for completion (shows "database is now in sync")</li>
+                <li>Refresh this page</li>
+              </ol>
+              <p className="mt-2 italic">Or wait for the next automatic deployment to complete.</p>
+            </div>
+          )}
         </div>
       )}
 

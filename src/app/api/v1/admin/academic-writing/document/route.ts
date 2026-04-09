@@ -6,14 +6,30 @@ import { successResponse, errorResponse } from '@/lib/api-response'
 // GET /api/v1/admin/academic-writing/document - Get all documents
 export async function GET(request: NextRequest) {
   try {
+    console.log('Fetching academic writing documents...')
+
     const documents = await prisma.academicWritingDocument.findMany({
       orderBy: { createdAt: 'desc' }
     })
 
+    console.log(`Found ${documents.length} documents`)
+
     return NextResponse.json(successResponse(documents))
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching documents:', error)
-    return NextResponse.json(errorResponse('Failed to fetch documents'), { status: 500 })
+
+    // Check if it's a table not found error
+    if (error.message?.includes('does not exist')) {
+      return NextResponse.json(
+        errorResponse('Database tables not created yet. Please run: npm run db:push in Render shell'),
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(
+      errorResponse(`Failed to fetch documents: ${error.message || 'Unknown error'}`),
+      { status: 500 }
+    )
   }
 }
 

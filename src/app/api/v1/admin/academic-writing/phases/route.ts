@@ -5,6 +5,8 @@ import { successResponse, errorResponse } from '@/lib/api-response'
 // GET /api/v1/admin/academic-writing/phases - Get all phases
 export async function GET(request: NextRequest) {
   try {
+    console.log('Fetching academic writing phases...')
+
     const phases = await prisma.academicWritingPhase.findMany({
       include: {
         serviceItems: {
@@ -14,10 +16,24 @@ export async function GET(request: NextRequest) {
       orderBy: { order: 'asc' }
     })
 
+    console.log(`Found ${phases.length} phases`)
+
     return NextResponse.json(successResponse(phases))
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching phases:', error)
-    return NextResponse.json(errorResponse('Failed to fetch phases'), { status: 500 })
+
+    // Check if it's a table not found error
+    if (error.message?.includes('does not exist')) {
+      return NextResponse.json(
+        errorResponse('Database tables not created yet. Please run: npm run db:push in Render shell'),
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(
+      errorResponse(`Failed to fetch phases: ${error.message || 'Unknown error'}`),
+      { status: 500 }
+    )
   }
 }
 
