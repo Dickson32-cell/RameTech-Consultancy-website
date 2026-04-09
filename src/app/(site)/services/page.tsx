@@ -59,18 +59,32 @@ const iconComponents: Record<string, React.ReactNode> = {
 
 export default function ServicesPage() {
   const [activeService, setActiveService] = useState<string | null>(null)
-  const [services, setServices] = useState<Service[]>([])
-  const [loadingServices, setLoadingServices] = useState(true)
   const [academicWritingPhases, setAcademicWritingPhases] = useState<AcademicWritingPhase[]>([])
   const [academicWritingDocument, setAcademicWritingDocument] = useState<AcademicWritingDocument | null>(null)
   const [loadingAcademic, setLoadingAcademic] = useState(false)
   const [academicDataFetched, setAcademicDataFetched] = useState(false)
 
-  // Fetch all services from database on mount
+  // Default services (hardcoded) - these always show
+  const defaultServices = [
+    { id: 'software', name: 'Software Development', slug: 'software', icon: 'FaCode', description: 'Custom software solutions built to meet your specific business needs.', features: ['Web Applications', 'Desktop Software', 'API Development', 'System Integration'] },
+    { id: 'mobile', name: 'Mobile Development', slug: 'mobile', icon: 'FaMobileAlt', description: 'Native and cross-platform mobile applications for iOS and Android.', features: ['iOS Development', 'Android Development', 'React Native', 'Flutter Apps'] },
+    { id: 'academic', name: 'Academic Writing', slug: 'academic-writing', icon: 'FaGraduationCap', description: 'Professional academic writing support for Bachelor, Master, and PhD level research.', features: ['Research Proposals', 'Literature Reviews', 'Data Analysis', 'Thesis Compilation'] },
+    { id: 'hardware', name: 'Hardware & IT', slug: 'hardware', icon: 'FaServer', description: 'Complete IT infrastructure solutions and hardware procurement.', features: ['Network Setup', 'Server Management', 'Hardware Procurement', 'IT Support'] },
+    { id: 'cloud', name: 'Cloud Services', slug: 'cloud', icon: 'FaCloud', description: 'Scalable cloud solutions for modern businesses.', features: ['Cloud Migration', 'AWS/Azure Setup', 'Cloud Architecture', 'DevOps'] },
+    { id: 'design', name: 'Graphic Design', slug: 'design', icon: 'FaPalette', description: 'Professional design services to elevate your brand.', features: ['Logo Design', 'Brand Identity', 'Marketing Materials', 'UI/UX Design'] },
+    { id: 'analytics', name: 'Advanced Analytics', slug: 'analytics', icon: 'FaChartLine', description: 'Data-driven insights to make smarter business decisions.', features: ['Business Intelligence', 'Data Visualization', 'Predictive Analytics', 'Custom Dashboards'] },
+    { id: 'marketing', name: 'Marketing Research', slug: 'marketing', icon: 'FaSearch', description: 'In-depth market research and competitor analysis.', features: ['Market Research', 'Competitor Analysis', 'Customer Insights', 'Brand Strategy'] },
+    { id: 'digital', name: 'Digital Marketing', slug: 'digital', icon: 'FaBullhorn', description: 'Comprehensive digital marketing strategies to grow your reach.', features: ['SEO Optimization', 'Social Media', 'Content Marketing', 'PPC Campaigns'] },
+    { id: 'ai', name: 'AI & Automation', slug: 'ai', icon: 'FaRobot', description: 'Intelligent automation solutions powered by artificial intelligence.', features: ['Machine Learning', 'Process Automation', 'Chatbots', 'Predictive Models'] },
+  ]
+
+  const [dbServices, setDbServices] = useState<Service[]>([])
+
+  // Pre-fetch academic writing data on mount
   useEffect(() => {
-    console.log('Component mounted, fetching all services from database...')
-    fetchServices()
+    console.log('Component mounted, pre-fetching academic writing data...')
     fetchAcademicWriting()
+    fetchDbServices()
   }, [])
 
   useEffect(() => {
@@ -81,30 +95,39 @@ export default function ServicesPage() {
     }
   }, [activeService])
 
-  const fetchServices = async () => {
+  // Fetch services from database (to sync with admin edits)
+  const fetchDbServices = async () => {
     try {
-      console.log('Fetching services from API...')
-      // Add cache-busting parameter
+      console.log('Fetching services from database for sync...')
       const response = await fetch(`/api/v1/services?t=${Date.now()}`)
       const result = await response.json()
 
-      console.log('Services API response:', result)
-
       if (result.success && result.data) {
-        // Map services and add special link for academic writing
-        const mappedServices = result.data.map((s: Service) => ({
-          ...s,
-          link: s.slug === 'academic-writing' ? '/services/academic-writing' : null
-        }))
-        setServices(mappedServices)
-        console.log('Services loaded:', mappedServices.length)
+        console.log('Database services loaded:', result.data.length)
+        setDbServices(result.data)
       }
     } catch (error) {
-      console.error('Error fetching services:', error)
-    } finally {
-      setLoadingServices(false)
+      console.error('Error fetching database services:', error)
     }
   }
+
+  // Merge database services with default services
+  const services = defaultServices.map(defaultService => {
+    // Find matching service from database
+    const dbService = dbServices.find(db => db.slug === defaultService.slug)
+
+    // If found in database, use database version (admin can edit it)
+    if (dbService) {
+      return {
+        ...defaultService,
+        ...dbService,
+        features: dbService.features.length > 0 ? dbService.features : defaultService.features
+      }
+    }
+
+    // Otherwise use default
+    return defaultService
+  })
 
   const fetchAcademicWriting = async () => {
     console.log('fetchAcademicWriting() called')
@@ -169,17 +192,8 @@ export default function ServicesPage() {
       {/* Services Grid */}
       <section className="py-16 md:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {loadingServices ? (
-            <div className="flex justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            </div>
-          ) : services.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-gray-600 text-lg">No services available. Please add services in the admin panel.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {services.map((service) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {services.map((service) => (
                 <div
                   key={service.id}
                   className={`bento-card cursor-pointer transition-all duration-300 ${activeService === service.slug ? 'ring-2 ring-primary' : ''}`}
@@ -365,7 +379,6 @@ export default function ServicesPage() {
               </div>
             ))}
           </div>
-          )}
         </div>
       </section>
 
