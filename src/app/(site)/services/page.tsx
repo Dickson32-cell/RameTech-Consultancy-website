@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { FaCode, FaLaptopCode, FaPalette, FaServer, FaMobileAlt, FaDatabase, FaCloud, FaShieldAlt, FaChartLine, FaSearch, FaBullhorn, FaRobot, FaChartBar, FaCheck } from 'react-icons/fa'
+import { FaCode, FaLaptopCode, FaPalette, FaServer, FaMobileAlt, FaDatabase, FaCloud, FaShieldAlt, FaChartLine, FaSearch, FaBullhorn, FaRobot, FaChartBar, FaCheck, FaGraduationCap } from 'react-icons/fa'
 
 // Icon mapping
 const iconComponents: Record<string, React.ReactNode> = {
@@ -19,21 +19,23 @@ const iconComponents: Record<string, React.ReactNode> = {
   FaBullhorn: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>,
   FaRobot: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>,
   FaChartBar: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>,
+  FaGraduationCap: <FaGraduationCap className="w-8 h-8" />,
 }
 
 export default function ServicesPage() {
   const [activeService, setActiveService] = useState<string | null>(null)
 
   const services = [
-    { id: 'software', name: 'Software Development', icon: 'FaCode', description: 'Custom software solutions built to meet your specific business needs.', features: ['Web Applications', 'Desktop Software', 'API Development', 'System Integration'] },
-    { id: 'mobile', name: 'Mobile Development', icon: 'FaMobileAlt', description: 'Native and cross-platform mobile applications for iOS and Android.', features: ['iOS Development', 'Android Development', 'React Native', 'Flutter Apps'] },
-    { id: 'hardware', name: 'Hardware & IT', icon: 'FaServer', description: 'Complete IT infrastructure solutions and hardware procurement.', features: ['Network Setup', 'Server Management', 'Hardware Procurement', 'IT Support'] },
-    { id: 'cloud', name: 'Cloud Services', icon: 'FaCloud', description: 'Scalable cloud solutions for modern businesses.', features: ['Cloud Migration', 'AWS/Azure Setup', 'Cloud Architecture', 'DevOps'] },
-    { id: 'design', name: 'Graphic Design', icon: 'FaPalette', description: 'Professional design services to elevate your brand.', features: ['Logo Design', 'Brand Identity', 'Marketing Materials', 'UI/UX Design'] },
-    { id: 'analytics', name: 'Advanced Analytics', icon: 'FaChartLine', description: 'Data-driven insights to make smarter business decisions.', features: ['Business Intelligence', 'Data Visualization', 'Predictive Analytics', 'Custom Dashboards'] },
-    { id: 'marketing', name: 'Marketing Research', icon: 'FaSearch', description: 'In-depth market research and competitor analysis.', features: ['Market Research', 'Competitor Analysis', 'Customer Insights', 'Brand Strategy'] },
-    { id: 'digital', name: 'Digital Marketing', icon: 'FaBullhorn', description: 'Comprehensive digital marketing strategies to grow your reach.', features: ['SEO Optimization', 'Social Media', 'Content Marketing', 'PPC Campaigns'] },
-    { id: 'ai', name: 'AI & Automation', icon: 'FaRobot', description: 'Intelligent automation solutions powered by artificial intelligence.', features: ['Machine Learning', 'Process Automation', 'Chatbots', 'Predictive Models'] },
+    { id: 'software', name: 'Software Development', icon: 'FaCode', description: 'Custom software solutions built to meet your specific business needs.', features: ['Web Applications', 'Desktop Software', 'API Development', 'System Integration'], link: '/services' },
+    { id: 'mobile', name: 'Mobile Development', icon: 'FaMobileAlt', description: 'Native and cross-platform mobile applications for iOS and Android.', features: ['iOS Development', 'Android Development', 'React Native', 'Flutter Apps'], link: '/services' },
+    { id: 'academic', name: 'Academic Writing', icon: 'FaGraduationCap', description: 'Professional academic writing support for Bachelor, Master, and PhD level research.', features: ['Research Proposals', 'Literature Reviews', 'Data Analysis', 'Thesis Compilation'], link: '/services/academic-writing' },
+    { id: 'hardware', name: 'Hardware & IT', icon: 'FaServer', description: 'Complete IT infrastructure solutions and hardware procurement.', features: ['Network Setup', 'Server Management', 'Hardware Procurement', 'IT Support'], link: '/services' },
+    { id: 'cloud', name: 'Cloud Services', icon: 'FaCloud', description: 'Scalable cloud solutions for modern businesses.', features: ['Cloud Migration', 'AWS/Azure Setup', 'Cloud Architecture', 'DevOps'], link: '/services' },
+    { id: 'design', name: 'Graphic Design', icon: 'FaPalette', description: 'Professional design services to elevate your brand.', features: ['Logo Design', 'Brand Identity', 'Marketing Materials', 'UI/UX Design'], link: '/services' },
+    { id: 'analytics', name: 'Advanced Analytics', icon: 'FaChartLine', description: 'Data-driven insights to make smarter business decisions.', features: ['Business Intelligence', 'Data Visualization', 'Predictive Analytics', 'Custom Dashboards'], link: '/services' },
+    { id: 'marketing', name: 'Marketing Research', icon: 'FaSearch', description: 'In-depth market research and competitor analysis.', features: ['Market Research', 'Competitor Analysis', 'Customer Insights', 'Brand Strategy'], link: '/services' },
+    { id: 'digital', name: 'Digital Marketing', icon: 'FaBullhorn', description: 'Comprehensive digital marketing strategies to grow your reach.', features: ['SEO Optimization', 'Social Media', 'Content Marketing', 'PPC Campaigns'], link: '/services' },
+    { id: 'ai', name: 'AI & Automation', icon: 'FaRobot', description: 'Intelligent automation solutions powered by artificial intelligence.', features: ['Machine Learning', 'Process Automation', 'Chatbots', 'Predictive Models'], link: '/services' },
   ]
 
   return (
@@ -63,19 +65,33 @@ export default function ServicesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {services.map((service) => (
-              <div 
+              <div
                 key={service.id}
                 className={`bento-card cursor-pointer transition-all duration-300 ${activeService === service.id ? 'ring-2 ring-primary' : ''}`}
-                onClick={() => setActiveService(activeService === service.id ? null : service.id)}
               >
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary">
-                  {iconComponents[service.icon]}
-                </div>
-                <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
-                <p className="text-gray-600 mb-4">{service.description}</p>
-                
+                {service.link ? (
+                  <Link href={service.link} className="block">
+                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary">
+                      {iconComponents[service.icon]}
+                    </div>
+                    <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
+                    <p className="text-gray-600 mb-4">{service.description}</p>
+                  </Link>
+                ) : (
+                  <div onClick={() => setActiveService(activeService === service.id ? null : service.id)}>
+                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary">
+                      {iconComponents[service.icon]}
+                    </div>
+                    <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
+                    <p className="text-gray-600 mb-4">{service.description}</p>
+                  </div>
+                )}
+
                 {/* Expandable Features */}
-                <div className={`overflow-hidden transition-all duration-300 ${activeService === service.id ? 'max-h-48 mt-4' : 'max-h-0'}`}>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${activeService === service.id ? 'max-h-48 mt-4' : 'max-h-0'}`}
+                  onClick={() => setActiveService(activeService === service.id ? null : service.id)}
+                >
                   <div className="pt-4 border-t border-gray-100">
                     <p className="text-sm font-medium text-text mb-3">What we offer:</p>
                     <ul className="space-y-2">
