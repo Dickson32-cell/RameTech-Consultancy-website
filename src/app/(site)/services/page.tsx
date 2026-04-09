@@ -192,7 +192,7 @@ export default function ServicesPage() {
                     setActiveService(newActive)
                   }}>
                     <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary">
-                      {iconComponents[service.icon]}
+                      {iconComponents[service.icon || 'FaCode']}
                     </div>
                     <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
                     <p className="text-gray-600 mb-4">{service.description}</p>
@@ -203,7 +203,7 @@ export default function ServicesPage() {
                 ) : service.link ? (
                   <Link href={service.link} className="block">
                     <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary">
-                      {iconComponents[service.icon]}
+                      {iconComponents[service.icon || 'FaCode']}
                     </div>
                     <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
                     <p className="text-gray-600 mb-4">{service.description}</p>
