@@ -13,6 +13,7 @@ interface Service {
   features: string[]
   order: number
   isActive: boolean
+  link?: string | null
 }
 
 interface AcademicWritingItem {
