@@ -143,6 +143,26 @@ export async function createDepartmentsStructure() {
     })
     console.log('✓ Creative Services department created')
 
+    // Create Paper Craft Sub-Department
+    console.log('Creating Paper Craft sub-department...')
+    const paperCraftSubDept = await prisma.subDepartment.upsert({
+      where: { slug: 'paper-craft' },
+      update: {
+        name: 'Paper Craft',
+        description: 'Custom paper bags, gift bags, shopping bags, and paper craft solutions for businesses and events.',
+        order: 0
+      },
+      create: {
+        departmentId: creativeDept.id,
+        name: 'Paper Craft',
+        slug: 'paper-craft',
+        description: 'Custom paper bags, gift bags, shopping bags, and paper craft solutions for businesses and events.',
+        order: 0,
+        isActive: true
+      }
+    })
+    console.log('  ✓ Paper Craft sub-department created')
+
     // Department 4: Data & Research Services
     const researchDept = await prisma.department.upsert({
       where: { slug: 'data-research-services' },
@@ -293,6 +313,61 @@ export async function createDepartmentsStructure() {
     })
     console.log(`  ✓ ${creativeService.title}`)
 
+    // Paper Craft Services
+    const paperCraftServices = [
+      {
+        title: 'Custom Paper Bags',
+        slug: 'custom-paper-bags',
+        description: 'High-quality custom printed paper bags for retail, events, and corporate branding.',
+        features: ['Custom Sizes', 'Full Color Printing', 'Logo Branding', 'Eco-Friendly Materials', 'Bulk Orders'],
+        order: 0
+      },
+      {
+        title: 'Gift Bags',
+        slug: 'gift-bags',
+        description: 'Beautiful gift bags for all occasions - weddings, birthdays, corporate events, and special celebrations.',
+        features: ['Wedding Gift Bags', 'Birthday Bags', 'Corporate Gift Bags', 'Luxury Finishes', 'Custom Designs'],
+        order: 1
+      },
+      {
+        title: 'Shopping Bags',
+        slug: 'shopping-bags',
+        description: 'Durable shopping bags with handles for retail stores, boutiques, and shopping centers.',
+        features: ['Reinforced Handles', 'Various Sizes', 'Brand Customization', 'Bulk Discounts', 'Fast Turnaround'],
+        order: 2
+      },
+      {
+        title: 'Promotional Bags',
+        slug: 'promotional-bags',
+        description: 'Eye-catching promotional paper bags for marketing campaigns, trade shows, and brand awareness.',
+        features: ['Event Bags', 'Trade Show Bags', 'Marketing Campaigns', 'Full Branding', 'Custom Messaging'],
+        order: 3
+      }
+    ]
+
+    for (const service of paperCraftServices) {
+      await prisma.departmentService.upsert({
+        where: { slug: service.slug },
+        update: {
+          title: service.title,
+          description: service.description,
+          features: service.features,
+          order: service.order
+        },
+        create: {
+          departmentId: creativeDept.id,
+          subDepartmentId: paperCraftSubDept.id,
+          title: service.title,
+          slug: service.slug,
+          description: service.description,
+          features: service.features,
+          order: service.order,
+          isActive: true
+        }
+      })
+      console.log(`    ✓ ${service.title}`)
+    }
+
     // Data & Research Services
     const researchServices = [
       {
@@ -354,20 +429,92 @@ export async function createDepartmentsStructure() {
       console.log(`  ✓ ${service.title}`)
     }
 
+    // Step 4: Create Sample Department Projects
+    console.log('\nStep 4: Creating sample department projects...')
+
+    // Sample project for Technology Solutions
+    await prisma.departmentProject.upsert({
+      where: { slug: 'tech-ecommerce-platform' },
+      update: {},
+      create: {
+        departmentId: techDept.id,
+        title: 'E-Commerce Platform',
+        slug: 'tech-ecommerce-platform',
+        description: 'Full-featured e-commerce platform with payment integration, inventory management, and customer analytics.',
+        technologies: ['Next.js', 'Node.js', 'PostgreSQL', 'Stripe'],
+        clientName: 'Sample Client',
+        order: 0,
+        isActive: true
+      }
+    })
+    console.log('  ✓ Technology Solutions sample project')
+
+    // Sample project for IT Solutions
+    await prisma.departmentProject.upsert({
+      where: { slug: 'it-network-infrastructure' },
+      update: {},
+      create: {
+        departmentId: itDept.id,
+        title: 'Network Infrastructure Setup',
+        slug: 'it-network-infrastructure',
+        description: 'Complete office network infrastructure with servers, workstations, and security systems.',
+        clientName: 'Corporate Office',
+        order: 0,
+        isActive: true
+      }
+    })
+    console.log('  ✓ IT Solutions sample project')
+
+    // Sample project for Creative Services - Paper Craft
+    await prisma.departmentProject.upsert({
+      where: { slug: 'custom-branded-shopping-bags' },
+      update: {},
+      create: {
+        departmentId: creativeDept.id,
+        subDepartmentId: paperCraftSubDept.id,
+        title: 'Custom Branded Shopping Bags',
+        slug: 'custom-branded-shopping-bags',
+        description: 'Premium custom paper shopping bags with full-color logo printing for luxury retail store.',
+        clientName: 'Luxury Boutique',
+        order: 0,
+        isActive: true
+      }
+    })
+    console.log('  ✓ Paper Craft sample project')
+
+    // Sample project for Data & Research
+    await prisma.departmentProject.upsert({
+      where: { slug: 'market-research-study' },
+      update: {},
+      create: {
+        departmentId: researchDept.id,
+        title: 'Market Research Study',
+        slug: 'market-research-study',
+        description: 'Comprehensive market analysis and competitor research for product launch strategy.',
+        clientName: 'Tech Startup',
+        order: 0,
+        isActive: true
+      }
+    })
+    console.log('  ✓ Data & Research sample project')
+
     console.log('\n=== SUMMARY ===')
     console.log('✅ 4 Departments created')
+    console.log('✅ 1 Sub-Department created (Paper Craft)')
     console.log('✅ 4 Department Heads added to team')
-    console.log('✅ 13 Department Services created')
+    console.log('✅ 17 Department Services created')
+    console.log('✅ 4 Sample Projects created')
     console.log('\nDepartment Structure:')
     console.log(`1. Technology Solutions (${techServices.length} services) - Head: CEO`)
     console.log(`2. IT Solutions (1 service) - Head: Hardware Technician`)
-    console.log(`3. Creative Services (1 service) - Head: Creative Director`)
+    console.log(`3. Creative Services (1 service + Paper Craft sub-dept with ${paperCraftServices.length} services) - Head: Creative Director`)
     console.log(`4. Data & Research Services (${researchServices.length} services) - Head: Lead Researcher`)
     console.log('\n✅ All departments can now be edited in admin panel!')
     console.log('\nNext steps:')
     console.log('1. Go to /admin/team to add photos and update department head profiles')
     console.log('2. Go to /admin/departments to edit department details')
-    console.log('3. Visit main website to see departments displayed')
+    console.log('3. Go to /admin/departments/[id] to add projects with images/videos')
+    console.log('4. Visit main website to see departments and projects displayed')
 
   } catch (error) {
     console.error('Error creating departments:', error)
