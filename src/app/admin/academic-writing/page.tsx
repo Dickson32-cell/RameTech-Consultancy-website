@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { FaPlus, FaEdit, FaTrash, FaCheck, FaTimes, FaChevronDown, FaChevronUp, FaFileWord, FaDownload, FaUpload } from 'react-icons/fa'
 
 interface ServiceItem {
   id: string
@@ -24,12 +24,27 @@ interface Phase {
   serviceItems: ServiceItem[]
 }
 
+interface Document {
+  id: string
+  fileName: string
+  fileUrl: string
+  fileSize: number | null
+  description: string | null
+  createdAt: string
+  isActive: boolean
+}
+
 export default function AcademicWritingPage() {
   const router = useRouter()
   const [phases, setPhases] = useState<Phase[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [expandedPhases, setExpandedPhases] = useState<Set<string>>(new Set())
+
+  // Document management state
+  const [documents, setDocuments] = useState<Document[]>([])
+  const [uploadingDocument, setUploadingDocument] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   // Phase form state
   const [showPhaseForm, setShowPhaseForm] = useState(false)
@@ -63,6 +78,7 @@ export default function AcademicWritingPage() {
     }
 
     fetchPhases()
+    fetchDocuments()
   }, [router])
 
   const fetchPhases = async () => {
@@ -272,6 +288,110 @@ export default function AcademicWritingPage() {
     }
   }
 
+  // Document Management Functions
+  const fetchDocuments = async () => {
+    try {
+      const token = localStorage.getItem('admin_token')
+      const response = await fetch('/api/v1/admin/academic-writing/document', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setDocuments(result.data)
+      }
+    } catch (err) {
+      console.error('Error fetching documents:', err)
+    }
+  }
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Check if file is a Word document
+      const allowedTypes = [
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+        'application/msword' // .doc
+      ]
+
+      if (!allowedTypes.includes(file.type)) {
+        alert('Please upload a Word document (.doc or .docx)')
+        return
+      }
+
+      setSelectedFile(file)
+    }
+  }
+
+  const uploadDocument = async () => {
+    if (!selectedFile) {
+      alert('Please select a file first')
+      return
+    }
+
+    setUploadingDocument(true)
+
+    try {
+      const token = localStorage.getItem('admin_token')
+      const formData = new FormData()
+      formData.append('file', selectedFile)
+
+      const response = await fetch('/api/v1/admin/academic-writing/document', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        alert('Document uploaded successfully!')
+        setSelectedFile(null)
+        fetchDocuments()
+      } else {
+        alert(result.error || 'Failed to upload document')
+      }
+    } catch (err) {
+      alert('An error occurred while uploading document')
+      console.error(err)
+    } finally {
+      setUploadingDocument(false)
+    }
+  }
+
+  const deleteDocument = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this document?')) {
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('admin_token')
+      const response = await fetch(`/api/v1/admin/academic-writing/document/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        alert('Document deleted successfully')
+        fetchDocuments()
+      } else {
+        alert(result.error || 'Failed to delete document')
+      }
+    } catch (err) {
+      alert('An error occurred while deleting document')
+      console.error(err)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -297,6 +417,103 @@ export default function AcademicWritingPage() {
           {error}
         </div>
       )}
+
+      {/* Document Upload Section */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <FaFileWord className="text-blue-600" />
+          Price List Document
+        </h2>
+        <p className="text-gray-600 text-sm mb-4">
+          Upload a Word document (.doc or .docx) containing the Academic Writing service price list.
+          Only one document can be active at a time.
+        </p>
+
+        {/* Upload Form */}
+        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+            <input
+              type="file"
+              accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              onChange={handleFileSelect}
+              className="flex-1 text-sm"
+              disabled={uploadingDocument}
+            />
+            <button
+              onClick={uploadDocument}
+              disabled={!selectedFile || uploadingDocument}
+              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {uploadingDocument ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <FaUpload /> Upload
+                </>
+              )}
+            </button>
+          </div>
+          {selectedFile && (
+            <p className="text-sm text-gray-600 mt-2">
+              Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
+            </p>
+          )}
+        </div>
+
+        {/* Current Documents */}
+        <div>
+          <h3 className="text-md font-semibold text-gray-700 mb-3">Current Documents</h3>
+          {documents.length === 0 ? (
+            <p className="text-gray-500 text-sm italic">No documents uploaded yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {documents.map((doc) => (
+                <div
+                  key={doc.id}
+                  className={`flex items-center justify-between p-3 rounded-lg border ${
+                    doc.isActive ? 'border-green-300 bg-green-50' : 'border-gray-300 bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 flex-1">
+                    <FaFileWord className="text-blue-600 text-2xl flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-800 truncate">{doc.fileName}</p>
+                      <div className="flex flex-wrap gap-2 text-xs text-gray-500 mt-1">
+                        <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
+                        {doc.fileSize && <span>{(doc.fileSize / 1024).toFixed(2)} KB</span>}
+                        {doc.isActive && (
+                          <span className="text-green-600 font-semibold">● ACTIVE</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 ml-4">
+                    <a
+                      href={doc.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 text-blue-600 hover:bg-blue-100 rounded transition"
+                      title="Download"
+                    >
+                      <FaDownload />
+                    </a>
+                    <button
+                      onClick={() => deleteDocument(doc.id)}
+                      className="p-2 text-red-600 hover:bg-red-100 rounded transition"
+                      title="Delete"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Phases List */}
       <div className="space-y-4">

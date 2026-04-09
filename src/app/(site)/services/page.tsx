@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { FaCode, FaLaptopCode, FaPalette, FaServer, FaMobileAlt, FaDatabase, FaCloud, FaShieldAlt, FaChartLine, FaSearch, FaBullhorn, FaRobot, FaChartBar, FaCheck, FaGraduationCap } from 'react-icons/fa'
+import { FaCode, FaLaptopCode, FaPalette, FaServer, FaMobileAlt, FaDatabase, FaCloud, FaShieldAlt, FaChartLine, FaSearch, FaBullhorn, FaRobot, FaChartBar, FaCheck, FaGraduationCap, FaFileWord, FaDownload } from 'react-icons/fa'
 
 interface AcademicWritingItem {
   id: string
@@ -17,6 +17,14 @@ interface AcademicWritingPhase {
   id: string
   name: string
   serviceItems: AcademicWritingItem[]
+}
+
+interface AcademicWritingDocument {
+  id: string
+  fileName: string
+  fileUrl: string
+  fileSize: number | null
+  isActive: boolean
 }
 
 // Icon mapping
@@ -40,6 +48,7 @@ const iconComponents: Record<string, React.ReactNode> = {
 export default function ServicesPage() {
   const [activeService, setActiveService] = useState<string | null>(null)
   const [academicWritingPhases, setAcademicWritingPhases] = useState<AcademicWritingPhase[]>([])
+  const [academicWritingDocument, setAcademicWritingDocument] = useState<AcademicWritingDocument | null>(null)
   const [loadingAcademic, setLoadingAcademic] = useState(false)
 
   useEffect(() => {
@@ -51,10 +60,19 @@ export default function ServicesPage() {
   const fetchAcademicWriting = async () => {
     setLoadingAcademic(true)
     try {
-      const response = await fetch('/api/v1/academic-writing')
-      const result = await response.json()
-      if (result.success) {
-        setAcademicWritingPhases(result.data)
+      // First check if there's an uploaded document
+      const docResponse = await fetch('/api/v1/academic-writing/document')
+      const docResult = await docResponse.json()
+
+      if (docResult.success && docResult.data) {
+        setAcademicWritingDocument(docResult.data)
+      } else {
+        // Fallback to database phases if no document
+        const phasesResponse = await fetch('/api/v1/academic-writing')
+        const phasesResult = await phasesResponse.json()
+        if (phasesResult.success) {
+          setAcademicWritingPhases(phasesResult.data)
+        }
       }
     } catch (error) {
       console.error('Error fetching academic writing:', error)
@@ -139,7 +157,7 @@ export default function ServicesPage() {
 
                 {/* Expandable Features */}
                 {service.id === 'academic' ? (
-                  // Special display for Academic Writing with pricing
+                  // Special display for Academic Writing
                   <div
                     className={`overflow-hidden transition-all duration-300 ${activeService === service.id ? 'max-h-[2000px] mt-4' : 'max-h-0'}`}
                   >
@@ -148,7 +166,40 @@ export default function ServicesPage() {
                         <div className="flex justify-center py-4">
                           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                         </div>
-                      ) : (
+                      ) : academicWritingDocument ? (
+                        // Show document download if available
+                        <>
+                          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
+                            <div className="flex items-center gap-3 mb-3">
+                              <FaFileWord className="text-blue-600 text-3xl" />
+                              <div className="flex-1">
+                                <h4 className="text-sm font-semibold text-gray-800">Price List Document</h4>
+                                <p className="text-xs text-gray-600">{academicWritingDocument.fileName}</p>
+                                {academicWritingDocument.fileSize && (
+                                  <p className="text-xs text-gray-500">
+                                    {(academicWritingDocument.fileSize / 1024).toFixed(2)} KB
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <a
+                              href={academicWritingDocument.fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                            >
+                              <FaDownload /> Download Price List
+                            </a>
+                          </div>
+                          <Link
+                            href="/services/academic-writing"
+                            className="mt-4 block w-full text-center bg-primary/10 text-primary py-2 rounded-lg text-xs font-medium hover:bg-primary/20 transition"
+                          >
+                            View Service Details
+                          </Link>
+                        </>
+                      ) : academicWritingPhases.length > 0 ? (
+                        // Fallback to showing phases if no document
                         <>
                           <div className="flex items-center justify-between mb-4">
                             <p className="text-sm font-medium text-text">Service Phases & Pricing:</p>
@@ -198,6 +249,8 @@ export default function ServicesPage() {
                             View Complete Pricing Table
                           </Link>
                         </>
+                      ) : (
+                        <p className="text-sm text-gray-500 text-center py-4">No pricing information available</p>
                       )}
                     </div>
                   </div>

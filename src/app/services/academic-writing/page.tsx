@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { FaArrowLeft, FaGraduationCap, FaCheckCircle } from 'react-icons/fa'
+import { FaArrowLeft, FaGraduationCap, FaCheckCircle, FaFileWord, FaDownload } from 'react-icons/fa'
 
 interface ServiceItem {
   id: string
@@ -22,21 +22,39 @@ interface Phase {
   serviceItems: ServiceItem[]
 }
 
+interface AcademicWritingDocument {
+  id: string
+  fileName: string
+  fileUrl: string
+  fileSize: number | null
+  isActive: boolean
+}
+
 export default function AcademicWritingPage() {
   const [phases, setPhases] = useState<Phase[]>([])
+  const [document, setDocument] = useState<AcademicWritingDocument | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchPhases()
+    fetchData()
   }, [])
 
-  const fetchPhases = async () => {
+  const fetchData = async () => {
     try {
-      const response = await fetch('/api/v1/academic-writing')
-      const result = await response.json()
+      // First check for uploaded document
+      const docResponse = await fetch('/api/v1/academic-writing/document')
+      const docResult = await docResponse.json()
 
-      if (result.success) {
-        setPhases(result.data)
+      if (docResult.success && docResult.data) {
+        setDocument(docResult.data)
+      }
+
+      // Also fetch phases for fallback display
+      const phasesResponse = await fetch('/api/v1/academic-writing')
+      const phasesResult = await phasesResponse.json()
+
+      if (phasesResult.success) {
+        setPhases(phasesResult.data)
       }
     } catch (error) {
       console.error('Error fetching academic writing services:', error)
@@ -105,12 +123,41 @@ export default function AcademicWritingPage() {
           </div>
         </div>
 
-        {/* Phases and Services */}
-        {phases.length === 0 ? (
+        {/* Document Download (Priority Display) */}
+        {document ? (
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-8 mb-8">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
+                <FaFileWord className="text-white text-4xl" />
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-2xl font-bold text-white mb-2">Download Our Complete Price List</h3>
+                <p className="text-blue-100 mb-1">{document.fileName}</p>
+                {document.fileSize && (
+                  <p className="text-blue-200 text-sm">
+                    File size: {(document.fileSize / 1024).toFixed(2)} KB
+                  </p>
+                )}
+              </div>
+              <a
+                href={document.fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 bg-white text-blue-600 px-8 py-4 rounded-lg hover:bg-blue-50 transition font-semibold shadow-lg"
+              >
+                <FaDownload className="text-xl" />
+                <span>Download Document</span>
+              </a>
+            </div>
+          </div>
+        ) : null}
+
+        {/* Phases and Services (Fallback or Additional Info) */}
+        {!document && phases.length === 0 ? (
           <div className="bg-white rounded-xl shadow-lg p-12 text-center">
             <p className="text-gray-600 text-lg">No services available at the moment. Please check back later.</p>
           </div>
-        ) : (
+        ) : !document && phases.length > 0 ? (
           <div className="space-y-8">
             {phases.map((phase, phaseIndex) => (
               <div key={phase.id} className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -179,7 +226,7 @@ export default function AcademicWritingPage() {
               </div>
             ))}
           </div>
-        )}
+        ) : null}
 
         {/* CTA Section */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-8 mt-12 text-center text-white">

@@ -446,3 +446,18 @@ model AcademicWritingServiceItem {
   @@index([order])
   @@index([isActive])
 }
+
+model AcademicWritingDocument {
+  id          String   @id @default(uuid())
+  fileName    String   // Original file name
+  fileUrl     String   // Cloudinary URL
+  fileSize    Int?     // File size in bytes
+  uploadedBy  String?  // Admin who uploaded
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([isActive])
+  @@index([createdAt])
+}
