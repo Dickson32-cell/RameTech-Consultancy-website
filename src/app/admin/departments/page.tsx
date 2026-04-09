@@ -27,6 +27,7 @@ export default function DepartmentsPage() {
   const [departments, setDepartments] = useState<Department[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [settingUp, setSettingUp] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token')
@@ -67,6 +68,40 @@ export default function DepartmentsPage() {
       console.error('Fetch departments error:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const runQuickSetup = async () => {
+    if (!confirm('This will create the default department structure (4 departments, 4 team heads, 17 services). Continue?')) {
+      return
+    }
+
+    setSettingUp(true)
+    try {
+      const token = localStorage.getItem('admin_token')
+      const response = await fetch('/api/v1/admin/setup-departments', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      const result = await response.json()
+
+      console.log('Setup result:', result)
+
+      if (result.success) {
+        alert(`Setup Successful!\n\n${result.log}\n\nRefreshing page...`)
+        fetchDepartments()
+        window.location.reload()
+      } else {
+        alert(`Setup Failed!\n\nError: ${result.error}\n\nLog:\n${result.log}`)
+      }
+    } catch (err: any) {
+      alert(`Setup Error: ${err.message}`)
+      console.error('Setup error:', err)
+    } finally {
+      setSettingUp(false)
     }
   }
 
@@ -138,13 +173,34 @@ export default function DepartmentsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Departments</h1>
           <p className="text-gray-600 mt-1">Manage your departments and their content</p>
         </div>
-        <Link
-          href="/admin/departments/new"
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-        >
-          <FaPlus className="mr-2" />
-          Add Department
-        </Link>
+        <div className="flex gap-2">
+          {departments.length === 0 && !error && (
+            <button
+              onClick={runQuickSetup}
+              disabled={settingUp}
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:bg-gray-400"
+            >
+              {settingUp ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Setting Up...
+                </>
+              ) : (
+                <>
+                  <FaCheck className="mr-2" />
+                  Quick Setup
+                </>
+              )}
+            </button>
+          )}
+          <Link
+            href="/admin/departments/new"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            <FaPlus className="mr-2" />
+            Add Department
+          </Link>
+        </div>
       </div>
 
       {/* Error Display */}
