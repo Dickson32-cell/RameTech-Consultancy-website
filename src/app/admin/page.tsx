@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FaBriefcase, FaUsers, FaProjectDiagram, FaArrowRight } from 'react-icons/fa'
+import { FaBriefcase, FaUsers, FaProjectDiagram, FaArrowRight, FaCheckCircle } from 'react-icons/fa'
 
 interface Stats {
   services: number
@@ -16,6 +16,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({ services: 0, team: 0, portfolio: 0 })
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [runningDiagnostics, setRunningDiagnostics] = useState(false)
 
   useEffect(() => {
     // Check auth
@@ -56,6 +57,44 @@ export default function AdminDashboard() {
     fetchStats()
   }, [router])
 
+  const runSystemDiagnostics = async () => {
+    setRunningDiagnostics(true)
+    try {
+      const token = localStorage.getItem('admin_token')
+      const response = await fetch('/api/v1/admin/diagnostics', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      const result = await response.json()
+
+      console.log('System Diagnostics:', result)
+
+      // Format message
+      const tableStatus = Object.entries(result.diagnostics?.tables || {})
+        .map(([name, info]: [string, any]) => `${name}: ${info.status} (${info.count || 0} records)${info.error ? ` - ${info.error}` : ''}`)
+        .join('\n')
+
+      const message = `
+SYSTEM DIAGNOSTICS
+==================
+
+${result.diagnostics?.overall || 'Unknown'}
+
+DATABASE TABLES:
+${tableStatus}
+
+${result.diagnostics?.recommendations?.length > 0 ? `\nRECOMMENDATIONS:\n${result.diagnostics.recommendations.map((r: string, i: number) => `${i + 1}. ${r}`).join('\n')}` : ''}
+
+${result.diagnostics?.errors?.length > 0 ? `\nERRORS:\n${result.diagnostics.errors.join('\n')}` : ''}
+      `.trim()
+
+      alert(message)
+    } catch (error: any) {
+      alert(`Diagnostics failed: ${error.message}`)
+    } finally {
+      setRunningDiagnostics(false)
+    }
+  }
+
   if (!isAuthenticated) {
     return null
   }
@@ -86,9 +125,19 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Welcome to RAME Tech Admin Panel</p>
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-1">Welcome to RAME Tech Admin Panel</p>
+        </div>
+        <button
+          onClick={runSystemDiagnostics}
+          disabled={runningDiagnostics}
+          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 text-sm"
+        >
+          <FaCheckCircle />
+          {runningDiagnostics ? 'Running...' : 'System Check'}
+        </button>
       </div>
 
       {isLoading ? (
