@@ -1,8 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FaCode, FaLaptopCode, FaPalette, FaServer, FaMobileAlt, FaDatabase, FaCloud, FaShieldAlt, FaChartLine, FaSearch, FaBullhorn, FaRobot, FaChartBar, FaCheck, FaGraduationCap } from 'react-icons/fa'
+
+interface AcademicWritingItem {
+  id: string
+  name: string
+  description: string
+  bachelorPrice: number
+  masterPrice: number
+  phdPrice: number
+}
+
+interface AcademicWritingPhase {
+  id: string
+  name: string
+  serviceItems: AcademicWritingItem[]
+}
 
 // Icon mapping
 const iconComponents: Record<string, React.ReactNode> = {
@@ -24,11 +39,34 @@ const iconComponents: Record<string, React.ReactNode> = {
 
 export default function ServicesPage() {
   const [activeService, setActiveService] = useState<string | null>(null)
+  const [academicWritingPhases, setAcademicWritingPhases] = useState<AcademicWritingPhase[]>([])
+  const [loadingAcademic, setLoadingAcademic] = useState(false)
+
+  useEffect(() => {
+    if (activeService === 'academic') {
+      fetchAcademicWriting()
+    }
+  }, [activeService])
+
+  const fetchAcademicWriting = async () => {
+    setLoadingAcademic(true)
+    try {
+      const response = await fetch('/api/v1/academic-writing')
+      const result = await response.json()
+      if (result.success) {
+        setAcademicWritingPhases(result.data)
+      }
+    } catch (error) {
+      console.error('Error fetching academic writing:', error)
+    } finally {
+      setLoadingAcademic(false)
+    }
+  }
 
   const services = [
     { id: 'software', name: 'Software Development', icon: 'FaCode', description: 'Custom software solutions built to meet your specific business needs.', features: ['Web Applications', 'Desktop Software', 'API Development', 'System Integration'], link: '/services' },
     { id: 'mobile', name: 'Mobile Development', icon: 'FaMobileAlt', description: 'Native and cross-platform mobile applications for iOS and Android.', features: ['iOS Development', 'Android Development', 'React Native', 'Flutter Apps'], link: '/services' },
-    { id: 'academic', name: 'Academic Writing', icon: 'FaGraduationCap', description: 'Professional academic writing support for Bachelor, Master, and PhD level research.', features: ['Research Proposals', 'Literature Reviews', 'Data Analysis', 'Thesis Compilation'], link: '/services/academic-writing' },
+    { id: 'academic', name: 'Academic Writing', icon: 'FaGraduationCap', description: 'Professional academic writing support for Bachelor, Master, and PhD level research.', features: [], link: '/services/academic-writing' },
     { id: 'hardware', name: 'Hardware & IT', icon: 'FaServer', description: 'Complete IT infrastructure solutions and hardware procurement.', features: ['Network Setup', 'Server Management', 'Hardware Procurement', 'IT Support'], link: '/services' },
     { id: 'cloud', name: 'Cloud Services', icon: 'FaCloud', description: 'Scalable cloud solutions for modern businesses.', features: ['Cloud Migration', 'AWS/Azure Setup', 'Cloud Architecture', 'DevOps'], link: '/services' },
     { id: 'design', name: 'Graphic Design', icon: 'FaPalette', description: 'Professional design services to elevate your brand.', features: ['Logo Design', 'Brand Identity', 'Marketing Materials', 'UI/UX Design'], link: '/services' },
@@ -69,7 +107,19 @@ export default function ServicesPage() {
                 key={service.id}
                 className={`bento-card cursor-pointer transition-all duration-300 ${activeService === service.id ? 'ring-2 ring-primary' : ''}`}
               >
-                {service.link ? (
+                {service.id === 'academic' ? (
+                  // Academic Writing - expandable
+                  <div onClick={() => setActiveService(activeService === service.id ? null : service.id)}>
+                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary">
+                      {iconComponents[service.icon]}
+                    </div>
+                    <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
+                    <p className="text-gray-600 mb-4">{service.description}</p>
+                    <p className="text-xs text-primary font-medium">
+                      {activeService === service.id ? '▼ Click to collapse' : '▶ Click to view pricing'}
+                    </p>
+                  </div>
+                ) : service.link ? (
                   <Link href={service.link} className="block">
                     <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary">
                       {iconComponents[service.icon]}
@@ -88,22 +138,88 @@ export default function ServicesPage() {
                 )}
 
                 {/* Expandable Features */}
-                <div
-                  className={`overflow-hidden transition-all duration-300 ${activeService === service.id ? 'max-h-48 mt-4' : 'max-h-0'}`}
-                  onClick={() => setActiveService(activeService === service.id ? null : service.id)}
-                >
-                  <div className="pt-4 border-t border-gray-100">
-                    <p className="text-sm font-medium text-text mb-3">What we offer:</p>
-                    <ul className="space-y-2">
-                      {service.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-2 text-sm text-gray-600">
-                          <FaCheck className="w-4 h-4 text-primary flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
+                {service.id === 'academic' ? (
+                  // Special display for Academic Writing with pricing
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${activeService === service.id ? 'max-h-[2000px] mt-4' : 'max-h-0'}`}
+                  >
+                    <div className="pt-4 border-t border-gray-100">
+                      {loadingAcademic ? (
+                        <div className="flex justify-center py-4">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-between mb-4">
+                            <p className="text-sm font-medium text-text">Service Phases & Pricing:</p>
+                            <Link
+                              href="/services/academic-writing"
+                              className="text-xs text-primary hover:text-primary/80 underline"
+                            >
+                              View Full Details
+                            </Link>
+                          </div>
+
+                          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                            {academicWritingPhases.map((phase) => (
+                              <div key={phase.id} className="bg-gray-50 rounded-lg p-3">
+                                <h4 className="text-xs font-semibold text-primary mb-2">{phase.name}</h4>
+                                <div className="space-y-2">
+                                  {phase.serviceItems.slice(0, 3).map((item) => (
+                                    <div key={item.id} className="text-xs">
+                                      <p className="font-medium text-gray-800 mb-1">{item.name}</p>
+                                      <div className="flex gap-2 text-[10px]">
+                                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
+                                          B: GHS {item.bachelorPrice}
+                                        </span>
+                                        <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded">
+                                          M: GHS {item.masterPrice}
+                                        </span>
+                                        <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded">
+                                          PhD: GHS {item.phdPrice}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                  {phase.serviceItems.length > 3 && (
+                                    <p className="text-[10px] text-gray-500 italic">
+                                      +{phase.serviceItems.length - 3} more items...
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          <Link
+                            href="/services/academic-writing"
+                            className="mt-4 block w-full text-center bg-primary text-white py-2 rounded-lg text-xs font-medium hover:bg-primary/90 transition"
+                          >
+                            View Complete Pricing Table
+                          </Link>
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  // Regular features display for other services
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${activeService === service.id ? 'max-h-48 mt-4' : 'max-h-0'}`}
+                    onClick={() => setActiveService(activeService === service.id ? null : service.id)}
+                  >
+                    <div className="pt-4 border-t border-gray-100">
+                      <p className="text-sm font-medium text-text mb-3">What we offer:</p>
+                      <ul className="space-y-2">
+                        {service.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-center gap-2 text-sm text-gray-600">
+                            <FaCheck className="w-4 h-4 text-primary flex-shrink-0" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
