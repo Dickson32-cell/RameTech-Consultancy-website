@@ -6,6 +6,7 @@ import { successResponse, errorResponse } from '@/lib/api-response'
 // GET /api/v1/admin/departments - Get all departments
 export async function GET(request: NextRequest) {
   try {
+    console.log('Fetching departments...')
 
     const departments = await prisma.department.findMany({
       orderBy: { order: 'asc' },
@@ -36,10 +37,31 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    return NextResponse.json(successResponse(departments))
-  } catch (error) {
+    console.log(`Found ${departments.length} departments`)
+
+    const response = NextResponse.json(successResponse(departments))
+
+    // Add no-cache headers
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+
+    return response
+  } catch (error: any) {
     console.error('Error fetching departments:', error)
-    return NextResponse.json(errorResponse('Failed to fetch departments'), { status: 500 })
+
+    // Check if it's a table not found error
+    if (error.message?.includes('does not exist')) {
+      return NextResponse.json(
+        errorResponse('Database tables not created yet. Please run: npm run render:setup in Render shell'),
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(
+      errorResponse(`Failed to fetch departments: ${error.message || 'Unknown error'}`),
+      { status: 500 }
+    )
   }
 }
 

@@ -29,13 +29,21 @@ export default function DepartmentsPage() {
 
   const fetchDepartments = async () => {
     try {
-      const response = await fetch('/api/v1/departments')
+      console.log('Fetching departments for main page...')
+      const response = await fetch(`/api/v1/departments?t=${Date.now()}`, {
+        cache: 'no-store'
+      })
       const result = await response.json()
 
+      console.log('Departments response:', result)
+
       if (result.success) {
-        setDepartments(result.data)
+        setDepartments(result.data || [])
+        console.log('Departments loaded:', result.data?.length || 0)
+      } else {
+        console.error('Departments API error:', result.error)
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching departments:', err)
     } finally {
       setLoading(false)
@@ -64,8 +72,18 @@ export default function DepartmentsPage() {
         </div>
 
         {/* Departments Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {departments.map((dept) => (
+        {departments.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="text-6xl mb-4">🏢</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">No Departments Yet</h3>
+            <p className="text-gray-600 mb-6">Departments are being set up. Please check back soon!</p>
+            <p className="text-sm text-gray-500">
+              Admin: Run <code className="bg-gray-200 px-2 py-1 rounded">npm run render:setup</code> in Render shell to create departments
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {departments.map((dept) => (
             <Link
               key={dept.id}
               href={`/departments/${dept.slug}`}
@@ -140,17 +158,6 @@ export default function DepartmentsPage() {
               </div>
             </Link>
           ))}
-        </div>
-
-        {departments.length === 0 && (
-          <div className="text-center py-16">
-            <div className="text-6xl mb-4">🏢</div>
-            <h3 className="text-2xl font-semibold text-gray-700 mb-2">
-              No Departments Yet
-            </h3>
-            <p className="text-gray-500">
-              Check back soon for our departments and services
-            </p>
           </div>
         )}
       </div>

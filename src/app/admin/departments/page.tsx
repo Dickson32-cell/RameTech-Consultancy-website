@@ -40,23 +40,31 @@ export default function DepartmentsPage() {
 
   const fetchDepartments = async () => {
     try {
+      console.log('Fetching departments from admin API...')
       const token = localStorage.getItem('admin_token')
-      const response = await fetch('/api/v1/admin/departments', {
+      const response = await fetch(`/api/v1/admin/departments?t=${Date.now()}`, {
         headers: {
           'Authorization': `Bearer ${token}`
-        }
+        },
+        cache: 'no-store'
       })
 
       const result = await response.json()
+      console.log('Departments API response:', result)
 
       if (result.success) {
-        setDepartments(result.data)
+        setDepartments(result.data || [])
+        setError('')
+        console.log('Departments loaded:', result.data?.length || 0)
       } else {
-        setError(result.error || 'Failed to fetch departments')
+        const errorMsg = result.error || 'Failed to fetch departments'
+        setError(errorMsg)
+        console.error('Departments API error:', errorMsg)
       }
-    } catch (err) {
-      setError('An error occurred while fetching departments')
-      console.error(err)
+    } catch (err: any) {
+      const errorMsg = `Network error: ${err.message || 'Unknown error'}`
+      setError(errorMsg)
+      console.error('Fetch departments error:', err)
     } finally {
       setLoading(false)
     }
@@ -139,9 +147,33 @@ export default function DepartmentsPage() {
         </Link>
       </div>
 
+      {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          {error}
+        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <FaTimes className="h-5 w-5 text-red-500" />
+            </div>
+            <div className="ml-3 flex-1">
+              <h3 className="text-sm font-medium text-red-800">Error Loading Departments</h3>
+              <div className="mt-2 text-sm text-red-700">
+                <p>{error}</p>
+              </div>
+              {error.includes('Database tables not created') && (
+                <div className="mt-4 bg-white/50 p-4 rounded">
+                  <p className="font-semibold text-sm text-red-900 mb-2">To fix this:</p>
+                  <ol className="list-decimal ml-5 text-sm space-y-1 text-red-800">
+                    <li>Go to your Render dashboard</li>
+                    <li>Open your web service</li>
+                    <li>Click "Shell" tab</li>
+                    <li>Run: <code className="bg-gray-800 text-white px-2 py-1 rounded">npm run render:setup</code></li>
+                    <li>Wait for completion (creates departments and sample data)</li>
+                    <li>Refresh this page</li>
+                  </ol>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
