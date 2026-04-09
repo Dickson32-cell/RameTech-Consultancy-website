@@ -2,16 +2,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/api-response'
-import { verifyAuth } from '@/lib/auth'
 
 // GET /api/v1/admin/departments - Get all departments
 export async function GET(request: NextRequest) {
   try {
-    // Verify authentication
-    const authResult = await verifyAuth(request)
-    if (!authResult.authenticated) {
-      return NextResponse.json(errorResponse(authResult.error!), { status: 401 })
-    }
 
     const departments = await prisma.department.findMany({
       orderBy: { order: 'asc' },
@@ -52,12 +46,6 @@ export async function GET(request: NextRequest) {
 // POST /api/v1/admin/departments - Create new department
 export async function POST(request: NextRequest) {
   try {
-    // Verify authentication
-    const authResult = await verifyAuth(request)
-    if (!authResult.authenticated) {
-      return NextResponse.json(errorResponse(authResult.error!), { status: 401 })
-    }
-
     const body = await request.json()
     const { name, slug, description, icon, imageUrl, order, isActive } = body
 

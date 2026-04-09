@@ -528,15 +528,14 @@ export default function DepartmentDetailPage() {
       </div>
 
       {/* Project Modal */}
-      {selectedProject && (
-        <PortfolioModal
-          project={{
-            ...selectedProject,
-            category: department.name
-          }}
-          onClose={() => setSelectedProject(null)}
-        />
-      )}
+      <PortfolioModal
+        project={selectedProject ? {
+          ...selectedProject,
+          category: department.name
+        } : null}
+        isOpen={!!selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
     </div>
   )
 }

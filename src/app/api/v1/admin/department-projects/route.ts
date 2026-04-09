@@ -2,16 +2,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/api-response'
-import { verifyAuth } from '@/lib/auth'
+
 
 // GET /api/v1/admin/department-projects - Get all projects
 export async function GET(request: NextRequest) {
   try {
-    // Verify authentication
-    const authResult = await verifyAuth(request)
-    if (!authResult.authenticated) {
-      return NextResponse.json(errorResponse(authResult.error!), { status: 401 })
-    }
 
     const { searchParams } = new URL(request.url)
     const departmentId = searchParams.get('departmentId')
@@ -52,11 +47,6 @@ export async function GET(request: NextRequest) {
 // POST /api/v1/admin/department-projects - Create new project
 export async function POST(request: NextRequest) {
   try {
-    // Verify authentication
-    const authResult = await verifyAuth(request)
-    if (!authResult.authenticated) {
-      return NextResponse.json(errorResponse(authResult.error!), { status: 401 })
-    }
 
     const body = await request.json()
     const {

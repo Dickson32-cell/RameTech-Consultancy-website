@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/api-response'
-import { verifyAuth } from '@/lib/auth'
+
 
 // GET /api/v1/admin/subdepartments/:id - Get single subdepartment
 export async function GET(
@@ -10,11 +10,6 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Verify authentication
-    const authResult = await verifyAuth(request)
-    if (!authResult.authenticated) {
-      return NextResponse.json(errorResponse(authResult.error!), { status: 401 })
-    }
 
     const subdepartment = await prisma.subDepartment.findUnique({
       where: { id: params.id },
@@ -52,11 +47,6 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Verify authentication
-    const authResult = await verifyAuth(request)
-    if (!authResult.authenticated) {
-      return NextResponse.json(errorResponse(authResult.error!), { status: 401 })
-    }
 
     const body = await request.json()
     const { name, slug, description, order, isActive } = body
@@ -115,11 +105,6 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Verify authentication
-    const authResult = await verifyAuth(request)
-    if (!authResult.authenticated) {
-      return NextResponse.json(errorResponse(authResult.error!), { status: 401 })
-    }
 
     // Check if subdepartment exists
     const existing = await prisma.subDepartment.findUnique({
