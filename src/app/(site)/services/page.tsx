@@ -50,14 +50,24 @@ export default function ServicesPage() {
   const [academicWritingPhases, setAcademicWritingPhases] = useState<AcademicWritingPhase[]>([])
   const [academicWritingDocument, setAcademicWritingDocument] = useState<AcademicWritingDocument | null>(null)
   const [loadingAcademic, setLoadingAcademic] = useState(false)
+  const [academicDataFetched, setAcademicDataFetched] = useState(false)
+
+  // Pre-fetch academic writing data on mount for faster display
+  useEffect(() => {
+    console.log('Component mounted, pre-fetching academic writing data...')
+    fetchAcademicWriting()
+  }, [])
 
   useEffect(() => {
-    if (activeService === 'academic') {
+    console.log('Active service changed to:', activeService)
+    if (activeService === 'academic' && !academicDataFetched) {
+      console.log('Academic service active, fetching data...')
       fetchAcademicWriting()
     }
   }, [activeService])
 
   const fetchAcademicWriting = async () => {
+    console.log('fetchAcademicWriting() called')
     setLoadingAcademic(true)
     try {
       console.log('Services page: Fetching academic writing data...')
@@ -84,6 +94,9 @@ export default function ServicesPage() {
           setAcademicWritingPhases(phasesResult.data)
         }
       }
+
+      setAcademicDataFetched(true)
+      console.log('Academic data fetch complete')
     } catch (error) {
       console.error('Error fetching academic writing:', error)
     } finally {
@@ -137,7 +150,12 @@ export default function ServicesPage() {
               >
                 {service.id === 'academic' ? (
                   // Academic Writing - expandable
-                  <div onClick={() => setActiveService(activeService === service.id ? null : service.id)}>
+                  <div onClick={() => {
+                    console.log('Academic Writing card clicked! Current active:', activeService)
+                    const newActive = activeService === service.id ? null : service.id
+                    console.log('Setting activeService to:', newActive)
+                    setActiveService(newActive)
+                  }}>
                     <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary">
                       {iconComponents[service.icon]}
                     </div>
@@ -175,9 +193,25 @@ export default function ServicesPage() {
                       {/* Debug - shows what data was loaded */}
                       {!loadingAcademic && !academicWritingDocument && academicWritingPhases.length === 0 && (
                         <div className="bg-yellow-50 border border-yellow-300 p-3 rounded mb-3">
-                          <p className="text-xs text-yellow-800">
-                            Debug: No document or phases loaded. Check console for API responses.
+                          <p className="text-xs text-yellow-800 font-semibold mb-2">
+                            Debug: No document or phases loaded
                           </p>
+                          <p className="text-xs text-yellow-700">
+                            • Document: {academicWritingDocument ? 'EXISTS' : 'NULL'}<br/>
+                            • Phases: {academicWritingPhases.length}<br/>
+                            • Data fetched: {academicDataFetched ? 'Yes' : 'No'}<br/>
+                            • Loading: {loadingAcademic ? 'Yes' : 'No'}
+                          </p>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              console.log('Manual refresh clicked')
+                              fetchAcademicWriting()
+                            }}
+                            className="mt-2 text-xs bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700"
+                          >
+                            🔄 Refresh Data
+                          </button>
                         </div>
                       )}
 
