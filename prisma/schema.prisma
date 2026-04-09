@@ -186,6 +186,31 @@ model PricingTable {
   @@index([tableType])
 }
 
+model Publication {
+  id          String   @id @default(uuid())
+  title       String
+  type        String   // zenodo, article, research-paper, etc.
+  description String?  @db.Text
+  url         String   // Link to Zenodo, article, or PDF
+  authors     String[] // List of authors
+  publicationDate DateTime? @db.Timestamptz()
+  doi         String?  // Digital Object Identifier (for academic papers)
+  journal     String?  // Journal or conference name
+  tags        String[] // Keywords/tags
+  thumbnailUrl String? // Cover image or thumbnail
+  pdfUrl      String?  // Direct PDF link
+  isFeatured  Boolean  @default(false)
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([type])
+  @@index([order])
+  @@index([isActive])
+  @@index([isFeatured])
+}
+
 model BlogPost {
   id          String   @id @default(uuid())
   title       String
