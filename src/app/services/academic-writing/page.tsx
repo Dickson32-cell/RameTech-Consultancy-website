@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { FaArrowLeft, FaGraduationCap, FaCheckCircle, FaFileWord, FaDownload } from 'react-icons/fa'
+import { FaArrowLeft, FaGraduationCap, FaCheckCircle, FaFileWord, FaDownload, FaSync } from 'react-icons/fa'
 
 interface ServiceItem {
   id: string
@@ -34,16 +34,25 @@ export default function AcademicWritingPage() {
   const [phases, setPhases] = useState<Phase[]>([])
   const [document, setDocument] = useState<AcademicWritingDocument | null>(null)
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => {
     fetchData()
   }, [])
 
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await fetchData()
+    setRefreshing(false)
+  }
+
   const fetchData = async () => {
     try {
-      // First check for uploaded document
+      // First check for uploaded document (with cache-busting)
       console.log('Fetching Academic Writing document...')
-      const docResponse = await fetch('/api/v1/academic-writing/document')
+      const docResponse = await fetch(`/api/v1/academic-writing/document?t=${Date.now()}`, {
+        cache: 'no-store'
+      })
       const docResult = await docResponse.json()
 
       console.log('Document API response:', docResult)
@@ -55,9 +64,11 @@ export default function AcademicWritingPage() {
         console.log('No document found or API error')
       }
 
-      // Also fetch phases for fallback display
+      // Also fetch phases for fallback display (with cache-busting)
       console.log('Fetching Academic Writing phases...')
-      const phasesResponse = await fetch('/api/v1/academic-writing')
+      const phasesResponse = await fetch(`/api/v1/academic-writing?t=${Date.now()}`, {
+        cache: 'no-store'
+      })
       const phasesResult = await phasesResponse.json()
 
       console.log('Phases API response:', phasesResult)
@@ -93,11 +104,22 @@ export default function AcademicWritingPage() {
             <FaArrowLeft />
             <span>Back to Home</span>
           </Link>
-          <div className="flex items-center gap-4 mb-4">
-            <FaGraduationCap className="text-5xl" />
-            <h1 className="text-4xl md:text-5xl font-bold">
-              Academic Writing Services
-            </h1>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <FaGraduationCap className="text-5xl" />
+              <h1 className="text-4xl md:text-5xl font-bold">
+                Academic Writing Services
+              </h1>
+            </div>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg hover:bg-white/30 transition disabled:opacity-50"
+              title="Refresh to get latest data from admin panel"
+            >
+              <FaSync className={refreshing ? 'animate-spin' : ''} />
+              <span className="hidden md:inline">Refresh</span>
+            </button>
           </div>
           <p className="text-xl text-blue-100 max-w-3xl">
             Professional academic writing support for Bachelor, Master, and PhD level research

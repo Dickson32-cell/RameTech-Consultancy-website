@@ -16,7 +16,16 @@ export async function GET(request: NextRequest) {
       orderBy: { order: 'asc' }
     })
 
-    return NextResponse.json(successResponse(phases))
+    console.log(`Fetched ${phases.length} academic writing phases`)
+
+    const response = NextResponse.json(successResponse(phases))
+
+    // Add no-cache headers for real-time sync with admin panel
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+
+    return response
   } catch (error) {
     console.error('Error fetching academic writing services:', error)
     return NextResponse.json(

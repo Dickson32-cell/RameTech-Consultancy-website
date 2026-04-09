@@ -4,6 +4,17 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FaCode, FaLaptopCode, FaPalette, FaServer, FaMobileAlt, FaDatabase, FaCloud, FaShieldAlt, FaChartLine, FaSearch, FaBullhorn, FaRobot, FaChartBar, FaCheck, FaGraduationCap, FaFileWord, FaDownload } from 'react-icons/fa'
 
+interface Service {
+  id: string
+  name: string
+  slug: string
+  description: string
+  icon: string | null
+  features: string[]
+  order: number
+  isActive: boolean
+}
+
 interface AcademicWritingItem {
   id: string
   name: string
@@ -47,24 +58,52 @@ const iconComponents: Record<string, React.ReactNode> = {
 
 export default function ServicesPage() {
   const [activeService, setActiveService] = useState<string | null>(null)
+  const [services, setServices] = useState<Service[]>([])
+  const [loadingServices, setLoadingServices] = useState(true)
   const [academicWritingPhases, setAcademicWritingPhases] = useState<AcademicWritingPhase[]>([])
   const [academicWritingDocument, setAcademicWritingDocument] = useState<AcademicWritingDocument | null>(null)
   const [loadingAcademic, setLoadingAcademic] = useState(false)
   const [academicDataFetched, setAcademicDataFetched] = useState(false)
 
-  // Pre-fetch academic writing data on mount for faster display
+  // Fetch all services from database on mount
   useEffect(() => {
-    console.log('Component mounted, pre-fetching academic writing data...')
+    console.log('Component mounted, fetching all services from database...')
+    fetchServices()
     fetchAcademicWriting()
   }, [])
 
   useEffect(() => {
     console.log('Active service changed to:', activeService)
-    if (activeService === 'academic' && !academicDataFetched) {
+    if (activeService === 'academic-writing' && !academicDataFetched) {
       console.log('Academic service active, fetching data...')
       fetchAcademicWriting()
     }
   }, [activeService])
+
+  const fetchServices = async () => {
+    try {
+      console.log('Fetching services from API...')
+      // Add cache-busting parameter
+      const response = await fetch(`/api/v1/services?t=${Date.now()}`)
+      const result = await response.json()
+
+      console.log('Services API response:', result)
+
+      if (result.success && result.data) {
+        // Map services and add special link for academic writing
+        const mappedServices = result.data.map((s: Service) => ({
+          ...s,
+          link: s.slug === 'academic-writing' ? '/services/academic-writing' : null
+        }))
+        setServices(mappedServices)
+        console.log('Services loaded:', mappedServices.length)
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error)
+    } finally {
+      setLoadingServices(false)
+    }
+  }
 
   const fetchAcademicWriting = async () => {
     console.log('fetchAcademicWriting() called')
@@ -72,8 +111,8 @@ export default function ServicesPage() {
     try {
       console.log('Services page: Fetching academic writing data...')
 
-      // First check if there's an uploaded document
-      const docResponse = await fetch('/api/v1/academic-writing/document')
+      // First check if there's an uploaded document (cache-busting)
+      const docResponse = await fetch(`/api/v1/academic-writing/document?t=${Date.now()}`)
       const docResult = await docResponse.json()
 
       console.log('Services page - Document response:', docResult)
@@ -84,7 +123,7 @@ export default function ServicesPage() {
       } else {
         console.log('Services page: No document, fetching phases...')
         // Fallback to database phases if no document
-        const phasesResponse = await fetch('/api/v1/academic-writing')
+        const phasesResponse = await fetch(`/api/v1/academic-writing?t=${Date.now()}`)
         const phasesResult = await phasesResponse.json()
 
         console.log('Services page - Phases response:', phasesResult)
@@ -103,19 +142,6 @@ export default function ServicesPage() {
       setLoadingAcademic(false)
     }
   }
-
-  const services = [
-    { id: 'software', name: 'Software Development', icon: 'FaCode', description: 'Custom software solutions built to meet your specific business needs.', features: ['Web Applications', 'Desktop Software', 'API Development', 'System Integration'], link: '/services' },
-    { id: 'mobile', name: 'Mobile Development', icon: 'FaMobileAlt', description: 'Native and cross-platform mobile applications for iOS and Android.', features: ['iOS Development', 'Android Development', 'React Native', 'Flutter Apps'], link: '/services' },
-    { id: 'academic', name: 'Academic Writing', icon: 'FaGraduationCap', description: 'Professional academic writing support for Bachelor, Master, and PhD level research.', features: [], link: '/services/academic-writing' },
-    { id: 'hardware', name: 'Hardware & IT', icon: 'FaServer', description: 'Complete IT infrastructure solutions and hardware procurement.', features: ['Network Setup', 'Server Management', 'Hardware Procurement', 'IT Support'], link: '/services' },
-    { id: 'cloud', name: 'Cloud Services', icon: 'FaCloud', description: 'Scalable cloud solutions for modern businesses.', features: ['Cloud Migration', 'AWS/Azure Setup', 'Cloud Architecture', 'DevOps'], link: '/services' },
-    { id: 'design', name: 'Graphic Design', icon: 'FaPalette', description: 'Professional design services to elevate your brand.', features: ['Logo Design', 'Brand Identity', 'Marketing Materials', 'UI/UX Design'], link: '/services' },
-    { id: 'analytics', name: 'Advanced Analytics', icon: 'FaChartLine', description: 'Data-driven insights to make smarter business decisions.', features: ['Business Intelligence', 'Data Visualization', 'Predictive Analytics', 'Custom Dashboards'], link: '/services' },
-    { id: 'marketing', name: 'Marketing Research', icon: 'FaSearch', description: 'In-depth market research and competitor analysis.', features: ['Market Research', 'Competitor Analysis', 'Customer Insights', 'Brand Strategy'], link: '/services' },
-    { id: 'digital', name: 'Digital Marketing', icon: 'FaBullhorn', description: 'Comprehensive digital marketing strategies to grow your reach.', features: ['SEO Optimization', 'Social Media', 'Content Marketing', 'PPC Campaigns'], link: '/services' },
-    { id: 'ai', name: 'AI & Automation', icon: 'FaRobot', description: 'Intelligent automation solutions powered by artificial intelligence.', features: ['Machine Learning', 'Process Automation', 'Chatbots', 'Predictive Models'], link: '/services' },
-  ]
 
   return (
     <div>
@@ -142,17 +168,26 @@ export default function ServicesPage() {
       {/* Services Grid */}
       <section className="py-16 md:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {services.map((service) => (
-              <div
-                key={service.id}
-                className={`bento-card cursor-pointer transition-all duration-300 ${activeService === service.id ? 'ring-2 ring-primary' : ''}`}
-              >
-                {service.id === 'academic' ? (
+          {loadingServices ? (
+            <div className="flex justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : services.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-gray-600 text-lg">No services available. Please add services in the admin panel.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {services.map((service) => (
+                <div
+                  key={service.id}
+                  className={`bento-card cursor-pointer transition-all duration-300 ${activeService === service.slug ? 'ring-2 ring-primary' : ''}`}
+                >
+                  {service.slug === 'academic-writing' ? (
                   // Academic Writing - expandable
                   <div onClick={() => {
                     console.log('Academic Writing card clicked! Current active:', activeService)
-                    const newActive = activeService === service.id ? null : service.id
+                    const newActive = activeService === service.slug ? null : service.slug
                     console.log('Setting activeService to:', newActive)
                     setActiveService(newActive)
                   }}>
@@ -162,7 +197,7 @@ export default function ServicesPage() {
                     <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
                     <p className="text-gray-600 mb-4">{service.description}</p>
                     <p className="text-xs text-primary font-medium">
-                      {activeService === service.id ? '▼ Click to collapse' : '▶ Click to view pricing'}
+                      {activeService === service.slug ? '▼ Click to collapse' : '▶ Click to view pricing'}
                     </p>
                   </div>
                 ) : service.link ? (
@@ -174,9 +209,9 @@ export default function ServicesPage() {
                     <p className="text-gray-600 mb-4">{service.description}</p>
                   </Link>
                 ) : (
-                  <div onClick={() => setActiveService(activeService === service.id ? null : service.id)}>
+                  <div onClick={() => setActiveService(activeService === service.slug ? null : service.slug)}>
                     <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary">
-                      {iconComponents[service.icon]}
+                      {iconComponents[service.icon || 'FaCode']}
                     </div>
                     <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
                     <p className="text-gray-600 mb-4">{service.description}</p>
@@ -184,10 +219,10 @@ export default function ServicesPage() {
                 )}
 
                 {/* Expandable Features */}
-                {service.id === 'academic' ? (
+                {service.slug === 'academic-writing' ? (
                   // Special display for Academic Writing
                   <div
-                    className={`overflow-hidden transition-all duration-300 ${activeService === service.id ? 'max-h-[2000px] mt-4' : 'max-h-0'}`}
+                    className={`overflow-hidden transition-all duration-300 ${activeService === service.slug ? 'max-h-[2000px] mt-4' : 'max-h-0'}`}
                   >
                     <div className="pt-4 border-t border-gray-100">
                       {/* Debug - shows what data was loaded */}
@@ -310,8 +345,8 @@ export default function ServicesPage() {
                 ) : (
                   // Regular features display for other services
                   <div
-                    className={`overflow-hidden transition-all duration-300 ${activeService === service.id ? 'max-h-48 mt-4' : 'max-h-0'}`}
-                    onClick={() => setActiveService(activeService === service.id ? null : service.id)}
+                    className={`overflow-hidden transition-all duration-300 ${activeService === service.slug ? 'max-h-48 mt-4' : 'max-h-0'}`}
+                    onClick={() => setActiveService(activeService === service.slug ? null : service.slug)}
                   >
                     <div className="pt-4 border-t border-gray-100">
                       <p className="text-sm font-medium text-text mb-3">What we offer:</p>
@@ -329,6 +364,7 @@ export default function ServicesPage() {
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 

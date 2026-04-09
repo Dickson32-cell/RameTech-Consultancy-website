@@ -68,14 +68,19 @@ export default function ServicesOverview() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await fetch('/api/v1/services')
+        // Add cache-busting to get fresh data from admin edits
+        const res = await fetch(`/api/v1/services?t=${Date.now()}`, {
+          cache: 'no-store'
+        })
         const data = await res.json()
+        console.log('Homepage services fetched:', data)
         if (data.success && data.data) {
           const mappedServices = data.data.slice(0, 6).map((s: Service) => ({
             ...s,
             link: s.slug === 'academic-writing' ? '/services/academic-writing' : '/services'
           }))
           setServices(mappedServices)
+          console.log('Homepage services set:', mappedServices.length)
         }
       } catch (error) {
         console.error('Error fetching services:', error)

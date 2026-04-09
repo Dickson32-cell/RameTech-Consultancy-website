@@ -14,7 +14,16 @@ export async function GET(request: NextRequest) {
       orderBy: { order: 'asc' }
     })
 
-    return NextResponse.json(successResponse(services))
+    console.log(`Fetched ${services.length} services (active: ${active})`)
+
+    const response = NextResponse.json(successResponse(services))
+
+    // Add no-cache headers for real-time sync with admin panel
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
+
+    return response
   } catch (error) {
     console.error('Error fetching services:', error)
     return NextResponse.json(errorResponse('Failed to fetch services'), { status: 500 })
