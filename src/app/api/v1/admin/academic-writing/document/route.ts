@@ -1,15 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { v2 as cloudinary } from 'cloudinary'
+import cloudinary from '@/lib/cloudinary'
 
 const prisma = new PrismaClient()
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-})
 
 // GET /api/v1/admin/academic-writing/document - Get all documents
 export async function GET(request: NextRequest) {
@@ -34,9 +27,13 @@ export async function GET(request: NextRequest) {
 // POST /api/v1/admin/academic-writing/document - Upload new document
 export async function POST(request: NextRequest) {
   try {
+    console.log('Starting document upload...')
+
     const formData = await request.formData()
     const file = formData.get('file') as File
     const description = formData.get('description') as string
+
+    console.log('File received:', file?.name, file?.size, file?.type)
 
     if (!file) {
       return NextResponse.json(
@@ -45,32 +42,34 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Convert file to buffer
+    // Convert file to base64 data URI
+    console.log('Converting file to base64...')
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
+    const base64Data = buffer.toString('base64')
+    const dataURI = `data:${file.type};base64,${base64Data}`
+    console.log('Base64 conversion complete')
 
-    // Upload to Cloudinary
-    const uploadResult = await new Promise<any>((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          folder: 'academic-writing',
-          resource_type: 'raw', // For non-image files like Word docs
-          public_id: `price-list-${Date.now()}`
-        },
-        (error, result) => {
-          if (error) reject(error)
-          else resolve(result)
-        }
-      )
-      uploadStream.end(buffer)
+    // Upload to Cloudinary using data URI
+    console.log('Uploading to Cloudinary...')
+    const uploadResult = await cloudinary.uploader.upload(dataURI, {
+      resource_type: 'raw', // For non-image files like Word docs
+      folder: 'rametech/academic-writing',
+      public_id: `price-list-${Date.now()}`,
+      use_filename: true,
+      unique_filename: true
     })
 
+    console.log('Cloudinary upload success:', uploadResult.secure_url)
+
+    console.log('Deactivating previous documents...')
     // Deactivate all previous documents
     await prisma.academicWritingDocument.updateMany({
       where: { isActive: true },
       data: { isActive: false }
     })
 
+    console.log('Saving document to database...')
     // Save document info to database
     const document = await prisma.academicWritingDocument.create({
       data: {
@@ -82,15 +81,24 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    console.log('Document saved successfully:', document.id)
+
     return NextResponse.json({
       success: true,
       data: document,
       message: 'Document uploaded successfully'
     }, { status: 201 })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error uploading document:', error)
+
+    // Return detailed error message
+    let errorMessage = 'Failed to upload document'
+    if (error.message) {
+      errorMessage += ': ' + error.message
+    }
+
     return NextResponse.json(
-      { success: false, error: 'Failed to upload document' },
+      { success: false, error: errorMessage, details: error.toString() },
       { status: 500 }
     )
   }

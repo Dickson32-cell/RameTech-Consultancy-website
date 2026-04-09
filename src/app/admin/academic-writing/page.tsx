@@ -339,6 +339,8 @@ export default function AcademicWritingPage() {
       const formData = new FormData()
       formData.append('file', selectedFile)
 
+      console.log('Uploading file:', selectedFile.name, selectedFile.size, selectedFile.type)
+
       const response = await fetch('/api/v1/admin/academic-writing/document', {
         method: 'POST',
         headers: {
@@ -348,17 +350,24 @@ export default function AcademicWritingPage() {
       })
 
       const result = await response.json()
+      console.log('Upload response:', result)
 
       if (result.success) {
         alert('Document uploaded successfully!')
         setSelectedFile(null)
+        // Reset file input
+        const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement
+        if (fileInput) fileInput.value = ''
         fetchDocuments()
       } else {
-        alert(result.error || 'Failed to upload document')
+        // Show detailed error
+        const errorDetails = result.details ? `\n\nDetails: ${result.details}` : ''
+        alert(`Upload failed: ${result.error}${errorDetails}`)
+        console.error('Upload error:', result)
       }
-    } catch (err) {
-      alert('An error occurred while uploading document')
-      console.error(err)
+    } catch (err: any) {
+      alert(`An error occurred while uploading document: ${err.message || err}`)
+      console.error('Upload exception:', err)
     } finally {
       setUploadingDocument(false)
     }

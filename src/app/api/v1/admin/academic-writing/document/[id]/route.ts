@@ -1,15 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
-import { v2 as cloudinary } from 'cloudinary'
+import cloudinary from '@/lib/cloudinary'
 
 const prisma = new PrismaClient()
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-})
 
 // DELETE /api/v1/admin/academic-writing/document/[id] - Delete a document
 export async function DELETE(
