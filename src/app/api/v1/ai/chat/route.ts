@@ -21,8 +21,8 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Build RAG context from company knowledge base
-    const ragContext = buildRAGContext(message)
+    // Build RAG context from company knowledge base (including dynamic data)
+    const ragContext = await buildRAGContext(message)
 
     const systemPrompt = `You are RAME Tech Consultancy's virtual assistant. You ONLY answer questions related to RAME Tech's services, pricing, timelines, and general inquiries. You must stay in character as a professional business assistant at all times. Never tell jokes, never go off-topic, never role-play as anything other than the RAME Tech assistant.
 

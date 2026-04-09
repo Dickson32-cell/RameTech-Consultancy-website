@@ -404,3 +404,45 @@ model ChatbotLead {
   @@index([email])
   @@index([status])
 }
+
+// ============================================
+// ACADEMIC WRITING SERVICES
+// ============================================
+
+model AcademicWritingPhase {
+  id          String   @id @default(uuid())
+  name        String   // e.g., "Phase 1: Project Inception & Scoping"
+  description String?  @db.Text
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  serviceItems AcademicWritingServiceItem[]
+
+  @@index([order])
+  @@index([isActive])
+}
+
+model AcademicWritingServiceItem {
+  id          String   @id @default(uuid())
+  phaseId     String
+  phase       AcademicWritingPhase @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+
+  name        String   // e.g., "Topic Discovery & Gap Analysis"
+  description String   @db.Text
+
+  // Pricing for different degree levels
+  bachelorPrice Int    // Price in GHS
+  masterPrice   Int    // Price in GHS
+  phdPrice      Int    // Price in GHS
+
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([phaseId])
+  @@index([order])
+  @@index([isActive])
+}

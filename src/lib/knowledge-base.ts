@@ -1,6 +1,10 @@
 // Company Knowledge Base for RAG System
 // This knowledge is used to augment AI responses with accurate company information
 
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
+
 export interface KnowledgeChunk {
   id: string
   category: string
@@ -203,13 +207,142 @@ export function retrieveRelevantKnowledge(query: string, topK: number = 3): stri
   return relevantChunks.map(c => c.content)
 }
 
-// Build RAG context for prompts
-export function buildRAGContext(query: string): string {
-  const relevantInfo = retrieveRelevantKnowledge(query, 3)
-  
-  if (relevantInfo.length === 0) {
+// Fetch dynamic knowledge from database
+async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
+  try {
+    const chunks: KnowledgeChunk[] = []
+
+    // Fetch Academic Writing Services
+    const academicWriting = await prisma.academicWritingPhase.findMany({
+      where: { isActive: true },
+      include: {
+        serviceItems: {
+          where: { isActive: true },
+          orderBy: { order: 'asc' }
+        }
+      },
+      orderBy: { order: 'asc' }
+    })
+
+    if (academicWriting.length > 0) {
+      const academicContent = academicWriting.map(phase => {
+        const items = phase.serviceItems.map(item =>
+          `${item.name}: ${item.description} - Bachelor: GHS ${item.bachelorPrice}, Master: GHS ${item.masterPrice}, PhD: GHS ${item.phdPrice}`
+        ).join('\n  ')
+        return `${phase.name}:\n  ${items}`
+      }).join('\n\n')
+
+      chunks.push({
+        id: 'academic-writing-dynamic',
+        category: 'Academic Writing',
+        content: `Academic Writing Services: RAME Tech offers comprehensive academic writing support for Bachelor, Master, and PhD level research.\n\n${academicContent}`,
+        keywords: ['academic', 'writing', 'thesis', 'dissertation', 'research', 'bachelor', 'master', 'phd', 'proposal', 'literature review', 'methodology', 'data analysis', 'defense']
+      })
+    }
+
+    // Fetch Publications
+    const publications = await prisma.publication.findMany({
+      where: { isActive: true, isFeatured: true },
+      take: 5,
+      orderBy: { order: 'asc' }
+    })
+
+    if (publications.length > 0) {
+      const pubContent = publications.map(pub =>
+        `"${pub.title}" (${pub.type}) - ${pub.description || 'Research publication'}`
+      ).join('\n')
+
+      chunks.push({
+        id: 'publications-dynamic',
+        category: 'Publications',
+        content: `Recent Publications by RAME Tech:\n${pubContent}\n\nView all publications at our Publications page.`,
+        keywords: ['publication', 'research', 'paper', 'article', 'journal', 'zenodo', 'doi', 'academic']
+      })
+    }
+
+    // Fetch Services
+    const services = await prisma.service.findMany({
+      where: { isActive: true },
+      orderBy: { order: 'asc' }
+    })
+
+    if (services.length > 0) {
+      const servicesContent = services.map(service =>
+        `${service.name}: ${service.description}`
+      ).join('\n')
+
+      chunks.push({
+        id: 'services-dynamic',
+        category: 'Services',
+        content: `RAME Tech Services:\n${servicesContent}`,
+        keywords: ['service', 'services', 'offer', 'provide', 'solution']
+      })
+    }
+
+    // Fetch FAQs
+    const faqs = await prisma.fAQ.findMany({
+      where: { isActive: true },
+      orderBy: { order: 'asc' },
+      take: 10
+    })
+
+    if (faqs.length > 0) {
+      const faqContent = faqs.map(faq =>
+        `Q: ${faq.question}\nA: ${faq.answer}`
+      ).join('\n\n')
+
+      chunks.push({
+        id: 'faq-dynamic',
+        category: 'FAQ',
+        content: `Frequently Asked Questions:\n${faqContent}`,
+        keywords: ['faq', 'question', 'answer', 'help', 'how', 'what', 'why', 'when']
+      })
+    }
+
+    return chunks
+  } catch (error) {
+    console.error('Error fetching dynamic knowledge:', error)
+    return []
+  }
+}
+
+// Build RAG context for prompts (async version)
+export async function buildRAGContext(query: string): Promise<string> {
+  // Get static knowledge
+  const relevantStaticInfo = retrieveRelevantKnowledge(query, 2)
+
+  // Get dynamic knowledge
+  const dynamicKnowledge = await fetchDynamicKnowledge()
+  const allKnowledge = [...companyKnowledge, ...dynamicKnowledge]
+
+  // Search dynamic knowledge for relevant info
+  const queryLower = query.toLowerCase()
+  const queryWords = queryLower.split(/\s+/)
+
+  const scoredDynamicChunks = dynamicKnowledge.map(chunk => {
+    let score = 0
+    for (const keyword of queryWords) {
+      if (chunk.keywords.some(k => k.includes(keyword) || keyword.includes(k))) {
+        score += 2
+      }
+      if (chunk.content.toLowerCase().includes(keyword)) {
+        score += 1
+      }
+    }
+    return { chunk, score }
+  })
+
+  const relevantDynamicInfo = scoredDynamicChunks
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 2)
+    .map(item => item.chunk.content)
+
+  const allRelevantInfo = [...relevantStaticInfo, ...relevantDynamicInfo]
+
+  if (allRelevantInfo.length === 0) {
     return ''
   }
 
-  return `\n\nRelevant Company Information:\n${relevantInfo.map((info, i) => `${i + 1}. ${info}`).join('\n')}\n\nUse this information to provide accurate responses about RAME Tech Consultancy.`
+  return `\n\nRelevant Company Information:\n${allRelevantInfo.map((info, i) => `${i + 1}. ${info}`).join('\n')}\n\nUse this information to provide accurate responses about RAME Tech Consultancy.`
 }
