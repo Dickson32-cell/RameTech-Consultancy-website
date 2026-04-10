@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FaBriefcase, FaUsers, FaProjectDiagram, FaArrowRight, FaCheckCircle } from 'react-icons/fa'
+import { FaBriefcase, FaUsers, FaProjectDiagram, FaArrowRight, FaCheckCircle, FaRobot } from 'react-icons/fa'
 
 interface Stats {
   services: number
@@ -17,6 +17,7 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [runningDiagnostics, setRunningDiagnostics] = useState(false)
+  const [testingChatbot, setTestingChatbot] = useState(false)
 
   useEffect(() => {
     // Check auth
@@ -95,6 +96,53 @@ ${result.diagnostics?.errors?.length > 0 ? `\nERRORS:\n${result.diagnostics.erro
     }
   }
 
+  const testChatbotKnowledge = async () => {
+    setTestingChatbot(true)
+    try {
+      const response = await fetch('/api/v1/chatbot/knowledge-test')
+      const result = await response.json()
+
+      console.log('Chatbot Knowledge:', result)
+
+      // Format examples
+      const examples = Object.entries(result.knowledge?.examples || {})
+        .map(([question, answer]) => `Q: "${question}"\nA: ${answer}`)
+        .join('\n\n')
+
+      const message = `
+AI CHATBOT KNOWLEDGE TEST
+=========================
+
+Status: ${result.knowledge?.overall?.status || 'Unknown'}
+
+WHAT CHATBOT KNOWS:
+- Departments: ${result.knowledge?.summary?.departments || 0}
+- Team Members: ${result.knowledge?.summary?.teamMembers || 0}
+- Academic Writing Phases: ${result.knowledge?.summary?.academicWriting?.phases || 0}
+- Academic Writing Items: ${result.knowledge?.summary?.academicWriting?.items || 0}
+- Services: ${result.knowledge?.summary?.services || 0}
+- FAQs: ${result.knowledge?.summary?.faqs || 0}
+- Blog Posts: ${result.knowledge?.summary?.blogPosts || 0}
+- Publications: ${result.knowledge?.summary?.publications || 0}
+- Department Projects: ${result.knowledge?.summary?.departmentProjects || 0}
+- Academic Document: ${result.knowledge?.summary?.academicDocument || 'None'}
+
+TOTAL KNOWLEDGE ITEMS: ${result.knowledge?.overall?.totalKnowledgeItems || 0}
+
+EXAMPLE RESPONSES:
+${examples}
+
+${result.recommendation || ''}
+      `.trim()
+
+      alert(message)
+    } catch (error: any) {
+      alert(`Chatbot test failed: ${error.message}`)
+    } finally {
+      setTestingChatbot(false)
+    }
+  }
+
   if (!isAuthenticated) {
     return null
   }
@@ -130,14 +178,25 @@ ${result.diagnostics?.errors?.length > 0 ? `\nERRORS:\n${result.diagnostics.erro
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-600 mt-1">Welcome to RAME Tech Admin Panel</p>
         </div>
-        <button
-          onClick={runSystemDiagnostics}
-          disabled={runningDiagnostics}
-          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 text-sm"
-        >
-          <FaCheckCircle />
-          {runningDiagnostics ? 'Running...' : 'System Check'}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={testChatbotKnowledge}
+            disabled={testingChatbot}
+            className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 disabled:bg-gray-400 text-sm"
+            title="Test what the AI chatbot knows"
+          >
+            <FaRobot />
+            {testingChatbot ? 'Testing...' : 'Chatbot Test'}
+          </button>
+          <button
+            onClick={runSystemDiagnostics}
+            disabled={runningDiagnostics}
+            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:bg-gray-400 text-sm"
+          >
+            <FaCheckCircle />
+            {runningDiagnostics ? 'Running...' : 'System Check'}
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
