@@ -38,91 +38,91 @@ const INTENT_PATTERNS = {
 
 const RESPONSES: Record<string, { response: string; followUp?: string }> = {
   greeting: {
-    response: 'Hello! 👋 Welcome to RAME Tech Consultancy!\n\nI\'m your virtual assistant here to help you with:\n\n• Learning about our services\n• Getting pricing information\n• Understanding timelines\n• Contacting our team\n\nWhat can I help you with today?',
+    response: 'Hello! 👋 Welcome to RAME Tech Consultancy!\n\nI\'m part of the RAME Tech team, here to help you with:\n\n• Learning about our services and departments\n• Getting pricing information\n• Understanding project timelines\n• Connecting with our team\n\nWhat can I help you with today?',
     followUp: 'Would you like to see our services or get a quote?'
   },
   goodbye: {
-    response: 'Thank you for chatting with RAME Tech! 😊\n\nIf you have more questions later, don\'t hesitate to reach out.\n\n💬 WhatsApp: wa.me/233204249540\n📧 info.rametechconsultancy@gmail.com\n\nHave a great day!'
+    response: 'Thank you for chatting with us! 😊\n\nIf you have more questions later, feel free to reach out anytime.\n\n💬 WhatsApp: wa.me/233204249540\n📧 info.rametechconsultancy@gmail.com\n\nWe look forward to working with you! Have a great day!'
   },
   pricing: {
-    response: '💰 Pricing at RAME Tech:\n\n🌐 Websites: From GHS 5,000\n📱 Mobile Apps: From GHS 15,000\n🎨 Logo Design: From GHS 800\n☁️ Cloud Services: Custom quote\n⚙️ Custom Software: From GHS 20,000\n\nEvery project is unique. Tell me about your needs for an accurate quote!',
-    followUp: 'Would you like a detailed quote? Click WhatsApp to chat directly!'
+    response: '💰 Our Pricing:\n\n🌐 Websites: From GHS 5,000\n📱 Mobile Apps: From GHS 15,000\n🎨 Logo Design: From GHS 800\n📦 Paper Bags: Custom pricing\n☁️ Cloud Services: Custom quote\n⚙️ Custom Software: From GHS 20,000\n\nEvery project is unique! Tell me about your needs and we\'ll provide an accurate quote.',
+    followUp: 'Ready for a detailed quote? Let\'s discuss your project!'
   },
   timeline: {
-    response: '⏱️ Typical Timelines:\n\n🌐 Basic Website: 2-4 weeks\n🛒 E-commerce: 6-8 weeks\n📱 Mobile App: 8-16 weeks\n⚙️ Custom Software: 8-12 weeks\n\nComplex projects may take longer. We\'ll give you exact timelines after our consultation.',
+    response: '⏱️ Our Typical Project Timelines:\n\n🌐 Basic Website: 2-4 weeks\n🛒 E-commerce: 6-8 weeks\n📱 Mobile App: 8-16 weeks\n📦 Paper Bags: 1-2 weeks\n⚙️ Custom Software: 8-12 weeks\n\nComplex projects may take longer. We\'ll give you exact timelines after our consultation!',
     followUp: 'Ready to start? Let\'s discuss your project timeline!'
   },
   services: {
-    response: '📦 RAME Tech Services:\n\n🌐 **Technology Solutions**\nSoftware, Mobile Apps, Database, Cloud, Cybersecurity, AI\n\n🔧 **IT Solutions**\nHardware, Network Setup, IT Support\n\n🎨 **Creative Services**\nGraphic Design, Branding, UI/UX\n📦 Paper Craft: Custom bags, Gift bags, Shopping bags\n\n📊 **Data & Research Services**\nMarketing Research, Digital Marketing, Analytics, Academic Writing\n\nWe also have organized departments! Visit /departments to explore.\n\nWhich service interests you?',
-    followUp: 'Ask about any department or service for details!'
+    response: '📦 Our Services & Departments:\n\n🌐 **Technology Solutions**\nWe build software, mobile apps, databases, cloud solutions, cybersecurity systems, and AI solutions\n\n🔧 **IT Solutions**\nWe provide hardware support, network setup, and IT infrastructure\n\n🎨 **Creative Services**\nWe create graphic designs, branding, UI/UX designs\n📦 Paper Craft: We make custom paper bags, gift bags, shopping bags, promotional bags\n\n📊 **Data & Research Services**\nWe offer marketing research, digital marketing, data analytics, and academic writing support\n\nVisit /departments to explore each department in detail!\n\nWhich of our services interests you?',
+    followUp: 'I\'d be happy to tell you more about any of our departments or services!'
   },
   web: {
-    response: '🌐 Web Development Services:\n\n• Custom Websites: From GHS 5,000\n• E-commerce Platforms: From GHS 12,000\n• Web Applications: From GHS 20,000\n• CMS Integration\n• SEO Optimization\n• API Integration\n\nWe use modern technologies like Next.js, React, and Node.js.',
-    followUp: 'What type of website do you need? E-commerce, business site, or web app?'
+    response: '🌐 Our Web Development Services:\n\n• Custom Websites: From GHS 5,000\n• E-commerce Platforms: From GHS 12,000\n• Web Applications: From GHS 20,000\n• CMS Integration\n• SEO Optimization\n• API Integration\n\nWe use modern technologies like Next.js, React, and Node.js to build fast, reliable websites!',
+    followUp: 'What type of website are you looking for? E-commerce, business site, or web app?'
   },
   mobile: {
-    response: '📱 Mobile App Development:\n\n• iOS Apps (Swift)\n• Android Apps (Kotlin)\n• Cross-platform (React Native, Flutter)\n• From GHS 15,000\n\nWe build apps for startups, businesses, and enterprises.',
-    followUp: 'Do you need iOS, Android, or both? Let\'s discuss your app idea!'
+    response: '📱 Our Mobile App Development:\n\n• iOS Apps (Swift)\n• Android Apps (Kotlin)\n• Cross-platform (React Native, Flutter)\n• Starting from GHS 15,000\n\nWe build apps for startups, businesses, and enterprises. Our team handles everything from design to app store submission!',
+    followUp: 'Do you need iOS, Android, or both? I\'d love to discuss your app idea!'
   },
   design: {
-    response: '🎨 Graphic Design Services:\n\n• Logo Design: From GHS 800\n• Brand Identity: From GHS 2,500\n• Business Cards & Letterheads\n• Social Media Graphics\n• Marketing Materials\n• UI/UX Design\n\nAll designs include revisions until you\'re happy!',
-    followUp: 'What would you like designed? Logo, brand identity, or marketing materials?'
+    response: '🎨 Our Graphic Design Services:\n\n• Logo Design: From GHS 800\n• Brand Identity: From GHS 2,500\n• Business Cards & Letterheads\n• Social Media Graphics\n• Marketing Materials\n• UI/UX Design\n\nAll our designs include revisions until you\'re completely happy!',
+    followUp: 'What would you like us to design for you? Logo, brand identity, or marketing materials?'
   },
   cloud: {
-    response: '☁️ Cloud Services:\n\n• AWS Solutions\n• Azure Integration\n• Cloud Migration\n• DevOps & CI/CD\n• Serverless Architecture\n• Cloud Security\n\nWe help you leverage the full power of the cloud!',
+    response: '☁️ Our Cloud Services:\n\n• AWS Solutions\n• Azure Integration\n• Cloud Migration\n• DevOps & CI/CD\n• Serverless Architecture\n• Cloud Security\n\nWe help you leverage the full power of the cloud! Our team has extensive experience with both AWS and Azure.',
     followUp: 'Already using cloud services, or starting fresh? We can help either way!'
   },
   analytics: {
-    response: '📊 Advanced Analytics:\n\n• Business Intelligence Dashboards\n• Real-time Data Processing\n• Predictive Analytics\n• Custom KPI Tracking\n• ML-powered Insights\n• Data Visualization\n\nTurn your data into actionable business insights!',
-    followUp: 'What kind of data do you want to analyze? Let\'s talk use cases!'
+    response: '📊 Our Advanced Analytics:\n\n• Business Intelligence Dashboards\n• Real-time Data Processing\n• Predictive Analytics\n• Custom KPI Tracking\n• ML-powered Insights\n• Data Visualization\n\nWe turn your data into actionable business insights!',
+    followUp: 'What kind of data would you like us to analyze? I\'d love to discuss use cases!'
   },
   ai: {
-    response: '🤖 AI & Automation Services:\n\n• Custom Chatbots (Web, WhatsApp)\n• Process Automation\n• Natural Language Processing\n• Computer Vision\n• AI Consulting\n• ML Model Development\n\nBring AI to your business workflows!',
-    followUp: 'Interested in chatbots, automation, or custom AI solutions?'
+    response: '🤖 Our AI & Automation Services:\n\n• Custom Chatbots (Web, WhatsApp)\n• Process Automation\n• Natural Language Processing\n• Computer Vision\n• AI Consulting\n• ML Model Development\n\nWe bring AI to your business workflows! Our team specializes in practical AI solutions.',
+    followUp: 'Interested in chatbots, automation, or custom AI solutions? We can help!'
   },
   security: {
-    response: '🔒 Cybersecurity Services:\n\n• Security Audits\n• Penetration Testing\n• Compliance (GDPR, PCI-DSS)\n• Vulnerability Assessment\n• Incident Response\n• Security Training\n\nProtect your business from cyber threats!',
-    followUp: 'Need a security audit or worried about specific threats?'
+    response: '🔒 Our Cybersecurity Services:\n\n• Security Audits\n• Penetration Testing\n• Compliance (GDPR, PCI-DSS)\n• Vulnerability Assessment\n• Incident Response\n• Security Training\n\nWe protect your business from cyber threats with comprehensive security solutions!',
+    followUp: 'Need a security audit or worried about specific threats? Let us help!'
   },
   marketing: {
-    response: '📈 Marketing & Research:\n\n• Market Research & Analysis\n• Competitor Analysis\n• Customer Segmentation\n• Brand Strategy\n• Trend Forecasting\n• Survey Design\n\nMake data-driven marketing decisions!',
-    followUp: 'Looking for market research or marketing strategy help?'
+    response: '📈 Our Marketing & Research:\n\n• Market Research & Analysis\n• Competitor Analysis\n• Customer Segmentation\n• Brand Strategy\n• Trend Forecasting\n• Survey Design\n\nWe help you make data-driven marketing decisions!',
+    followUp: 'Looking for market research or marketing strategy help? We\'re here for you!'
   },
   contact: {
-    response: '📞 Contact RAME Tech:\n\n💬 WhatsApp: wa.me/233204249540\n📱 Phone: +233 55 733 2615\n📧 Email: info.rametechconsultancy@gmail.com\n\nWe reply within 24 hours!',
-    followUp: 'Click WhatsApp for instant response!'
+    response: '📞 How to Reach Us:\n\n💬 WhatsApp: wa.me/233204249540\n📱 Phone: +233 55 733 2615\n📧 Email: info.rametechconsultancy@gmail.com\n\nWe typically reply within 24 hours, often much faster!',
+    followUp: 'Click WhatsApp for the quickest response from our team!'
   },
   payment: {
-    response: '💳 Payment Options:\n\n• Bank Transfer\n• Mobile Money (MTN MoMo)\n• Card Payments\n\n**Payment Plan:**\n50% upfront → 30% mid-project → 20% on delivery',
-    followUp: 'Need a custom payment arrangement? We\'re flexible!'
+    response: '💳 Our Payment Options:\n\n• Bank Transfer\n• Mobile Money (MTN MoMo)\n• Card Payments\n\n**Our Payment Plan:**\n50% upfront → 30% mid-project → 20% on delivery\n\nThis ensures smooth project flow and protects both parties!',
+    followUp: 'Need a custom payment arrangement? We\'re flexible and can work with you!'
   },
   support: {
-    response: '🛠️ Support & Maintenance:\n\n• 30-day warranty on all projects\n• Bug fixes included (30 days)\n• Maintenance from GHS 1,500/month\n• Security updates\n• 24/7 Monitoring available\n\nWe\'ve got you covered after launch!',
-    followUp: 'Need ongoing support? Ask about our maintenance packages!'
+    response: '🛠️ Our Support & Maintenance:\n\n• 30-day warranty on all our projects\n• Bug fixes included (30 days)\n• Maintenance packages from GHS 1,500/month\n• Security updates\n• 24/7 Monitoring available\n\nWe\'ve got you covered after launch! We don\'t just build and disappear.',
+    followUp: 'Need ongoing support? Ask me about our maintenance packages!'
   },
   portfolio: {
-    response: '💼 Our Work:\n\nWe\'ve completed 50+ projects including:\n• E-commerce platforms\n• Inventory management systems\n• Mobile apps (iOS & Android)\n• Brand identity packages\n• Custom web applications\n• Analytics dashboards\n\nVisit our Portfolio page to see more!',
-    followUp: 'Want to see examples of specific project types?'
+    response: '💼 Our Work:\n\nWe\'ve completed 50+ projects including:\n• E-commerce platforms\n• Inventory management systems\n• Mobile apps (iOS & Android)\n• Brand identity packages\n• Custom web applications\n• Analytics dashboards\n• Custom paper bags for retail stores\n\nVisit /portfolio to see our completed projects across all departments!',
+    followUp: 'Want to see examples from a specific department or project type?'
   },
   company: {
-    response: '🏢 RAME Tech Consultancy:\n\nBased in Ghana, we provide innovative tech solutions:\n• Software Development\n• Hardware & IT\n• Graphic Design\n• Emerging Technologies\n\nWe help businesses transform through technology. 5+ years experience, 50+ completed projects!',
-    followUp: 'Would you like to know about specific services?'
+    response: '🏢 About Us:\n\nWe\'re RAME Tech Consultancy, based in Ghana! We provide innovative tech solutions through our 4 specialized departments:\n\n• Technology Solutions\n• IT Solutions\n• Creative Services (including Paper Craft)\n• Data & Research Services\n\nWe\'ve been helping businesses transform through technology for 5+ years with 50+ completed projects!',
+    followUp: 'Would you like to know about our specific departments or services?'
   },
   location: {
-    response: '📍 Based in Ghana, serving worldwide!\n\nWe specialize in remote collaboration and have worked with clients across:\n• Ghana\n• Other African countries\n• Europe\n• North America\n\nDistance isn\'t a barrier!',
-    followUp: 'Where are you located? We can discuss your project!'
+    response: '📍 We\'re Based in Ghana, Serving the World!\n\nOur team specializes in remote collaboration and we\'ve successfully worked with clients across:\n• Ghana\n• Other African countries\n• Europe\n• North America\n\nDistance isn\'t a barrier for us - we collaborate seamlessly with clients worldwide!',
+    followUp: 'Where are you located? We\'d love to discuss how we can work together!'
   },
   human: {
-    response: '👤 I\'ll connect you with our team!\n\n💬 WhatsApp: wa.me/233204249540\n📱 Call: +233 55 733 2615\n\nA human will respond within 24 hours!',
-    followUp: 'Click WhatsApp for the fastest response!'
+    response: '👤 I\'ll connect you with my colleagues!\n\n💬 WhatsApp: wa.me/233204249540\n📱 Call: +233 55 733 2615\n\nOur team will respond within 24 hours - usually much faster!',
+    followUp: 'Click WhatsApp for the fastest response from our team!'
   },
   departments: {
-    response: '🏢 RAME Tech Departments:\n\n🌐 **Technology Solutions** (CEO)\nSoftware, Mobile, Database, Cloud, Cybersecurity, AI\n\n🔧 **IT Solutions** (IT Specialist)\nHardware & IT Support\n\n🎨 **Creative Services** (Creative Director)\nGraphic Design + Paper Craft\n\n📊 **Data & Research** (Lead Researcher)\nMarketing, Analytics, Academic Writing\n\nVisit /departments to explore each!',
-    followUp: 'Which department interests you?'
+    response: '🏢 Our Departments:\n\nWe\'re organized into 4 specialized departments:\n\n🌐 **Technology Solutions** (Led by our CEO)\nWe build software, mobile apps, databases, cloud solutions, cybersecurity systems, and AI\n\n🔧 **IT Solutions** (Led by our IT Specialist)\nWe handle hardware, network setup, and IT infrastructure\n\n🎨 **Creative Services** (Led by our Creative Director)\nWe design graphics, brands, UI/UX, and create custom paper bags\n\n📊 **Data & Research** (Led by our Lead Researcher)\nWe conduct marketing research, digital marketing, analytics, and academic writing\n\nVisit /departments to explore each department!',
+    followUp: 'Which of our departments interests you? I can tell you more about any of them!'
   },
   papercraft: {
-    response: '📦 Paper Craft Services:\n\nWe offer custom paper bags and craft solutions:\n\n• **Custom Paper Bags** - Full color printing, custom sizes\n• **Gift Bags** - Weddings, birthdays, corporate events\n• **Shopping Bags** - Reinforced handles, bulk orders\n• **Promotional Bags** - Trade shows, marketing campaigns\n\nAll eco-friendly with logo branding available!\n\nPart of our Creative Services department.',
-    followUp: 'Need custom bags for your business or event? Let\'s talk!'
+    response: '📦 Our Paper Craft Services:\n\nWe create custom paper bags and craft solutions:\n\n• **Custom Paper Bags** - We print in full color with custom sizes\n• **Gift Bags** - Perfect for weddings, birthdays, corporate events\n• **Shopping Bags** - Reinforced handles, available in bulk\n• **Promotional Bags** - Great for trade shows and marketing campaigns\n\nAll our bags are eco-friendly and we can add your logo branding!\n\nThis is part of our Creative Services department.',
+    followUp: 'Need custom bags for your business or event? We\'d love to help!'
   },
 }
 
@@ -140,7 +140,7 @@ export default function Chatbot() {
     {
       id: 1,
       role: 'assistant',
-      content: 'Hello! 👋 I\'m the RAME Tech assistant.\n\nI can help you with:\n• Our services & pricing\n• Project timelines\n• Contact information\n• And more!\n\nWhat would you like to know?',
+      content: 'Hello! 👋 I\'m part of the RAME Tech team!\n\nI can help you with:\n• Our services & departments\n• Pricing & quotes\n• Project timelines\n• Connecting with our team\n• Paper Craft services\n• And more!\n\nWhat would you like to know about us?',
       timestamp: new Date()
     }
   ])
