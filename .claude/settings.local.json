@@ -17,7 +17,8 @@
       "Bash(dir:*)",
       "Bash(npx prisma db push)",
       "Bash(npx prisma generate:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(ping:*)"
     ],
     "deny": [],
     "ask": []

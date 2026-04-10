@@ -326,7 +326,26 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
       orderBy: { order: 'asc' }
     })
 
+    console.log(`Chatbot Knowledge: Fetched ${departments.length} departments`)
+
     if (departments.length > 0) {
+      // Create a comprehensive department overview chunk
+      const deptOverview = departments.map(dept => {
+        const servicesList = dept.services.map(s => s.title).join(', ')
+        const subDeptInfo = dept.subDepartments.length > 0
+          ? ` (includes ${dept.subDepartments.map(sd => sd.name).join(', ')})`
+          : ''
+        return `${dept.name}${subDeptInfo}: ${servicesList}`
+      }).join('\n')
+
+      chunks.push({
+        id: 'departments-overview',
+        category: 'Departments',
+        content: `RAME Tech has ${departments.length} main departments:\n\n${deptOverview}\n\nEach department offers specialized services. We are organized into: Technology Solutions, IT Solutions, Creative Services (including Paper Craft), and Data & Research Services.`,
+        keywords: ['department', 'departments', 'organized', 'structure', 'division', 'how many', 'what departments']
+      })
+
+      // Individual department details
       for (const dept of departments) {
         // Main department services
         const deptServices = dept.services.map(s => `${s.title}: ${s.description}`).join('\n')
@@ -350,7 +369,11 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
           content: fullContent,
           keywords: [dept.name.toLowerCase(), dept.slug, 'department', 'services', ...dept.services.map(s => s.title.toLowerCase())]
         })
+
+        console.log(`  - ${dept.name}: ${dept.services.length} services, ${dept.subDepartments.length} sub-depts`)
       }
+    } else {
+      console.log('Chatbot Knowledge: No departments found in database')
     }
 
     // Fetch Team Members (Department Heads)
