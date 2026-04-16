@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, FormEvent, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { FaArrowLeft, FaPlus, FaTrash } from 'react-icons/fa'
@@ -17,7 +17,7 @@ interface PricingTier {
   highlighted: boolean
 }
 
-export default function NewPricingTablePage() {
+function NewPricingTableForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const departmentIdFromUrl = searchParams.get('departmentId')
@@ -379,5 +379,17 @@ export default function NewPricingTablePage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function NewPricingTablePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <NewPricingTableForm />
+    </Suspense>
   )
 }

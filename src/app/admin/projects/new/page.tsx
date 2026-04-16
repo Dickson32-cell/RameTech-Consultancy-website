@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, FormEvent, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { FaArrowLeft } from 'react-icons/fa'
@@ -15,7 +15,7 @@ interface SubDepartment {
   name: string
 }
 
-export default function NewProjectPage() {
+function NewProjectForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const departmentIdFromUrl = searchParams.get('departmentId')
@@ -393,5 +393,17 @@ export default function NewProjectPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function NewProjectPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    }>
+      <NewProjectForm />
+    </Suspense>
   )
 }
