@@ -24,6 +24,8 @@ export default function EditDepartmentPage() {
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
   const [error, setError] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -67,6 +69,10 @@ export default function EditDepartmentPage() {
           order: dept.order,
           isActive: dept.isActive
         })
+        // Set image preview if image exists
+        if (dept.imageUrl) {
+          setImagePreview(dept.imageUrl)
+        }
         setError('')
       } else {
         setError(result.error || 'Failed to fetch department')
@@ -92,6 +98,51 @@ export default function EditDepartmentPage() {
       ...formData,
       name
     })
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    if (!allowedTypes.includes(file.type)) {
+      setError('Only JPEG, PNG, GIF, and WebP images are allowed')
+      return
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be under 5MB')
+      return
+    }
+
+    setUploading(true)
+    setError('')
+
+    try {
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', file)
+
+      const response = await fetch('/api/v1/upload/department', {
+        method: 'POST',
+        body: uploadFormData
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setFormData({ ...formData, imageUrl: result.url })
+        setImagePreview(result.url)
+      } else {
+        setError(result.error || 'Failed to upload image')
+      }
+    } catch (err) {
+      setError('An error occurred while uploading the image')
+      console.error(err)
+    } finally {
+      setUploading(false)
+    }
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -240,19 +291,35 @@ export default function EditDepartmentPage() {
             />
           </div>
 
-          {/* Image URL */}
+          {/* Hero Image Upload */}
           <div>
-            <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2">
-              Hero Image URL
+            <label htmlFor="imageUpload" className="block text-sm font-medium text-gray-700 mb-2">
+              Hero Image
             </label>
             <input
-              type="url"
-              id="imageUrl"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="https://..."
+              type="file"
+              id="imageUpload"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              onChange={handleImageUpload}
+              disabled={uploading}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
+            {uploading && (
+              <p className="mt-2 text-sm text-blue-600">Uploading image...</p>
+            )}
+            {imagePreview && (
+              <div className="mt-4">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="max-w-full h-48 object-cover rounded-lg border border-gray-300"
+                />
+                <p className="mt-2 text-xs text-gray-500">Current hero image</p>
+              </div>
+            )}
+            <p className="mt-1 text-xs text-gray-500">
+              Recommended: 1920x600px. Max size: 5MB. Formats: JPEG, PNG, GIF, WebP
+            </p>
           </div>
 
           {/* Order */}
