@@ -7,6 +7,7 @@ import { successResponse, errorResponse } from '@/lib/api-response'
 export async function GET(request: NextRequest) {
   try {
     const team = await prisma.teamMember.findMany({
+      where: { isActive: true },
       orderBy: { order: 'asc' }
     })
 

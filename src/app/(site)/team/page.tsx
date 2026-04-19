@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { useState, useEffect } from 'react'
 
 interface TeamMember {
@@ -63,11 +62,10 @@ export default function TeamPage() {
                 {/* Avatar */}
                 <div className="relative w-40 h-40 mx-auto mb-6">
                   {member.photoUrl ? (
-                    <Image 
+                    <img
                       src={member.photoUrl}
                       alt={member.name}
-                      fill
-                      className={`object-cover rounded-full transition-all duration-300 ${hoveredId === member.id ? 'scale-105' : ''}`}
+                      className={`w-full h-full object-cover rounded-full transition-all duration-300 ${hoveredId === member.id ? 'scale-105' : ''}`}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary to-secondary text-white text-3xl font-bold rounded-full">
