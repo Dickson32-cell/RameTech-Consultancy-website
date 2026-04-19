@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
         title: a.title as string,
         description: (a.description as string | null) || null,
         url: a.url as string,
+        imageUrl: (a.urlToImage as string | null) || null,
         source: (a.source?.name as string | null) || null,
         publishedAt: a.publishedAt as string,
       }))

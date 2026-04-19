@@ -4,6 +4,36 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { FaExternalLinkAlt, FaArrowRight } from 'react-icons/fa'
 
+function NewsCardImage({ src, alt, source }: { src: string | null; alt: string; source: string | null }) {
+  const [failed, setFailed] = useState(false)
+  if (src && !failed) {
+    return (
+      <div className="aspect-video overflow-hidden relative">
+        <img
+          src={src}
+          alt={alt}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={() => setFailed(true)}
+        />
+        {source && (
+          <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/50 backdrop-blur-sm rounded-full text-white text-xs font-medium">
+            {source}
+          </span>
+        )}
+      </div>
+    )
+  }
+  return (
+    <div className="aspect-video bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
+      {source && (
+        <span className="px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-white text-sm font-semibold border border-white/20">
+          {source}
+        </span>
+      )}
+    </div>
+  )
+}
+
 interface BlogPost {
   id: string
   title: string
@@ -20,6 +50,7 @@ interface NewsArticle {
   title: string
   description: string | null
   url: string
+  imageUrl: string | null
   source: string | null
   publishedAt: string
 }
@@ -201,14 +232,8 @@ export default function BlogPreview() {
                     className="group cursor-pointer"
                   >
                     <article className="bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 h-full flex flex-col">
-                      {/* News header image placeholder */}
-                      <div className="aspect-video bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
-                        <div className="text-center px-4">
-                          <span className="text-white/20 text-6xl font-bold leading-none select-none">
-                            {String(index + 1).padStart(2, '0')}
-                          </span>
-                        </div>
-                      </div>
+                      {/* Article image */}
+                      <NewsCardImage src={article.imageUrl} alt={article.title} source={article.source} />
 
                       <div className="p-6 flex flex-col flex-grow">
                         {/* Source badge */}

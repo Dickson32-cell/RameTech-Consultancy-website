@@ -7,8 +7,45 @@ interface NewsArticle {
   title: string
   description: string | null
   url: string
+  imageUrl: string | null
   source: string | null
   publishedAt: string
+}
+
+function NewsImage({ src, alt, source }: { src: string | null; alt: string; source: string | null }) {
+  const [failed, setFailed] = useState(false)
+
+  if (src && !failed) {
+    return (
+      <div className="aspect-video overflow-hidden relative">
+        <img
+          src={src}
+          alt={alt}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={() => setFailed(true)}
+        />
+        {source && (
+          <span className="absolute bottom-2 left-2 px-2.5 py-1 bg-black/50 backdrop-blur-sm rounded-full text-white text-xs font-medium">
+            {source}
+          </span>
+        )}
+      </div>
+    )
+  }
+
+  // Fallback gradient
+  return (
+    <div className="aspect-video bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center relative overflow-hidden">
+      <span className="absolute inset-0 opacity-10 text-white text-8xl font-black flex items-center justify-center select-none">
+        N
+      </span>
+      {source && (
+        <span className="relative z-10 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-white text-sm font-semibold border border-white/20">
+          {source}
+        </span>
+      )}
+    </div>
+  )
 }
 
 export default function NewsSection() {
@@ -78,21 +115,11 @@ export default function NewsSection() {
           className="group"
         >
           <article className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col">
-            {/* Card header */}
-            <div className="aspect-video bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center relative overflow-hidden">
-              <span className="absolute inset-0 opacity-10 text-white text-8xl font-black flex items-center justify-center select-none">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              {article.source && (
-                <span className="relative z-10 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-full text-white text-sm font-semibold border border-white/20">
-                  {article.source}
-                </span>
-              )}
-            </div>
+            {/* Article image */}
+            <NewsImage src={article.imageUrl} alt={article.title} source={article.source} />
 
             {/* Content */}
             <div className="p-6 flex flex-col flex-grow">
-              {/* Meta row */}
               <div className="flex items-center justify-between mb-3">
                 <span className="px-3 py-1 bg-accent/10 text-accent rounded-full text-xs font-medium">
                   News
@@ -103,19 +130,16 @@ export default function NewsSection() {
                 </span>
               </div>
 
-              {/* Title */}
               <h2 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors line-clamp-3 flex-grow">
                 {article.title}
               </h2>
 
-              {/* Description */}
               {article.description && (
                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                   {article.description}
                 </p>
               )}
 
-              {/* CTA */}
               <div className="pt-4 border-t border-gray-100 flex items-center gap-2 text-primary text-sm font-medium group-hover:gap-3 transition-all duration-200">
                 <span>Read full article</span>
                 <FaExternalLinkAlt size={11} />
