@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import PortfolioModal from '@/components/shared/PortfolioModal'
 
 interface SubDepartment {
@@ -68,6 +67,19 @@ interface Department {
   services: Service[]
   projects: Project[]
   pricingTables: PricingTable[]
+}
+
+function HeroImage({ src, alt }: { src: string; alt: string }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) return null
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="absolute inset-0 w-full h-full object-cover"
+      onError={() => setFailed(true)}
+    />
+  )
 }
 
 export default function DepartmentDetailPage() {
@@ -137,25 +149,22 @@ export default function DepartmentDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative h-64 md:h-80 bg-gradient-to-r from-blue-600 to-indigo-700 overflow-hidden">
+      <div className="relative h-64 md:h-96 overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700">
         {department.imageUrl && (
-          <Image
-            src={department.imageUrl}
-            alt={department.name}
-            fill
-            className="object-cover opacity-30"
-          />
+          <HeroImage src={department.imageUrl} alt={department.name} />
         )}
-        <div className="absolute inset-0 flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <Link href="/departments" className="text-white/80 hover:text-white mb-4 inline-block">
+        {/* Dark gradient so text is always readable */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
+        <div className="absolute inset-0 flex items-end">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8">
+            <Link href="/departments" className="text-white/80 hover:text-white mb-4 inline-block text-sm">
               ← Back to Departments
             </Link>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-lg">
               {department.name}
             </h1>
             {department.description && (
-              <p className="text-xl text-white/90 max-w-3xl">
+              <p className="text-lg text-white/90 max-w-3xl drop-shadow">
                 {department.description}
               </p>
             )}
@@ -220,12 +229,11 @@ export default function DepartmentDetailPage() {
                   {department.services.map((service) => (
                     <div key={service.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
                       {service.imageUrl && (
-                        <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
-                          <Image
+                        <div className="h-48 mb-4 rounded-lg overflow-hidden">
+                          <img
                             src={service.imageUrl}
                             alt={service.title}
-                            fill
-                            className="object-cover"
+                            className="w-full h-full object-cover"
                           />
                         </div>
                       )}
@@ -265,12 +273,11 @@ export default function DepartmentDetailPage() {
                   {subDept.services.map((service) => (
                     <div key={service.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
                       {service.imageUrl && (
-                        <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
-                          <Image
+                        <div className="h-48 mb-4 rounded-lg overflow-hidden">
+                          <img
                             src={service.imageUrl}
                             alt={service.title}
-                            fill
-                            className="object-cover"
+                            className="w-full h-full object-cover"
                           />
                         </div>
                       )}
@@ -324,11 +331,10 @@ export default function DepartmentDetailPage() {
                             playsInline
                           />
                         ) : project.imageUrl ? (
-                          <Image
+                          <img
                             src={project.imageUrl}
                             alt={project.title}
-                            fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-300"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                           />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-gray-400">
@@ -381,11 +387,10 @@ export default function DepartmentDetailPage() {
                             playsInline
                           />
                         ) : project.imageUrl ? (
-                          <Image
+                          <img
                             src={project.imageUrl}
                             alt={project.title}
-                            fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-300"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                           />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center text-gray-400">
