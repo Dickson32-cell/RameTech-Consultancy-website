@@ -53,8 +53,13 @@ module.exports = {
         'rotate-slow': 'rotate-slow 20s linear infinite',
         'scale-pulse': 'scale-pulse 2s ease-in-out infinite',
         'shimmer': 'shimmer 3s linear infinite',
+        'ticker': 'ticker 55s linear infinite',
       },
       keyframes: {
+        ticker: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
         fadeInUp: {
           '0%': { opacity: '0', transform: 'translateY(30px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },

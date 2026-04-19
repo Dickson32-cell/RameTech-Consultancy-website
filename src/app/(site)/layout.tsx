@@ -3,6 +3,7 @@ import Footer from '@/components/layout/Footer'
 import ScrollProgress from '@/components/shared/ScrollProgress'
 import Chatbot from '@/components/chatbot/Chatbot'
 import NewsletterPopup from '@/components/shared/NewsletterPopup'
+import NewsTicker from '@/components/NewsTicker'
 
 export default function SiteLayout({
   children,
@@ -13,6 +14,7 @@ export default function SiteLayout({
     <>
       <ScrollProgress />
       <Header />
+      <NewsTicker />
       {children}
       <Footer />
       <Chatbot />

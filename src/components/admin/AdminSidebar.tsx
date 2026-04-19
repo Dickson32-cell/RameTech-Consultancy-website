@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FaHome, FaBriefcase, FaUsers, FaProjectDiagram, FaSignOutAlt, FaBars, FaBlog, FaEnvelope, FaShareAlt, FaTimes, FaBuilding, FaBook, FaGraduationCap } from 'react-icons/fa'
+import { FaHome, FaBriefcase, FaUsers, FaProjectDiagram, FaSignOutAlt, FaBars, FaBlog, FaEnvelope, FaShareAlt, FaTimes, FaBuilding, FaBook, FaGraduationCap, FaNewspaper } from 'react-icons/fa'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: FaHome },
@@ -14,6 +14,7 @@ const navigation = [
   { name: 'Publications', href: '/admin/publications', icon: FaBook },
   { name: 'Academic Writing', href: '/admin/academic-writing', icon: FaGraduationCap },
   { name: 'Blog', href: '/admin/blogs', icon: FaBlog },
+  { name: 'News Updates', href: '/admin/news', icon: FaNewspaper },
   { name: 'Social Links', href: '/admin/social-links', icon: FaShareAlt },
   { name: 'Messages', href: '/admin/messages', icon: FaEnvelope, badge: true },
 ]
