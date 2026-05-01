@@ -120,15 +120,17 @@ export default function EditTeamMemberPage() {
       })
 
       const data = await res.json()
+      console.log('API Response:', data) // Debug logging
 
-      if (!data.success) {
+      if (!res.ok || !data.success) {
         setError(data.error || 'Failed to update team member')
         setIsSaving(false)
         return
       }
 
       router.push('/admin/team')
-    } catch {
+    } catch (err) {
+      console.error('Form submission error:', err)
       setError('An error occurred. Please try again.')
       setIsSaving(false)
     }

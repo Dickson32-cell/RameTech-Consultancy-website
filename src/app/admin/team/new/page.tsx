@@ -71,15 +71,17 @@ export default function NewTeamMemberPage() {
       })
 
       const data = await res.json()
+      console.log('API Response:', data) // Debug logging
 
-      if (!data.success) {
+      if (!res.ok || !data.success) {
         setError(data.error || 'Failed to create team member')
         setIsLoading(false)
         return
       }
 
       router.push('/admin/team')
-    } catch {
+    } catch (err) {
+      console.error('Form submission error:', err)
       setError('An error occurred. Please try again.')
       setIsLoading(false)
     }
