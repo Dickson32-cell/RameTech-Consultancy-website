@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       use_filename: true,
       unique_filename: true,
       transformation: [
-        { width: 800, height: 800, crop: 'limit', gravity: 'face' },
+        { width: 800, height: 800, crop: 'fill', gravity: 'face' },
         { quality: 'auto', fetch_format: 'auto' }
       ]
     })
