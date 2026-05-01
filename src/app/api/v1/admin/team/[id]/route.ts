@@ -51,8 +51,14 @@ export async function PUT(
     })
 
     return NextResponse.json(successResponse(member))
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error updating team member:', error)
+
+    // Check for unique constraint violation (duplicate email)
+    if (error.code === 'P2002') {
+      return NextResponse.json(errorResponse('This email is already in use by another team member'), { status: 409 })
+    }
+
     return NextResponse.json(errorResponse('Failed to update team member'), { status: 500 })
   }
 }
