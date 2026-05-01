@@ -18,7 +18,11 @@
       "Bash(npx prisma db push)",
       "Bash(npx prisma generate:*)",
       "Bash(curl:*)",
-      "Bash(ping:*)"
+      "Bash(ping:*)",
+      "Bash(timeout 45 bash:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npm run db:seed-academic:*)",
+      "Bash(npx ts-node:*)"
     ],
     "deny": [],
     "ask": []
