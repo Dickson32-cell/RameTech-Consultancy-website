@@ -13,19 +13,19 @@ async function main() {
   // ============================================
   // ADMIN USER
   // ============================================
-  const adminPassword = await bcrypt.hash('admin123', 12)
+  const adminPassword = await bcrypt.hash('Admin@123', 12)
   await prisma.portalUser.upsert({
     where: { email: 'admin@rametech.com' },
-    update: {},
+    update: { passwordHash: adminPassword },
     create: {
       email: 'admin@rametech.com',
       passwordHash: adminPassword,
-      name: 'Admin User',
+      name: 'RAME Tech Admin',
       role: 'admin',
       isActive: true
     }
   })
-  console.log('✅ Admin user created')
+  console.log('✅ Admin user created/updated')
 
   // ============================================
   // TEAM MEMBERS (from src/app/team/page.tsx)
