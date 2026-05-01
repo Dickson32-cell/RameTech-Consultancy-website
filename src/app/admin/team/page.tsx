@@ -25,7 +25,7 @@ export default function AdminTeamPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token')
-    if (!token) {
+    if (!token || token === 'undefined') {
       router.push('/admin/login')
       return
     }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FaArrowLeft, FaUpload, FaTimes, FaImage } from 'react-icons/fa'
@@ -8,6 +8,14 @@ import { FaArrowLeft, FaUpload, FaTimes, FaImage } from 'react-icons/fa'
 export default function NewTeamMemberPage() {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token')
+    if (!token || token === 'undefined') {
+      router.push('/admin/login')
+    }
+  }, [router])
+
   const [formData, setFormData] = useState({
     name: '',
     role: '',

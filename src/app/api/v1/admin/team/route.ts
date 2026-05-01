@@ -38,11 +38,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(successResponse(member), { status: 201 })
   } catch (error: any) {
-    console.error('Error creating team member:', error)
+    console.error('Error creating team member:', error?.code, error?.message, error)
 
-    // Check for unique constraint violation (duplicate email)
     if (error.code === 'P2002') {
       return NextResponse.json(errorResponse('This email is already in use by another team member'), { status: 409 })
+    }
+
+    if (error.code === 'P1001' || error.code === 'P1003') {
+      return NextResponse.json(errorResponse('Database connection failed. Please check server configuration.'), { status: 503 })
     }
 
     return NextResponse.json(errorResponse('Failed to create team member'), { status: 500 })
