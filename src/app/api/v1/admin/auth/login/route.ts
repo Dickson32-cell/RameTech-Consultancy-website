@@ -58,8 +58,25 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     console.error('Login error:', error?.message || error)
+
+    // Handle database connection errors specifically
+    if (error?.code === 'P1001' || error?.code === 'P1003') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Database connection error. Please contact support.',
+          details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        },
+        { status: 503 }
+      )
+    }
+
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+      {
+        success: false,
+        error: 'Internal server error',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
       { status: 500 }
     )
   }
