@@ -322,10 +322,16 @@ async function main() {
   ]
 
   for (const social of socialLinks) {
-    await prisma.socialMedia.upsert({
-      where: { id: social.name.toLowerCase().replace(/\s+/g, '-') },
+    await prisma.socialLink.upsert({
+      where: { platform: social.name.toLowerCase() },
       update: {},
-      create: social
+      create: {
+        platform: social.name.toLowerCase(),
+        url: social.url,
+        icon: social.icon,
+        order: social.order,
+        isActive: social.isActive
+      }
     })
   }
   console.log(`✅ ${socialLinks.length} social media links seeded`)
