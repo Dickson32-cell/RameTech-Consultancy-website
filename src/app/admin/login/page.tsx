@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
         <div className="bg-white rounded-xl shadow-lg p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Admin Login</h1>
-            <p className="text-gray-600 mt-2">Sign in to RAME Tech Admin Panel</p>
+            <p className="text-gray-600 mt-2">Sign in to RAMEDIC Admin Panel</p>
           </div>
 
           {error && (
@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                placeholder="admin@rametech.com"
+                placeholder="admin@ramedic.com"
               />
             </div>
 
