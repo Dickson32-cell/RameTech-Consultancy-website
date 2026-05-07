@@ -47,7 +47,7 @@ export default function HeroSection() {
             </h1>
             
             <p className="text-lg md:text-xl text-white/80 mb-8 max-w-xl mx-auto lg:mx-0">
-              RAME Tech Consultancy delivers cutting-edge software development, hardware & IT solutions, and professional graphic design services to help your business thrive.
+              RAMEDIC Consultancy and Creative LTD delivers cutting-edge software development, hardware & IT solutions, creative services, and research to help your business thrive.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">

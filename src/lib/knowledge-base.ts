@@ -17,13 +17,13 @@ export const companyKnowledge: KnowledgeChunk[] = [
   {
     id: 'company-1',
     category: 'Company',
-    content: 'RAME Tech Consultancy is a Ghana-based technology company providing innovative digital solutions. We specialize in software development, hardware & IT services, graphic design, and emerging technologies. With over 5 years of experience, we have completed 50+ projects for clients across Ghana, Africa, Europe, and North America.',
-    keywords: ['company', 'about', 'who', 'rame tech', 'ghana', 'experience', 'years', 'projects', 'overview']
+    content: 'RAMEDIC Consultancy and Creative LTD is a Ghana-based company providing innovative solutions in technology, IT, creative services, and research. We specialize in software development, hardware & IT services, graphic design, paper craft, and research services. With over 5 years of experience, we have completed 50+ projects for clients across Ghana, Africa, Europe, and North America.',
+    keywords: ['company', 'about', 'who', 'ramedic', 'ghana', 'experience', 'years', 'projects', 'overview']
   },
   {
     id: 'company-2',
     category: 'Company',
-    content: 'RAME Tech Consultancy delivers cutting-edge technology solutions to help businesses grow. Our mission is to provide affordable, high-quality tech services that empower businesses in Ghana and beyond to succeed in the digital age.',
+    content: 'RAMEDIC Consultancy and Creative LTD delivers cutting-edge solutions to help businesses grow. Our mission is to provide affordable, high-quality services that empower businesses in Ghana and beyond to succeed in the digital age.',
     keywords: ['mission', 'vision', 'goal', 'purpose', 'why', 'values']
   },
 
@@ -123,7 +123,7 @@ export const companyKnowledge: KnowledgeChunk[] = [
   {
     id: 'contact-1',
     category: 'Contact',
-    content: 'Contact Information: Phone/Call: +233 55 733 2615, WhatsApp: wa.me/233204249540 or +233 20 424 9540, Email: info.rametechconsultancy@gmail.com. We reply to messages within 24 hours.',
+    content: 'Contact Information: Phone/Call: +233 55 733 2615, WhatsApp: wa.me/233204249540 or +233 20 424 9540, Email: info@ramedic.com. We reply to messages within 24 hours.',
     keywords: ['contact', 'call', 'phone', 'email', 'whatsapp', 'message', 'reach', 'connect', 'talk', 'speak', 'hour', 'response', 'reply']
   },
   {
@@ -153,7 +153,7 @@ export const companyKnowledge: KnowledgeChunk[] = [
   {
     id: 'portfolio-1',
     category: 'Portfolio',
-    content: 'Portfolio & Work: We have completed 50+ projects including e-commerce platforms, inventory management systems, mobile apps, custom web applications, brand identity packages, and analytics dashboards. Visit our Portfolio page to see case studies.',
+    content: 'Portfolio & Work: We have completed 50+ projects including e-commerce platforms, inventory management systems, mobile apps, custom web applications, brand identity packages, analytics dashboards, and custom paper craft solutions. Visit our Portfolio page to see case studies.',
     keywords: ['portfolio', 'work', 'projects', 'example', 'case study', 'reference', 'previous', 'completed', 'showcase', 'samples']
   },
 
@@ -235,7 +235,7 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
       chunks.push({
         id: 'academic-writing-dynamic',
         category: 'Academic Writing',
-        content: `Academic Writing Services: RAME Tech offers comprehensive academic writing support for Bachelor, Master, and PhD level research.\n\n${academicContent}`,
+        content: `Academic Writing Services: RAMEDIC offers comprehensive academic writing support for Bachelor, Master, and PhD level research.\n\n${academicContent}`,
         keywords: ['academic', 'writing', 'thesis', 'dissertation', 'research', 'bachelor', 'master', 'phd', 'proposal', 'literature review', 'methodology', 'data analysis', 'defense']
       })
     }
@@ -255,7 +255,7 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
       chunks.push({
         id: 'publications-dynamic',
         category: 'Publications',
-        content: `Recent Publications by RAME Tech:\n${pubContent}\n\nView all publications at our Publications page.`,
+        content: `Recent Publications by RAMEDIC:\n${pubContent}\n\nView all publications at our Publications page.`,
         keywords: ['publication', 'research', 'paper', 'article', 'journal', 'zenodo', 'doi', 'academic']
       })
     }
@@ -274,7 +274,7 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
       chunks.push({
         id: 'services-dynamic',
         category: 'Services',
-        content: `RAME Tech Services:\n${servicesContent}`,
+        content: `RAMEDIC Services:\n${servicesContent}`,
         keywords: ['service', 'services', 'offer', 'provide', 'solution']
       })
     }
@@ -341,7 +341,7 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
       chunks.push({
         id: 'departments-overview',
         category: 'Departments',
-        content: `RAME Tech has ${departments.length} main departments:\n\n${deptOverview}\n\nEach department offers specialized services. We are organized into: Technology Solutions, IT Solutions, Creative Services (including Paper Craft), and Data & Research Services.`,
+        content: `RAMEDIC has ${departments.length} main departments:\n\n${deptOverview}\n\nEach department offers specialized services. We are organized into: Technology Solutions, IT Solutions, Creative Services (including Paper Craft), and Data & Research Services.`,
         keywords: ['department', 'departments', 'organized', 'structure', 'division', 'how many', 'what departments']
       })
 
@@ -476,5 +476,5 @@ export async function buildRAGContext(query: string): Promise<string> {
     return ''
   }
 
-  return `\n\nRelevant Company Information:\n${allRelevantInfo.map((info, i) => `${i + 1}. ${info}`).join('\n')}\n\nUse this information to provide accurate responses about RAME Tech Consultancy.`
+  return `\n\nRelevant Company Information:\n${allRelevantInfo.map((info, i) => `${i + 1}. ${info}`).join('\n')}\n\nUse this information to provide accurate responses about RAMEDIC Consultancy and Creative LTD.`
 }

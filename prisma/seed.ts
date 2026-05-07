@@ -15,12 +15,12 @@ async function main() {
   // ============================================
   const adminPassword = await bcrypt.hash('Admin@123', 12)
   await prisma.portalUser.upsert({
-    where: { email: 'admin@rametech.com' },
+    where: { email: 'admin@ramedic.com' },
     update: { passwordHash: adminPassword },
     create: {
-      email: 'admin@rametech.com',
+      email: 'admin@ramedic.com',
       passwordHash: adminPassword,
-      name: 'RAME Tech Admin',
+      name: 'RAMEDIC Admin',
       role: 'admin',
       isActive: true
     }
@@ -34,8 +34,8 @@ async function main() {
     {
       name: 'Abdul Rashid Dickson',
       role: 'CEO',
-      bio: 'Leading RAME Tech with vision and expertise in software development and business strategy.',
-      email: 'dickson@rametech.com',
+      bio: 'Leading RAMEDIC with vision and expertise in software development and business strategy.',
+      email: 'dickson@ramedic.com',
       phone: '+233 000 000 000',
       photoUrl: '/images/team/abdul-rashid-dickson.jpg',
       order: 1,
@@ -45,7 +45,7 @@ async function main() {
       name: 'Harriet Emefa Asonkey',
       role: 'Administrator',
       bio: 'Keeping operations smooth and efficient with exceptional organizational skills.',
-      email: 'harriet@rametech.com',
+      email: 'harriet@ramedic.com',
       phone: '+233 000 000 001',
       photoUrl: '/images/team/harriet-emefa-asonkey.jpg',
       order: 2,
@@ -55,7 +55,7 @@ async function main() {
       name: 'Dickson Abdul-Wahab',
       role: 'Researcher',
       bio: 'Driving innovation through thorough research and technical exploration.',
-      email: 'wahab@rametech.com',
+      email: 'wahab@ramedic.com',
       phone: '+233 000 000 002',
       photoUrl: '/images/team/dickson-abdul-wahab.jpg',
       order: 3,
@@ -65,7 +65,7 @@ async function main() {
       name: 'Anyetei Sowah Joseph',
       role: 'Graphic Designer',
       bio: 'Creative designer bringing brands to life with stunning visual designs.',
-      email: 'joseph@rametech.com',
+      email: 'joseph@ramedic.com',
       phone: '+233 000 000 003',
       photoUrl: '/images/team/anyetei-sowah-joseph.jpg',
       order: 4,
@@ -75,7 +75,7 @@ async function main() {
       name: 'David Tetteh',
       role: 'Hardware Technician',
       bio: 'Expert in hardware setup, repairs, and IT infrastructure maintenance.',
-      email: 'david@rametech.com',
+      email: 'david@ramedic.com',
       phone: '+233 000 000 004',
       photoUrl: '/images/team/david-tetteh.jpg',
       order: 5,
@@ -314,7 +314,7 @@ async function main() {
   const socialLinks = [
     {
       name: 'LinkedIn',
-      url: 'https://linkedin.com/company/rametech',
+      url: 'https://linkedin.com/company/ramedic',
       icon: 'FaLinkedin',
       order: 1,
       isActive: true

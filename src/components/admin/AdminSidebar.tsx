@@ -96,7 +96,7 @@ export default function AdminSidebar() {
           <div className="p-4 md:p-6 border-b border-white/20 flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <h1 className="text-lg md:text-xl font-bold truncate">RAME Tech</h1>
+                <h1 className="text-lg md:text-xl font-bold truncate">RAMEDIC</h1>
                 <p className="text-xs md:text-sm text-white/80">Admin Panel</p>
               </div>
               <button

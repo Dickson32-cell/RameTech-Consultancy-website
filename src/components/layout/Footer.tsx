@@ -62,15 +62,15 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <div className="relative h-12 w-40">
-              <Image 
-                src="/logo.png" 
-                alt="RAME Tech Consultancy"
+              <Image
+                src="/logo.png"
+                alt="RAMEDIC Consultancy and Creative LTD"
                 fill
                 className="object-contain"
               />
             </div>
             <p className="text-gray-400 mb-4">
-              Professional tech consultancy delivering innovative solutions in software development, hardware & IT, and graphic design.
+              Professional consultancy delivering innovative solutions in software development, hardware & IT, creative services, and research.
             </p>
 
             {/* Social Media Icons */}
@@ -261,7 +261,7 @@ export default function Footer() {
         <div className="border-t border-gray-700/50 mt-10 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">
-              {new Date().getFullYear()} RAME Tech Consultancy. All rights reserved.
+              {new Date().getFullYear()} RAMEDIC Consultancy and Creative LTD. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
               <Link href="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 cursor-pointer">Privacy Policy</Link>

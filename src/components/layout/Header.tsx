@@ -29,9 +29,9 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center py-2 -ml-2 cursor-pointer">
             <div className="relative h-12 w-36 sm:h-14 sm:w-44">
-              <Image 
-                src="/logo.png" 
-                alt="RAME Tech Consultancy"
+              <Image
+                src="/logo.png"
+                alt="RAMEDIC Consultancy and Creative LTD"
                 fill
                 className="object-contain"
               />

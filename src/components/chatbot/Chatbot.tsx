@@ -38,7 +38,7 @@ const INTENT_PATTERNS = {
 
 const RESPONSES: Record<string, { response: string; followUp?: string }> = {
   greeting: {
-    response: 'Hello! 👋 Welcome to RAME Tech Consultancy!\n\nI\'m part of the RAME Tech team, here to help you with:\n\n• Learning about our services and departments\n• Getting pricing information\n• Understanding project timelines\n• Connecting with our team\n\nWhat can I help you with today?',
+    response: 'Hello! 👋 Welcome to RAMEDIC Consultancy and Creative LTD!\n\nI\'m part of the RAMEDIC team, here to help you with:\n\n• Learning about our services and departments\n• Getting pricing information\n• Understanding project timelines\n• Connecting with our team\n\nWhat can I help you with today?',
     followUp: 'Would you like to see our services or get a quote?'
   },
   goodbye: {
@@ -105,7 +105,7 @@ const RESPONSES: Record<string, { response: string; followUp?: string }> = {
     followUp: 'Want to see examples from a specific department or project type?'
   },
   company: {
-    response: '🏢 About Us:\n\nWe\'re RAME Tech Consultancy, based in Ghana! We provide innovative tech solutions through our 4 specialized departments:\n\n• Technology Solutions\n• IT Solutions\n• Creative Services (including Paper Craft)\n• Data & Research Services\n\nWe\'ve been helping businesses transform through technology for 5+ years with 50+ completed projects!',
+    response: '🏢 About Us:\n\nWe\'re RAMEDIC Consultancy and Creative LTD, based in Ghana! We provide innovative solutions through our 4 specialized departments:\n\n• Technology Solutions\n• IT Solutions\n• Creative Services (including Paper Craft)\n• Data & Research Services\n\nWe\'ve been helping businesses transform through technology for 5+ years with 50+ completed projects!',
     followUp: 'Would you like to know about our specific departments or services?'
   },
   location: {
@@ -140,7 +140,7 @@ export default function Chatbot() {
     {
       id: 1,
       role: 'assistant',
-      content: 'Hello! 👋 I\'m part of the RAME Tech team!\n\nI can help you with:\n• Our services & departments\n• Pricing & quotes\n• Project timelines\n• Connecting with our team\n• Paper Craft services\n• And more!\n\nWhat would you like to know about us?',
+      content: 'Hello! 👋 I\'m part of the RAMEDIC team!\n\nI can help you with:\n• Our services & departments\n• Pricing & quotes\n• Project timelines\n• Connecting with our team\n• Paper Craft services\n• And more!\n\nWhat would you like to know about us?',
       timestamp: new Date()
     }
   ])
@@ -373,7 +373,7 @@ export default function Chatbot() {
             <div className="flex items-center gap-2 md:gap-3">
               <FaRobot className="text-[20px] md:text-[24px]" />
               <div>
-                <h3 className="font-semibold text-sm md:text-base">RAME Tech Assistant</h3>
+                <h3 className="font-semibold text-sm md:text-base">RAMEDIC Assistant</h3>
                 <p className="text-xs text-gray-200 hidden md:block">Smart help 24/7</p>
               </div>
             </div>

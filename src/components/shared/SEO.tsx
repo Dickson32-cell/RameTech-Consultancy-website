@@ -14,9 +14,9 @@ interface SEOProps {
   author?: string
 }
 
-const SITE_NAME = 'RAME Tech Consultancy'
-const SITE_URL = 'https://rametech.com'
-const DEFAULT_DESCRIPTION = 'Professional tech consultancy offering software development, hardware & IT solutions, and graphic design services in Ghana.'
+const SITE_NAME = 'RAMEDIC Consultancy and Creative LTD'
+const SITE_URL = 'https://ramedic.com'
+const DEFAULT_DESCRIPTION = 'Professional consultancy offering software development, IT solutions, creative services including paper craft, and research services in Ghana.'
 
 export function generateMetadata({
   title,
@@ -71,7 +71,7 @@ export function generateOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'RAME Tech Consultancy',
+    name: 'RAMEDIC Consultancy and Creative LTD',
     url: SITE_URL,
     logo: `${SITE_URL}/logo.png`,
     contactPoint: {
@@ -81,7 +81,7 @@ export function generateOrganizationSchema() {
       availableLanguage: 'English'
     },
     sameAs: [
-      'https://www.instagram.com/rametech_consultancy?igsh=MTJyOXhic2F4Z2Fhcw%3D%3D&utm_source=qr'
+      'https://www.instagram.com/ramedic'
     ]
   }
 }
@@ -90,7 +90,7 @@ export function generateLocalBusinessSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: 'RAME Tech Consultancy',
+    name: 'RAMEDIC Consultancy and Creative LTD',
     image: `${SITE_URL}/logo.png`,
     address: {
       '@type': 'PostalAddress',

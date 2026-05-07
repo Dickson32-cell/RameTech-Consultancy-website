@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'RAME Tech Consultancy | Software Development, Hardware & IT, Graphic Design',
-  description: 'Professional tech consultancy offering software development, hardware & IT solutions, and graphic design services in Ghana.',
-  keywords: 'software development, hardware IT, graphic design, Ghana, website, mobile app',
+  title: 'RAMEDIC Consultancy and Creative LTD | Software Development, IT Solutions, Creative Services, Research',
+  description: 'Professional consultancy offering software development, IT solutions, creative services including paper craft, and research services in Ghana.',
+  keywords: 'software development, hardware IT, graphic design, paper craft, research, Ghana, website, mobile app, creative services',
 }
 
 export default function RootLayout({

@@ -1,13 +1,14 @@
-# RAME Tech Consultancy Website
+# RAMEDIC Consultancy and Creative LTD Website
 
 A professional consultancy website built with Next.js, React, TypeScript, and Tailwind CSS.
 
 ## Project Overview
 
-This website is for RAME Tech Consultancy, a Ghana-based tech company offering:
+This website is for RAMEDIC Consultancy and Creative LTD, a Ghana-based company offering:
 - Software Development
-- Hardware & IT Services
-- Graphic Design
+- IT Solutions
+- Creative Services (including Paper Craft)
+- Data & Research Services
 
 ## Tech Stack
 
@@ -22,7 +23,7 @@ This website is for RAME Tech Consultancy, a Ghana-based tech company offering:
 ## Project Structure
 
 ```
-rametech-website/
+ramedic-website/
 ├── prisma/
 │   ├── schema.prisma      # Database schema (10 models)
 │   └── seed.ts            # Seed data
