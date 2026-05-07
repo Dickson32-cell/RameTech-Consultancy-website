@@ -107,6 +107,56 @@ export default function PortfolioPage() {
                 <div key={i} className="bg-gray-200 rounded-2xl h-80 animate-pulse" />
               ))}
             </div>
+          ) : filteredProjects.length === 0 ? (
+            /* Empty State */
+            <div className="flex flex-col items-center justify-center py-20 px-4">
+              <div className="relative mb-8">
+                <div className="w-32 h-32 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center">
+                  <svg className="w-16 h-16 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+                {/* Decorative circles */}
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-accent rounded-full opacity-60 animate-pulse"></div>
+                <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-primary rounded-full opacity-60 animate-pulse delay-300"></div>
+              </div>
+
+              <h3 className="text-2xl md:text-3xl font-heading font-bold text-text mb-3">
+                {selectedCategory === 'All' ? 'No Projects Yet' : `No ${selectedCategory} Projects`}
+              </h3>
+
+              <p className="text-gray-600 text-center max-w-md mb-8">
+                {selectedCategory === 'All'
+                  ? "We're currently updating our portfolio. Check back soon to see our amazing projects, or get in touch to discuss your project!"
+                  : `We don't have any ${selectedCategory} projects to show yet. Try viewing all categories or contact us for custom solutions.`
+                }
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                {selectedCategory !== 'All' && (
+                  <button
+                    onClick={() => setSelectedCategory('All')}
+                    className="px-6 py-3 bg-white text-primary border-2 border-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-all duration-200"
+                  >
+                    View All Categories
+                  </button>
+                )}
+                <Link
+                  href="/contact"
+                  className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-200 text-center"
+                >
+                  Start Your Project
+                </Link>
+              </div>
+
+              {/* Optional: Show "coming soon" badges */}
+              <div className="mt-12 flex flex-wrap justify-center gap-3">
+                <span className="px-4 py-2 bg-primary/10 text-primary text-sm rounded-full">Web Development</span>
+                <span className="px-4 py-2 bg-accent/10 text-accent text-sm rounded-full">Mobile Apps</span>
+                <span className="px-4 py-2 bg-secondary/10 text-secondary text-sm rounded-full">Graphic Design</span>
+                <span className="px-4 py-2 bg-primary/10 text-primary text-sm rounded-full">Paper Craft</span>
+              </div>
+            </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProjects.map((project, index) => (

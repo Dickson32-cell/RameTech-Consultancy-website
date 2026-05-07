@@ -200,53 +200,9 @@ async function main() {
   // ============================================
   // PORTFOLIO PROJECTS
   // ============================================
-  const portfolioProjects = [
-    {
-      title: 'E-Commerce Platform',
-      slug: 'e-commerce-platform',
-      category: 'Web Development',
-      description: 'A full-featured online store with payment integration, inventory management, and responsive design for seamless shopping across all devices.',
-      imageUrl: 'https://ui-avatars.com/api/?name=E-Commerce&size=400x300&background=1A5276&color=fff',
-      technologies: ['Next.js', 'Stripe', 'PostgreSQL', 'Tailwind CSS'],
-      clientName: 'Retail Client',
-      projectUrl: null,
-      order: 1,
-      isActive: true
-    },
-    {
-      title: 'Mobile Banking App',
-      slug: 'mobile-banking-app',
-      category: 'Mobile Development',
-      description: 'Secure mobile banking application with biometric authentication, real-time transactions, and budget tracking features.',
-      imageUrl: 'https://ui-avatars.com/api/?name=Banking+App&size=400x300&background=F39C12&color=fff',
-      technologies: ['React Native', 'Node.js', 'MongoDB', 'JWT'],
-      clientName: 'Financial Services Ltd',
-      projectUrl: null,
-      order: 2,
-      isActive: true
-    },
-    {
-      title: 'Corporate Branding',
-      slug: 'corporate-branding',
-      category: 'Graphic Design',
-      description: 'Complete brand identity package including logo design, business cards, letterheads, and brand guidelines document.',
-      imageUrl: 'https://ui-avatars.com/api/?name=Branding&size=400x300&background=154360&color=fff',
-      technologies: ['Adobe Illustrator', 'Photoshop', 'Figma'],
-      clientName: 'Corporate Client',
-      projectUrl: null,
-      order: 3,
-      isActive: true
-    }
-  ]
-
-  for (const project of portfolioProjects) {
-    await prisma.portfolioProject.upsert({
-      where: { slug: project.slug },
-      update: {},
-      create: project
-    })
-  }
-  console.log(`✅ ${portfolioProjects.length} portfolio projects seeded`)
+  // Portfolio projects are now managed entirely through the admin panel
+  // No seed data needed - admins will upload their own projects
+  console.log('✅ Portfolio projects: Managed via admin panel (no seed data)')
 
   // ============================================
   // FAQs

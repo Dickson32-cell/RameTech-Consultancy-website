@@ -72,6 +72,27 @@ export async function PUT(
   }
 }
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params
+    const body = await request.json()
+
+    // Allow partial updates (e.g., just toggling isActive)
+    const project = await prisma.portfolioProject.update({
+      where: { id },
+      data: body
+    })
+
+    return NextResponse.json(successResponse(project))
+  } catch (error) {
+    console.error('Error updating portfolio project:', error)
+    return NextResponse.json(errorResponse('Failed to update portfolio project'), { status: 500 })
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
