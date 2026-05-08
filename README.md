@@ -169,8 +169,8 @@ STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
 # Chatbot
-CHATBOT_SYSTEM_PROMPT="You are the RAME Tech virtual assistant..."
-WHATSAPP_LINK=wa.me/233204249540
+CHATBOT_SYSTEM_PROMPT="You are the RAMEDIC virtual assistant..."
+WHATSAPP_LINK=wa.me/233537400179
 ```
 
 ## Building for Production

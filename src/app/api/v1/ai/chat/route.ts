@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
 
     // Check if Worker URL exists
     if (!AI_WORKER_URL) {
-      return NextResponse.json({ 
-        response: 'AI service not configured. Please contact us via WhatsApp: wa.me/233204249540',
+      return NextResponse.json({
+        response: 'AI service not configured. Please contact us via WhatsApp: wa.me/233537400179',
         error: 'Worker URL missing'
       }, { status: 500 })
     }
@@ -45,7 +45,7 @@ IMPORTANT RULES:
 ABOUT OUR COMPANY (RAMEDIC Consultancy and Creative LTD):
 - We're a Ghana-based company with 5+ years of experience
 - We've completed 50+ projects for clients worldwide
-- Contact: Phone/WhatsApp: +233 55 733 2615, WhatsApp: wa.me/233204249540, Email: info@ramedic.com
+- Contact: Phone: +233 55 733 2615, WhatsApp Business: wa.me/233537400179 or +233 53 740 0179, Email: info@ramedic.com
 - Business Hours: Mon-Fri 8AM-5PM, Sat 9AM-2PM (GMT)
 - Payment Terms: 50% upfront, 30% mid-project, 20% on delivery
 - We offer 30-day warranty on all projects, maintenance plans from GHS 1,500/month
@@ -62,7 +62,7 @@ IMPORTANT: This information is pulled directly from our current database and inc
 
 ALWAYS use this current information when answering questions about our departments, services, team, and offerings! Speak as if YOU are providing these services as part of OUR team.` : ''}
 
-For questions outside our business scope, respond with: "I'm part of the RAMEDIC team and can best help you with questions about our services. For other inquiries, please contact us at wa.me/233204249540"`
+For questions outside our business scope, respond with: "I'm part of the RAMEDIC team and can best help you with questions about our services. For other inquiries, please contact us at wa.me/233537400179"`
 
     // Call your Cloudflare Worker
     const response = await fetch(AI_WORKER_URL, {
@@ -110,7 +110,7 @@ For questions outside our business scope, respond with: "I'm part of the RAMEDIC
     console.error('AI API Error:', error)
     
     return NextResponse.json({
-      response: "I'm having trouble connecting to my AI brain right now. For immediate help, please WhatsApp us: wa.me/233204249540",
+      response: "I'm having trouble connecting to my AI brain right now. For immediate help, please WhatsApp us: wa.me/233537400179",
       error: error.message || 'Unknown error'
     })
   }

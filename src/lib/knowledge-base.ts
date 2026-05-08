@@ -123,7 +123,7 @@ export const companyKnowledge: KnowledgeChunk[] = [
   {
     id: 'contact-1',
     category: 'Contact',
-    content: 'Contact Information: Phone/Call: +233 55 733 2615, WhatsApp: wa.me/233204249540 or +233 20 424 9540, Email: info@ramedic.com. We reply to messages within 24 hours.',
+    content: 'Contact Information: Phone/Call: +233 55 733 2615, WhatsApp Business: wa.me/233537400179 or +233 53 740 0179, Email: info@ramedic.com. We reply to messages within 24 hours.',
     keywords: ['contact', 'call', 'phone', 'email', 'whatsapp', 'message', 'reach', 'connect', 'talk', 'speak', 'hour', 'response', 'reply']
   },
   {

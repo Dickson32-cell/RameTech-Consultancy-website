@@ -42,7 +42,7 @@ const RESPONSES: Record<string, { response: string; followUp?: string }> = {
     followUp: 'Would you like to see our services or get a quote?'
   },
   goodbye: {
-    response: 'Thank you for chatting with us! 😊\n\nIf you have more questions later, feel free to reach out anytime.\n\n💬 WhatsApp: wa.me/233204249540\n📧 info.rametechconsultancy@gmail.com\n\nWe look forward to working with you! Have a great day!'
+    response: 'Thank you for chatting with us! 😊\n\nIf you have more questions later, feel free to reach out anytime.\n\n💬 WhatsApp: wa.me/233537400179\n📧 info@ramedic.com\n\nWe look forward to working with you! Have a great day!'
   },
   pricing: {
     response: '💰 Our Pricing:\n\n🌐 Websites: From GHS 5,000\n📱 Mobile Apps: From GHS 15,000\n🎨 Logo Design: From GHS 800\n📦 Paper Bags: Custom pricing\n☁️ Cloud Services: Custom quote\n⚙️ Custom Software: From GHS 20,000\n\nEvery project is unique! Tell me about your needs and we\'ll provide an accurate quote.',
@@ -89,7 +89,7 @@ const RESPONSES: Record<string, { response: string; followUp?: string }> = {
     followUp: 'Looking for market research or marketing strategy help? We\'re here for you!'
   },
   contact: {
-    response: '📞 How to Reach Us:\n\n💬 WhatsApp: wa.me/233204249540\n📱 Phone: +233 55 733 2615\n📧 Email: info.rametechconsultancy@gmail.com\n\nWe typically reply within 24 hours, often much faster!',
+    response: '📞 How to Reach Us:\n\n💬 WhatsApp: wa.me/233537400179\n📱 Phone: +233 55 733 2615\n📧 Email: info@ramedic.com\n\nWe typically reply within 24 hours, often much faster!',
     followUp: 'Click WhatsApp for the quickest response from our team!'
   },
   payment: {
@@ -113,7 +113,7 @@ const RESPONSES: Record<string, { response: string; followUp?: string }> = {
     followUp: 'Where are you located? We\'d love to discuss how we can work together!'
   },
   human: {
-    response: '👤 I\'ll connect you with my colleagues!\n\n💬 WhatsApp: wa.me/233204249540\n📱 Call: +233 55 733 2615\n\nOur team will respond within 24 hours - usually much faster!',
+    response: '👤 I\'ll connect you with my colleagues!\n\n💬 WhatsApp: wa.me/233537400179\n📱 Call: +233 55 733 2615\n\nOur team will respond within 24 hours - usually much faster!',
     followUp: 'Click WhatsApp for the fastest response from our team!'
   },
   departments: {
@@ -210,7 +210,7 @@ export default function Chatbot() {
     }
     
     // Default response with suggestions
-    return `Thanks for your question! 🤔\n\nI can help you with:\n• 📦 Our services\n• 💰 Pricing & quotes\n• ⏱️ Project timelines\n• 📞 Contact info\n\nOr click WhatsApp for instant support:\nwa.me/233204249540`
+    return `Thanks for your question! 🤔\n\nI can help you with:\n• 📦 Our services\n• 💰 Pricing & quotes\n• ⏱️ Project timelines\n• 📞 Contact info\n\nOr click WhatsApp for instant support:\nwa.me/233537400179`
   }
 
   // Handle drag
@@ -378,8 +378,8 @@ export default function Chatbot() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <a 
-                href="https://wa.me/233204249540" 
+              <a
+                href="https://wa.me/233537400179" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors"
