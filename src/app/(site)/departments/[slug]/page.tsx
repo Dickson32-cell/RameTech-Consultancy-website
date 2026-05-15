@@ -116,7 +116,13 @@ export default function DepartmentDetailPage() {
           console.log('📊 Pricing tables found:', result.data.pricingTables.map((pt: any) => ({
             name: pt.name,
             isActive: pt.isActive,
-            tableType: pt.tableType
+            tableType: pt.tableType,
+            dataStructure: {
+              hasTiers: !!pt.data?.tiers,
+              hasItems: !!pt.data?.items,
+              tiersCount: pt.data?.tiers?.length || 0,
+              itemsCount: pt.data?.items?.length || 0
+            }
           })))
         } else {
           console.log('⚠️ No pricing tables found for this department')
@@ -517,41 +523,82 @@ export default function DepartmentDetailPage() {
                   </div>
                 )}
 
-                {/* Simple Pricing Table */}
-                {pricingTable.tableType === 'simple' && pricingTable.data.items && (
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Item
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Description
-                            </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Price
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {pricingTable.data.items.map((item: any, idx: number) => (
-                            <tr key={idx} className="hover:bg-gray-50">
-                              <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                {item.name}
-                              </td>
-                              <td className="px-6 py-4 text-sm text-gray-600">
-                                {item.description}
-                              </td>
-                              <td className="px-6 py-4 text-sm text-right font-semibold text-gray-900">
-                                {item.price}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                {/* Simple Pricing Table - Supports both "tiers" and "items" format */}
+                {pricingTable.tableType === 'simple' && (pricingTable.data.tiers || pricingTable.data.items) && (
+                  <div>
+                    {/* Check if using tiers format (pricing plans) */}
+                    {pricingTable.data.tiers && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {pricingTable.data.tiers.map((tier: any, idx: number) => (
+                          <div
+                            key={idx}
+                            className={`bg-white rounded-xl shadow-lg overflow-hidden border-2 ${
+                              tier.highlighted ? 'border-blue-500' : 'border-gray-200'
+                            }`}
+                          >
+                            {tier.highlighted && (
+                              <div className="bg-blue-500 text-white text-center py-2 px-4 text-sm font-semibold">
+                                MOST POPULAR
+                              </div>
+                            )}
+                            <div className="p-8">
+                              <h3 className="text-2xl font-bold text-gray-900 mb-2">{tier.name}</h3>
+                              <div className="text-4xl font-bold text-blue-600 mb-6">
+                                {tier.price}
+                              </div>
+                              <ul className="space-y-3">
+                                {tier.features && tier.features.map((feature: string, fIdx: number) => (
+                                  <li key={fIdx} className="flex items-start text-gray-600">
+                                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    {feature}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Check if using items format (simple list) */}
+                    {pricingTable.data.items && (
+                      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                              <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Item
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Description
+                                </th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Price
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                              {pricingTable.data.items.map((item: any, idx: number) => (
+                                <tr key={idx} className="hover:bg-gray-50">
+                                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                    {item.name}
+                                  </td>
+                                  <td className="px-6 py-4 text-sm text-gray-600">
+                                    {item.description}
+                                  </td>
+                                  <td className="px-6 py-4 text-sm text-right font-semibold text-gray-900">
+                                    {item.price}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
