@@ -25,7 +25,8 @@
       "Bash(git commit:*)",
       "Bash(node -e:*)",
       "Bash(test:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
