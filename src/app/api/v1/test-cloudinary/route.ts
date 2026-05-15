@@ -1,21 +1,13 @@
 // Test endpoint to verify Cloudinary environment variables
 import { NextRequest, NextResponse } from 'next/server'
-import { v2 as cloudinary } from 'cloudinary'
+import cloudinary from '@/lib/cloudinary'
 
 export async function GET(request: NextRequest) {
   // Try to configure Cloudinary and test it
-  let configTest = 'Not attempted'
+  let configTest = 'Success - using shared config'
   let uploadTest = 'Not attempted'
 
   try {
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
-      secure: true,
-    })
-    configTest = 'Success'
-
     // Try a simple API call to test credentials
     try {
       await cloudinary.api.ping()
