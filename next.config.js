@@ -2,8 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['ui-avatars.com', 'images.unsplash.com'],
+    domains: ['ui-avatars.com', 'images.unsplash.com', 'res.cloudinary.com'],
     unoptimized: true,
+  },
+  // Expose environment variables to API routes
+  env: {
+    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
   },
   // Ensure static assets are properly served
   async headers() {
