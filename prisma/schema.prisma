@@ -79,7 +79,7 @@ model Department {
   name        String   @unique
   slug        String   @unique
   description String?  @db.Text
-  icon        String?  // Icon or image for department
+  icon        String?  // Department icon image URL
   imageUrl    String?  // Department hero image
   order       Int      @default(0)
   isActive    Boolean  @default(true)

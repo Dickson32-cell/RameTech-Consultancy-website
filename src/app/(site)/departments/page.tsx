@@ -20,6 +20,7 @@ interface Department {
 
 function DeptCardImage({ src, alt, icon }: { src: string | null; alt: string; icon: string | null }) {
   const [failed, setFailed] = useState(false)
+  const [iconFailed, setIconFailed] = useState(false)
 
   if (src && !failed) {
     return (
@@ -36,12 +37,21 @@ function DeptCardImage({ src, alt, icon }: { src: string | null; alt: string; ic
     )
   }
 
-  // Fallback: gradient with icon
+  // Fallback: gradient with icon (now supports icon images)
   return (
     <>
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600" />
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-6xl text-white opacity-80">{icon || '📁'}</span>
+        {icon && !iconFailed && icon.startsWith('http') ? (
+          <img
+            src={icon}
+            alt={`${alt} icon`}
+            className="w-24 h-24 object-contain opacity-90"
+            onError={() => setIconFailed(true)}
+          />
+        ) : (
+          <span className="text-6xl text-white opacity-80">{icon || '📁'}</span>
+        )}
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
     </>

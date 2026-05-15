@@ -9,7 +9,9 @@ export default function NewDepartmentPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [uploading, setUploading] = useState(false)
+  const [uploadingIcon, setUploadingIcon] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [iconPreview, setIconPreview] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -35,6 +37,51 @@ export default function NewDepartmentPage() {
       name,
       slug: generateSlug(name)
     })
+  }
+
+  const handleIconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
+    if (!allowedTypes.includes(file.type)) {
+      setError('Only JPEG, PNG, GIF, WebP, and SVG images are allowed')
+      return
+    }
+
+    // Validate file size (2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      setError('Icon size must be under 2MB')
+      return
+    }
+
+    setUploadingIcon(true)
+    setError('')
+
+    try {
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', file)
+
+      const response = await fetch('/api/v1/upload/department-icon', {
+        method: 'POST',
+        body: uploadFormData
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setFormData({ ...formData, icon: result.url })
+        setIconPreview(result.url)
+      } else {
+        setError(result.error || 'Failed to upload icon')
+      }
+    } catch (err) {
+      setError('An error occurred while uploading the icon')
+      console.error(err)
+    } finally {
+      setUploadingIcon(false)
+    }
   }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -186,19 +233,35 @@ export default function NewDepartmentPage() {
             />
           </div>
 
-          {/* Icon */}
+          {/* Icon Upload */}
           <div>
-            <label htmlFor="icon" className="block text-sm font-medium text-gray-700 mb-2">
-              Icon <span className="text-gray-500 text-xs">(URL or icon name)</span>
+            <label htmlFor="iconUpload" className="block text-sm font-medium text-gray-700 mb-2">
+              Department Icon
             </label>
             <input
-              type="text"
-              id="icon"
-              value={formData.icon}
-              onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="e.g., FaCode or https://..."
+              type="file"
+              id="iconUpload"
+              accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+              onChange={handleIconUpload}
+              disabled={uploadingIcon}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
+            {uploadingIcon && (
+              <p className="mt-2 text-sm text-blue-600">Uploading icon...</p>
+            )}
+            {iconPreview && (
+              <div className="mt-4">
+                <img
+                  src={iconPreview}
+                  alt="Icon Preview"
+                  className="w-32 h-32 object-contain rounded-lg border border-gray-300 bg-gray-50"
+                />
+                <p className="mt-2 text-xs text-gray-500">Icon uploaded successfully</p>
+              </div>
+            )}
+            <p className="mt-1 text-xs text-gray-500">
+              Recommended: Square icon (256x256px). Max size: 2MB. Formats: JPEG, PNG, GIF, WebP, SVG
+            </p>
           </div>
 
           {/* Hero Image Upload */}
