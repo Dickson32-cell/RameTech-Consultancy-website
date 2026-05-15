@@ -76,7 +76,7 @@ function HeroImage({ src, alt }: { src: string; alt: string }) {
     <img
       src={src}
       alt={alt}
-      className="absolute inset-0 w-full h-full object-cover"
+      className="w-full h-full object-cover"
       onError={() => setFailed(true)}
     />
   )
@@ -149,22 +149,24 @@ export default function DepartmentDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="relative h-64 md:h-96 overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700">
+      <div className="relative h-96 md:h-[500px] lg:h-[600px] overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700">
         {department.imageUrl && (
-          <HeroImage src={department.imageUrl} alt={department.name} />
+          <div className="absolute inset-0">
+            <HeroImage src={department.imageUrl} alt={department.name} />
+          </div>
         )}
         {/* Dark gradient so text is always readable */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/30" />
         <div className="absolute inset-0 flex items-end">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8">
-            <Link href="/departments" className="text-white/80 hover:text-white mb-4 inline-block text-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-12 md:pb-16">
+            <Link href="/departments" className="text-white/90 hover:text-white mb-6 inline-block text-sm font-medium">
               ← Back to Departments
             </Link>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-3 drop-shadow-lg">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
               {department.name}
             </h1>
             {department.description && (
-              <p className="text-lg text-white/90 max-w-3xl drop-shadow">
+              <p className="text-lg md:text-xl text-white/95 max-w-3xl drop-shadow-lg">
                 {department.description}
               </p>
             )}

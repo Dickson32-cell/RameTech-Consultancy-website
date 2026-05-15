@@ -28,11 +28,11 @@ function DeptCardImage({ src, alt, icon }: { src: string | null; alt: string; ic
         <img
           src={src}
           alt={alt}
-          className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           onError={() => setFailed(true)}
         />
         {/* Gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
       </>
     )
   }
@@ -46,14 +46,14 @@ function DeptCardImage({ src, alt, icon }: { src: string | null; alt: string; ic
           <img
             src={icon}
             alt={`${alt} icon`}
-            className="w-24 h-24 object-contain opacity-90"
+            className="w-32 h-32 object-contain opacity-90"
             onError={() => setIconFailed(true)}
           />
         ) : (
-          <span className="text-6xl text-white opacity-80">{icon || '📁'}</span>
+          <span className="text-7xl text-white opacity-90">{icon || '📁'}</span>
         )}
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
     </>
   )
 }
@@ -112,11 +112,11 @@ export default function DepartmentsPage() {
                 className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
               >
                 {/* Image area */}
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-64 overflow-hidden">
                   <DeptCardImage src={dept.imageUrl} alt={dept.name} icon={dept.icon} />
                   {/* Department name pinned to bottom of image */}
-                  <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 z-10">
-                    <h2 className="text-xl font-bold text-white drop-shadow">{dept.name}</h2>
+                  <div className="absolute bottom-0 left-0 right-0 px-6 pb-4 z-10">
+                    <h2 className="text-2xl font-bold text-white drop-shadow-lg">{dept.name}</h2>
                   </div>
                 </div>
 

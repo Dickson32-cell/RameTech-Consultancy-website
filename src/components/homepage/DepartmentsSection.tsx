@@ -73,27 +73,27 @@ export default function DepartmentsSection() {
               className="group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
             >
               {/* Image */}
-              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600">
+              <div className="relative h-64 overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-600">
                 {dept.imageUrl ? (
                   <>
                     <img
                       src={dept.imageUrl}
                       alt={dept.name}
-                      className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                   </>
                 ) : dept.icon ? (
                   <div className="absolute inset-0 flex items-center justify-center">
                     {dept.icon.startsWith('http') ? (
-                      <img src={dept.icon} alt={dept.name} className="w-20 h-20 object-contain opacity-90" />
+                      <img src={dept.icon} alt={dept.name} className="w-32 h-32 object-contain opacity-90" />
                     ) : (
-                      <span className="text-6xl text-white opacity-80">{dept.icon}</span>
+                      <span className="text-7xl text-white opacity-90">{dept.icon}</span>
                     )}
                   </div>
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-6xl text-white opacity-80">📁</span>
+                    <span className="text-7xl text-white opacity-90">📁</span>
                   </div>
                 )}
 
