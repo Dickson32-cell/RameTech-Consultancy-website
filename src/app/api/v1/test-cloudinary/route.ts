@@ -1,6 +1,6 @@
 // Test endpoint to verify Cloudinary environment variables
 import { NextRequest, NextResponse } from 'next/server'
-import cloudinary from '@/lib/cloudinary'
+import { ensureCloudinaryConfigured } from '@/lib/cloudinary'
 
 export async function GET(request: NextRequest) {
   // Try to configure Cloudinary and test it
@@ -8,6 +8,9 @@ export async function GET(request: NextRequest) {
   let uploadTest = 'Not attempted'
 
   try {
+    // Configure Cloudinary at request time
+    const cloudinary = ensureCloudinaryConfigured()
+
     // Try a simple API call to test credentials
     try {
       await cloudinary.api.ping()

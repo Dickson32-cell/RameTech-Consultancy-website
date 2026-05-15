@@ -1,14 +1,11 @@
 // Department hero image upload to Cloudinary
 import { NextRequest, NextResponse } from 'next/server'
-import cloudinary from '@/lib/cloudinary'
+import { ensureCloudinaryConfigured } from '@/lib/cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('Cloudinary Config:', {
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY ? 'SET' : 'NOT SET',
-      api_secret: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'NOT SET',
-    })
+    // Configure Cloudinary at request time to ensure env vars are loaded
+    const cloudinary = ensureCloudinaryConfigured()
 
     const formData = await request.formData()
     const file = formData.get('file') as File | null
