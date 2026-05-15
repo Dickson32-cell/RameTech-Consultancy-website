@@ -22,7 +22,10 @@
       "Bash(npx tsx:*)",
       "Bash(npm run:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nfix: Update admin password in seed file to Admin@123\n\n- Changed admin password from ''admin123'' to ''Admin@123'' for consistency\n- Updated upsert to also update password if admin already exists\n- Changed admin name to ''RAME Tech Admin''\n\nThis ensures the correct credentials work across all environments.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(node -e:*)",
+      "Bash(test:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

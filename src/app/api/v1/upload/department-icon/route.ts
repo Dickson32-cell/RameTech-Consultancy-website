@@ -1,9 +1,23 @@
 // Department icon image upload to Cloudinary
 import { NextRequest, NextResponse } from 'next/server'
-import cloudinary from '@/lib/cloudinary'
+import { v2 as cloudinary } from 'cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
+    // Configure Cloudinary explicitly in the route
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true,
+    })
+
+    console.log('Cloudinary Config:', {
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY ? 'SET' : 'NOT SET',
+      api_secret: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'NOT SET',
+    })
+
     const formData = await request.formData()
     const file = formData.get('file') as File | null
 
