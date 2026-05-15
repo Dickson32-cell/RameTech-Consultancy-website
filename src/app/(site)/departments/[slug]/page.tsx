@@ -99,10 +99,29 @@ export default function DepartmentDetailPage() {
 
   const fetchDepartment = async () => {
     try {
-      const response = await fetch(`/api/v1/departments?slug=${slug}`)
+      const response = await fetch(`/api/v1/departments?slug=${slug}&t=${Date.now()}`, {
+        cache: 'no-store'
+      })
       const result = await response.json()
 
       if (result.success) {
+        console.log('✅ Department data loaded:', {
+          name: result.data.name,
+          servicesCount: result.data.services?.length || 0,
+          projectsCount: result.data.projects?.length || 0,
+          pricingTablesCount: result.data.pricingTables?.length || 0,
+        })
+
+        if (result.data.pricingTables && result.data.pricingTables.length > 0) {
+          console.log('📊 Pricing tables found:', result.data.pricingTables.map((pt: any) => ({
+            name: pt.name,
+            isActive: pt.isActive,
+            tableType: pt.tableType
+          })))
+        } else {
+          console.log('⚠️ No pricing tables found for this department')
+        }
+
         setDepartment(result.data)
 
         // Set default tab based on available content
@@ -115,7 +134,7 @@ export default function DepartmentDetailPage() {
         }
       }
     } catch (err) {
-      console.error('Error fetching department:', err)
+      console.error('❌ Error fetching department:', err)
     } finally {
       setLoading(false)
     }
@@ -145,6 +164,13 @@ export default function DepartmentDetailPage() {
   const hasServices = department.services.length > 0 || department.subDepartments.some(sd => sd.services.length > 0)
   const hasProjects = department.projects.length > 0 || department.subDepartments.some(sd => sd.projects.length > 0)
   const hasPricing = department.pricingTables.length > 0
+
+  console.log('📑 Tab visibility:', {
+    hasServices,
+    hasProjects,
+    hasPricing,
+    pricingTablesCount: department.pricingTables.length
+  })
 
   return (
     <div className="min-h-screen bg-gray-50">

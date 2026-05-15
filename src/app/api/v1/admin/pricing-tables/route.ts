@@ -1,5 +1,6 @@
 // src/app/api/v1/admin/pricing-tables/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/api-response'
 
@@ -83,6 +84,22 @@ export async function POST(request: NextRequest) {
         }
       }
     })
+
+    console.log(`✅ Pricing table created successfully: ${pricingTable.name} (ID: ${pricingTable.id})`)
+    console.log(`   Department: ${pricingTable.department.name} (${pricingTable.department.slug})`)
+    console.log(`   Active: ${pricingTable.isActive}`)
+    console.log(`   Table Type: ${pricingTable.tableType}`)
+
+    // Revalidate relevant paths to clear cache
+    try {
+      revalidatePath('/departments')
+      revalidatePath(`/departments/${pricingTable.department.slug}`)
+      revalidatePath('/api/v1/departments')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for department pages')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
 
     return NextResponse.json(successResponse(pricingTable), { status: 201 })
   } catch (error) {

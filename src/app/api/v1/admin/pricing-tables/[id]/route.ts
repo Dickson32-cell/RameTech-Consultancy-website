@@ -1,5 +1,6 @@
 // src/app/api/v1/admin/pricing-tables/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/api-response'
 
@@ -73,6 +74,21 @@ export async function PUT(
       }
     })
 
+    console.log(`✅ Pricing table updated successfully: ${pricingTable.name} (ID: ${pricingTable.id})`)
+    console.log(`   Department: ${pricingTable.department.name} (${pricingTable.department.slug})`)
+    console.log(`   Active: ${pricingTable.isActive}`)
+
+    // Revalidate relevant paths to clear cache
+    try {
+      revalidatePath('/departments')
+      revalidatePath(`/departments/${pricingTable.department.slug}`)
+      revalidatePath('/api/v1/departments')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for department pages')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
+
     return NextResponse.json(successResponse(pricingTable))
   } catch (error) {
     console.error('Error updating pricing table:', error)
@@ -89,17 +105,35 @@ export async function DELETE(
 
     // Check if pricing table exists
     const existing = await prisma.pricingTable.findUnique({
-      where: { id: params.id }
+      where: { id: params.id },
+      include: {
+        department: true
+      }
     })
 
     if (!existing) {
       return NextResponse.json(errorResponse('Pricing table not found'), { status: 404 })
     }
 
+    console.log(`🗑️ Deleting pricing table: ${existing.name} (ID: ${params.id})`)
+
     // Delete pricing table
     await prisma.pricingTable.delete({
       where: { id: params.id }
     })
+
+    console.log(`✅ Pricing table deleted successfully: ${existing.name}`)
+
+    // Revalidate relevant paths to clear cache
+    try {
+      revalidatePath('/departments')
+      revalidatePath(`/departments/${existing.department.slug}`)
+      revalidatePath('/api/v1/departments')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for department pages')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
 
     return NextResponse.json(successResponse({ message: 'Pricing table deleted successfully' }))
   } catch (error) {
