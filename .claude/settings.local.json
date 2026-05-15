@@ -26,7 +26,11 @@
       "Bash(node -e:*)",
       "Bash(test:*)",
       "Bash(cat:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(dir /b:*)",
+      "Bash(node test-env.js:*)",
+      "Bash(if exist test-env.js del test-env.js)",
+      "Bash(node test-cloudinary-config.js:*)"
     ],
     "deny": [],
     "ask": []

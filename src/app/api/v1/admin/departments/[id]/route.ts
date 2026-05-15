@@ -1,5 +1,6 @@
 // src/app/api/v1/admin/departments/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/api-response'
 
@@ -100,6 +101,19 @@ export async function PUT(
       }
     })
 
+    console.log(`✅ Department updated successfully: ${department.name} (ID: ${department.id})`)
+
+    // Revalidate relevant paths to clear cache
+    try {
+      revalidatePath('/departments')
+      revalidatePath(`/departments/${department.slug}`)
+      revalidatePath('/api/v1/departments')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for departments pages')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
+
     return NextResponse.json(successResponse(department))
   } catch (error) {
     console.error('Error updating department:', error)
@@ -123,10 +137,25 @@ export async function DELETE(
       return NextResponse.json(errorResponse('Department not found'), { status: 404 })
     }
 
+    console.log(`🗑️ Deleting department: ${existing.name} (ID: ${params.id})`)
+
     // Delete department (cascade will handle related records)
     await prisma.department.delete({
       where: { id: params.id }
     })
+
+    console.log(`✅ Department deleted successfully: ${existing.name}`)
+
+    // Revalidate relevant paths to clear cache
+    try {
+      revalidatePath('/departments')
+      revalidatePath(`/departments/${existing.slug}`)
+      revalidatePath('/api/v1/departments')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for departments pages')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
 
     return NextResponse.json(successResponse({ message: 'Department deleted successfully' }))
   } catch (error) {

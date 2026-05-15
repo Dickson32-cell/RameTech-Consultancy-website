@@ -1,5 +1,6 @@
 // src/app/api/v1/admin/departments/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/api-response'
 
@@ -107,6 +108,18 @@ export async function POST(request: NextRequest) {
         }
       }
     })
+
+    console.log(`✅ Department created successfully: ${department.name} (ID: ${department.id})`)
+
+    // Revalidate relevant paths to clear cache
+    try {
+      revalidatePath('/departments')
+      revalidatePath('/api/v1/departments')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for departments pages')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
 
     return NextResponse.json(successResponse(department), { status: 201 })
   } catch (error) {
