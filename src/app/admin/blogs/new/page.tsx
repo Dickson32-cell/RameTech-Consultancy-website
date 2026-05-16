@@ -64,6 +64,17 @@ export default function NewBlogPostPage() {
     e.preventDefault()
     setError('')
     setIsLoading(true)
+
+    // Check if admin is logged in
+    const token = localStorage.getItem('admin_token')
+    if (!token) {
+      setError('Session expired. Please log in again.')
+      router.push('/admin/login')
+      return
+    }
+
+    console.log('🚀 Creating blog post...')
+
     try {
       const res = await fetch('/api/v1/admin/blogs', {
         method: 'POST',
@@ -71,14 +82,26 @@ export default function NewBlogPostPage() {
         credentials: 'include', // Important: Include cookies for authentication
         body: JSON.stringify(formData)
       })
+
+      console.log('📡 Response status:', res.status)
+
       const data = await res.json()
+
+      console.log('📦 Response data:', data)
+
       if (!data.success) {
         setError(data.error || 'Failed to create blog post')
+        if (res.status === 401) {
+          setError('Session expired. Please log in again.')
+          setTimeout(() => router.push('/admin/login'), 2000)
+        }
         setIsLoading(false)
         return
       }
+      console.log('✅ Blog post created successfully!')
       router.push('/admin/blogs')
-    } catch {
+    } catch (error) {
+      console.error('❌ Error creating blog:', error)
       setError('An error occurred. Please try again.')
       setIsLoading(false)
     }

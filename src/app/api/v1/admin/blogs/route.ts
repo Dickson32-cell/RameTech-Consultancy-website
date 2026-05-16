@@ -5,11 +5,39 @@ import prisma from '@/lib/db'
 import { verifyToken } from '@/lib/auth'
 
 async function checkAdmin() {
-  const cookieStore = await import('next/headers').then(m => m.cookies())
-  const token = cookieStore.get('rametech_token')?.value
-  const payload = token ? verifyToken(token) : null
-  if (!payload || payload.role !== 'admin') return null
-  return payload
+  try {
+    const cookieStore = await import('next/headers').then(m => m.cookies())
+    const token = cookieStore.get('rametech_token')?.value
+
+    console.log('🔐 Auth check:', {
+      hasCookie: !!token,
+      cookieName: 'rametech_token',
+      tokenPreview: token ? token.substring(0, 20) + '...' : 'NO TOKEN'
+    })
+
+    if (!token) {
+      console.log('❌ No token found in cookies')
+      return null
+    }
+
+    const payload = verifyToken(token)
+
+    if (!payload) {
+      console.log('❌ Token verification failed')
+      return null
+    }
+
+    if (payload.role !== 'admin') {
+      console.log('❌ User is not admin, role:', payload.role)
+      return null
+    }
+
+    console.log('✅ Admin authenticated:', payload.email)
+    return payload
+  } catch (error) {
+    console.error('❌ Auth check error:', error)
+    return null
+  }
 }
 
 export async function GET() {

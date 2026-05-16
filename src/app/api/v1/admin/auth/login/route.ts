@@ -46,12 +46,27 @@ export async function POST(request: NextRequest) {
       data: { token, user: { id: user.id, email: user.email, name: user.name, role: user.role } }
     })
 
-    response.cookies.set(COOKIE_NAME, token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'lax' as const,
       maxAge: 60 * 60 * 24 * 7,
       path: '/'
+    }
+
+    response.cookies.set(COOKIE_NAME, token, cookieOptions)
+
+    console.log('✅ Login successful:', {
+      email: user.email,
+      role: user.role,
+      cookieName: COOKIE_NAME,
+      cookieSet: true,
+      cookieOptions: {
+        httpOnly: cookieOptions.httpOnly,
+        secure: cookieOptions.secure,
+        sameSite: cookieOptions.sameSite,
+        path: cookieOptions.path
+      }
     })
 
     return response
