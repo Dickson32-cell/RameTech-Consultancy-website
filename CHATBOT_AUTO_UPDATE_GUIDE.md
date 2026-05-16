@@ -13,8 +13,10 @@ Every time someone asks a question, the chatbot **automatically fetches the late
 - Department descriptions
 - Services within each department
 - Sub-departments (like Paper Craft)
+- **Pricing Tables** ⭐ LATEST!
 
 **Admin adds new department** → Chatbot instantly knows about it!
+**Admin adds pricing table** → Chatbot knows the prices immediately!
 
 ### **2. Department Services** ⭐ NEW!
 - All 17 services across departments
@@ -86,6 +88,16 @@ Every time someone asks a question, the chatbot **automatically fetches the late
 
 **Admin uploads document** → Chatbot mentions it!
 
+### **12. Pricing Tables** ⭐ LATEST UPDATE!
+- All department pricing tables
+- Pricing tiers (Basic, Standard, Premium, etc.)
+- Pricing items (individual product/service prices)
+- Features included in each tier
+- Department-specific pricing
+
+**Admin adds/edits pricing table** → Chatbot uses new prices instantly!
+**Example:** "How much for Kraft Paper Bags?" → Chatbot shows exact pricing!
+
 ---
 
 ## 🔄 **How Auto-Update Works:**
@@ -96,7 +108,7 @@ Every time someone asks a question, the chatbot **automatically fetches the late
 
 2. **Chatbot queries database** in real-time:
    ```javascript
-   - Fetch departments
+   - Fetch departments (with pricing tables!)
    - Fetch services
    - Fetch team members
    - Fetch FAQs
@@ -104,6 +116,7 @@ Every time someone asks a question, the chatbot **automatically fetches the late
    - Fetch blog posts
    - Fetch academic writing data
    - Fetch uploaded documents
+   - Fetch all pricing tables
    ```
 
 3. **AI uses fresh data** to answer the question
@@ -171,6 +184,23 @@ Every time someone asks a question, the chatbot **automatically fetches the late
 - ✅ Chatbot: "Check out our latest: 10 Web Design Trends 2026..."
 - ✅ Blog appears in chatbot responses!
 
+### **Example 5: Adding Pricing Table** ⭐ NEW!
+
+**Admin Action:**
+1. Go to `/admin/departments`
+2. Select "Creative Services" department
+3. Click "Add Pricing Table"
+4. Add "Kraft Paper Bags" pricing
+5. Add tiers: Basic (GHS 500), Standard (GHS 800), Premium (GHS 1200)
+6. Add features for each tier
+7. Click Save
+
+**Chatbot Impact:**
+- ✅ User asks: "How much for paper bags?"
+- ✅ Chatbot: "Kraft Paper Bags pricing: Basic GHS 500, Standard GHS 800, Premium GHS 1200..."
+- ✅ Shows features for each tier!
+- ✅ Updates INSTANTLY - no delay!
+
 ---
 
 ## 🎯 **What Admin Needs to Do:**
@@ -215,15 +245,24 @@ Just use the admin panel normally:
 2. Ask the question in chatbot
 3. Should provide the answer you added
 
+### **Test 6: Pricing Table Updates** ⭐ NEW!
+1. Go to `/admin/departments`
+2. Select a department (e.g., Creative Services)
+3. Add or edit a pricing table
+4. Go to the chatbot on the main site
+5. Ask: **"How much for [service name]?"** or **"What are your prices?"**
+6. Should show the exact pricing you just added/updated!
+
 ---
 
 ## 🔧 **Technical Details:**
 
 ### **Dynamic Knowledge Sources:**
 ```
-✅ prisma.department (with services, subDepartments, projects)
+✅ prisma.department (with services, subDepartments, projects, pricingTables)
 ✅ prisma.departmentService
 ✅ prisma.subDepartment
+✅ prisma.pricingTable ⭐ NEW!
 ✅ prisma.teamMember
 ✅ prisma.academicWritingPhase
 ✅ prisma.academicWritingServiceItem
@@ -262,6 +301,7 @@ Just use the admin panel normally:
 - Paper Craft details ⭐
 - Team members ⭐
 - Pricing (Academic Writing) ⭐
+- **Pricing Tables (All Departments)** ⭐ LATEST!
 - Publications ⭐
 - Blog posts ⭐
 - FAQs ⭐

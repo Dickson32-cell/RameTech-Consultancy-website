@@ -299,7 +299,7 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
       })
     }
 
-    // Fetch Departments with Services and Sub-Departments
+    // Fetch Departments with Services, Sub-Departments, and Pricing Tables
     const departments = await prisma.department.findMany({
       where: { isActive: true },
       include: {
@@ -321,6 +321,10 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
           where: { isActive: true },
           take: 3,
           orderBy: { order: 'asc' }
+        },
+        pricingTables: {
+          where: { isActive: true },
+          orderBy: { createdAt: 'desc' }
         }
       },
       orderBy: { order: 'asc' }
@@ -361,19 +365,109 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
           ? `\n\nRecent Projects:\n${dept.projects.map(p => `- ${p.title}`).join('\n')}`
           : ''
 
-        const fullContent = `Department: ${dept.name}\n${dept.description || ''}\n\nServices:\n${deptServices}${subDeptContent ? `\n\nSub-Departments:\n${subDeptContent}` : ''}${projects}`
+        // Department pricing tables
+        let pricingContent = ''
+        if (dept.pricingTables && dept.pricingTables.length > 0) {
+          const pricingInfo = dept.pricingTables.map((pricingTable: any) => {
+            let tableContent = `${pricingTable.name}${pricingTable.description ? ` - ${pricingTable.description}` : ''}\n`
+
+            // Handle different pricing table formats
+            if (pricingTable.data) {
+              // Tiers format (pricing plans)
+              if (pricingTable.data.tiers && Array.isArray(pricingTable.data.tiers)) {
+                pricingTable.data.tiers.forEach((tier: any) => {
+                  tableContent += `  • ${tier.name}: ${tier.price}\n`
+                  if (tier.features && tier.features.length > 0) {
+                    tableContent += `    Features: ${tier.features.join(', ')}\n`
+                  }
+                })
+              }
+
+              // Items format (simple list)
+              if (pricingTable.data.items && Array.isArray(pricingTable.data.items)) {
+                pricingTable.data.items.forEach((item: any) => {
+                  tableContent += `  • ${item.name}: ${item.price}${item.description ? ` - ${item.description}` : ''}\n`
+                })
+              }
+
+              // Academic format
+              if (pricingTable.data.phases && Array.isArray(pricingTable.data.phases)) {
+                pricingTable.data.phases.forEach((phase: any) => {
+                  tableContent += `  ${phase.name}:\n`
+                  if (phase.items && phase.items.length > 0) {
+                    phase.items.forEach((item: any) => {
+                      tableContent += `    - ${item.serviceItem}: Bachelor GHS ${item.bachelor}, Master GHS ${item.master}, PhD GHS ${item.phd}\n`
+                    })
+                  }
+                })
+              }
+            }
+
+            return tableContent
+          }).join('\n')
+
+          pricingContent = `\n\nPricing:\n${pricingInfo}`
+        }
+
+        const fullContent = `Department: ${dept.name}\n${dept.description || ''}\n\nServices:\n${deptServices}${subDeptContent ? `\n\nSub-Departments:\n${subDeptContent}` : ''}${projects}${pricingContent}`
 
         chunks.push({
           id: `department-${dept.slug}`,
           category: 'Departments',
           content: fullContent,
-          keywords: [dept.name.toLowerCase(), dept.slug, 'department', 'services', ...dept.services.map(s => s.title.toLowerCase())]
+          keywords: [dept.name.toLowerCase(), dept.slug, 'department', 'services', 'pricing', 'price', 'cost', 'how much', ...dept.services.map(s => s.title.toLowerCase())]
         })
 
-        console.log(`  - ${dept.name}: ${dept.services.length} services, ${dept.subDepartments.length} sub-depts`)
+        console.log(`  - ${dept.name}: ${dept.services.length} services, ${dept.subDepartments.length} sub-depts, ${dept.pricingTables?.length || 0} pricing tables`)
       }
     } else {
       console.log('Chatbot Knowledge: No departments found in database')
+    }
+
+    // Create aggregated pricing knowledge chunk
+    const allPricingTables = departments.flatMap(dept =>
+      (dept.pricingTables || []).map((pt: any) => ({
+        department: dept.name,
+        table: pt
+      }))
+    )
+
+    if (allPricingTables.length > 0) {
+      let aggregatedPricing = 'RAMEDIC Pricing Information:\n\n'
+
+      allPricingTables.forEach(({ department, table }) => {
+        aggregatedPricing += `${department} - ${table.name}:\n`
+
+        if (table.data) {
+          // Tiers format
+          if (table.data.tiers && Array.isArray(table.data.tiers)) {
+            table.data.tiers.forEach((tier: any) => {
+              aggregatedPricing += `  • ${tier.name}: ${tier.price}\n`
+              if (tier.features && tier.features.length > 0) {
+                aggregatedPricing += `    (${tier.features.slice(0, 3).join(', ')}${tier.features.length > 3 ? ', ...' : ''})\n`
+              }
+            })
+          }
+
+          // Items format
+          if (table.data.items && Array.isArray(table.data.items)) {
+            table.data.items.forEach((item: any) => {
+              aggregatedPricing += `  • ${item.name}: ${item.price}\n`
+            })
+          }
+        }
+
+        aggregatedPricing += '\n'
+      })
+
+      chunks.push({
+        id: 'all-pricing-tables',
+        category: 'Pricing',
+        content: aggregatedPricing + 'Note: Prices may vary based on project complexity and requirements. Contact us for a detailed quote.',
+        keywords: ['pricing', 'price', 'cost', 'how much', 'charge', 'fee', 'rate', 'quote', 'budget', 'afford', 'expensive', 'cheap']
+      })
+
+      console.log(`✅ Aggregated ${allPricingTables.length} pricing tables into chatbot knowledge`)
     }
 
     // Fetch Team Members (Department Heads)
