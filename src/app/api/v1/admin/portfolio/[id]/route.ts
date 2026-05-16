@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import prisma from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/auth'
 
@@ -65,6 +66,16 @@ export async function PUT(
       }
     })
 
+    // Revalidate relevant paths to clear cache
+    try {
+      revalidatePath('/portfolio')
+      revalidatePath('/api/v1/portfolio')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for portfolio pages after update')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
+
     return NextResponse.json(successResponse(project))
   } catch (error) {
     console.error('Error updating portfolio project:', error)
@@ -99,9 +110,24 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
+
+    console.log(`🗑️ Deleting portfolio project: ${id}`)
+
     await prisma.portfolioProject.delete({
       where: { id }
     })
+
+    console.log(`✅ Portfolio project deleted successfully: ${id}`)
+
+    // Revalidate relevant paths to clear cache
+    try {
+      revalidatePath('/portfolio')
+      revalidatePath('/api/v1/portfolio')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for portfolio pages')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
 
     return NextResponse.json(successResponse({ message: 'Portfolio project deleted successfully' }))
   } catch (error) {

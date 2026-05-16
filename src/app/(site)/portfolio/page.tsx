@@ -24,14 +24,23 @@ export default function PortfolioPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
-    fetch('/api/v1/portfolio')
+    // Add timestamp to prevent caching
+    fetch(`/api/v1/portfolio?t=${Date.now()}`, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
           setProjects(data.data)
+          console.log(`Portfolio: Loaded ${data.data.length} projects`)
         }
       })
-      .catch(() => {})
+      .catch((error) => {
+        console.error('Error fetching portfolio:', error)
+      })
       .finally(() => setIsLoading(false))
   }, [])
 
@@ -177,6 +186,7 @@ export default function PortfolioPage() {
                           loop
                           playsInline
                           preload="metadata"
+                          src={project.videoUrl}
                           onError={(e) => {
                             console.error('Video load error:', {
                               url: project.videoUrl,
@@ -193,7 +203,7 @@ export default function PortfolioPage() {
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                   </svg>
                                   <p class="text-sm text-center">Video cannot be loaded</p>
-                                  <p class="text-xs text-gray-400 mt-2 text-center">The video file may not be available</p>
+                                  <p class="text-xs text-gray-400 mt-2 text-center break-all px-2">${project.videoUrl}</p>
                                 </div>
                               `
                             }
@@ -206,8 +216,6 @@ export default function PortfolioPage() {
                             maxHeight: '100%'
                           }}
                         >
-                          <source src={project.videoUrl} type="video/mp4" />
-                          <source src={project.videoUrl.replace('/api/v1/videos/', '/uploads/')} type="video/mp4" />
                           Your browser does not support the video tag.
                         </video>
                       </div>

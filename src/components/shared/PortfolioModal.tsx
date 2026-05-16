@@ -78,13 +78,30 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({ project, isOpen, onClos
         <div className="relative w-full h-64 md:h-96 bg-gray-100 overflow-hidden">
           {project.videoUrl ? (
             <video
+              key={project.videoUrl}
               src={project.videoUrl}
               controls
               loop
               playsInline
               preload="metadata"
               controlsList="nodownload"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain bg-black"
+              onError={(e) => {
+                console.error('Modal video error:', project.videoUrl)
+                const target = e.currentTarget
+                target.style.display = 'none'
+                const errorDiv = document.createElement('div')
+                errorDiv.className = 'w-full h-full flex flex-col items-center justify-center bg-gray-900 text-white p-4'
+                errorDiv.innerHTML = `
+                  <svg class="w-16 h-16 mb-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <p class="text-sm text-center mb-2">Unable to load video</p>
+                  <p class="text-xs text-gray-400 text-center break-all px-4">${project.videoUrl}</p>
+                `
+                target.parentElement?.appendChild(errorDiv)
+              }}
+              onCanPlay={() => console.log('Modal video ready:', project.videoUrl)}
             >
               Your browser does not support the video tag.
             </video>
