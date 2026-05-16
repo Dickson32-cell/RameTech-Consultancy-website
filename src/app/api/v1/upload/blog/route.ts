@@ -1,6 +1,6 @@
 // Blog image upload to Cloudinary
 import { NextRequest, NextResponse } from 'next/server'
-import cloudinary from '@/lib/cloudinary'
+import { ensureCloudinaryConfigured } from '@/lib/cloudinary'
 import { verifyToken } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
@@ -27,6 +27,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Uploading blog image to Cloudinary...')
+
+    // Ensure Cloudinary is configured
+    const cloudinary = ensureCloudinaryConfigured()
 
     // Convert file to base64
     const bytes = await file.arrayBuffer()

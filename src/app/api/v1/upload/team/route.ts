@@ -1,6 +1,6 @@
 // Team member photo upload to Cloudinary
 import { NextRequest, NextResponse } from 'next/server'
-import cloudinary from '@/lib/cloudinary'
+import { ensureCloudinaryConfigured } from '@/lib/cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,6 +25,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Uploading team photo to Cloudinary...')
+
+    // Ensure Cloudinary is configured
+    const cloudinary = ensureCloudinaryConfigured()
 
     // Convert file to base64
     const bytes = await file.arrayBuffer()

@@ -1,23 +1,9 @@
 // Department icon image upload to Cloudinary
 import { NextRequest, NextResponse } from 'next/server'
-import { v2 as cloudinary } from 'cloudinary'
+import { ensureCloudinaryConfigured } from '@/lib/cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
-    // Configure Cloudinary directly in the route with explicit values
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'db6oc5tr5',
-      api_key: process.env.CLOUDINARY_API_KEY || '142962498917514',
-      api_secret: process.env.CLOUDINARY_API_SECRET || 'WmtX55SrLC1VOV7-6Yuq91mc5AI',
-      secure: true,
-    })
-
-    console.log('🔧 Cloudinary configured:', {
-      cloud_name: cloudinary.config().cloud_name,
-      api_key: cloudinary.config().api_key ? 'SET' : 'NOT SET',
-      api_secret: cloudinary.config().api_secret ? 'SET' : 'NOT SET',
-    })
-
     const formData = await request.formData()
     const file = formData.get('file') as File | null
 
@@ -39,6 +25,9 @@ export async function POST(request: NextRequest) {
       fileSize: file.size,
       fileType: file.type
     })
+
+    // Ensure Cloudinary is configured
+    const cloudinary = ensureCloudinaryConfigured()
 
     // Convert file to base64 for Cloudinary upload
     const bytes = await file.arrayBuffer()

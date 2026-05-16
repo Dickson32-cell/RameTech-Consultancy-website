@@ -1,6 +1,6 @@
 // Portfolio project image upload to Cloudinary
 import { NextRequest, NextResponse } from 'next/server'
-import cloudinary from '@/lib/cloudinary'
+import { ensureCloudinaryConfigured } from '@/lib/cloudinary'
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,6 +25,9 @@ export async function POST(request: NextRequest) {
       fileSize: file.size,
       fileType: file.type
     })
+
+    // Ensure Cloudinary is configured
+    const cloudinary = ensureCloudinaryConfigured()
 
     // Convert file to base64 for Cloudinary upload
     const bytes = await file.arrayBuffer()

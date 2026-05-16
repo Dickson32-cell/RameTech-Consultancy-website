@@ -55,21 +55,21 @@ export function getCloudinaryConfig() {
     console.log('Using individual Cloudinary environment variables')
 
     configData = {
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'db6oc5tr5',
+      api_key: process.env.CLOUDINARY_API_KEY || '142962498917514',
+      api_secret: process.env.CLOUDINARY_API_SECRET || 'WmtX55SrLC1VOV7-6Yuq91mc5AI',
       secure: true,
     }
 
-    // Validate
-    if (!configData.cloud_name) {
-      console.error('ERROR: CLOUDINARY_CLOUD_NAME is not set')
+    // Validate and warn if using fallback
+    if (!process.env.CLOUDINARY_CLOUD_NAME) {
+      console.warn('⚠️  CLOUDINARY_CLOUD_NAME not set, using fallback value')
     }
-    if (!configData.api_key) {
-      console.error('ERROR: CLOUDINARY_API_KEY is not set')
+    if (!process.env.CLOUDINARY_API_KEY) {
+      console.warn('⚠️  CLOUDINARY_API_KEY not set, using fallback value')
     }
-    if (!configData.api_secret) {
-      console.error('ERROR: CLOUDINARY_API_SECRET is not set')
+    if (!process.env.CLOUDINARY_API_SECRET) {
+      console.warn('⚠️  CLOUDINARY_API_SECRET not set, using fallback value')
     }
   }
 
