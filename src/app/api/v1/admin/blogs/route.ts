@@ -20,7 +20,7 @@ async function checkAdmin(request?: NextRequest) {
     // If no header token, try cookie
     if (!token) {
       const cookieStore = await import('next/headers').then(m => m.cookies())
-      token = cookieStore.get('rametech_token')?.value
+      token = cookieStore.get('rametech_token')?.value || null
       console.log('🔐 Auth: Checking cookie for token')
     }
 
