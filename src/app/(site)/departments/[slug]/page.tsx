@@ -459,7 +459,19 @@ export default function DepartmentDetailPage() {
         {/* Pricing Tab */}
         {activeTab === 'pricing' && (
           <div className="space-y-12">
-            {department.pricingTables.map((pricingTable) => (
+            {department.pricingTables.map((pricingTable) => {
+              // Debug logging
+              console.log('🔍 Rendering pricing table:', {
+                name: pricingTable.name,
+                tableType: pricingTable.tableType,
+                hasTiers: !!pricingTable.data?.tiers,
+                hasItems: !!pricingTable.data?.items,
+                tiersLength: pricingTable.data?.tiers?.length,
+                itemsLength: pricingTable.data?.items?.length,
+                fullData: pricingTable.data
+              })
+
+              return (
               <div key={pricingTable.id}>
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">{pricingTable.name}</h2>
                 {pricingTable.description && (
@@ -527,7 +539,7 @@ export default function DepartmentDetailPage() {
                 {pricingTable.tableType === 'simple' && (pricingTable.data.tiers || pricingTable.data.items) && (
                   <div>
                     {/* Check if using tiers format (pricing plans) */}
-                    {pricingTable.data.tiers && (
+                    {pricingTable.data.tiers && Array.isArray(pricingTable.data.tiers) && pricingTable.data.tiers.length > 0 && (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {pricingTable.data.tiers.map((tier: any, idx: number) => (
                           <div
@@ -546,16 +558,20 @@ export default function DepartmentDetailPage() {
                               <div className="text-4xl font-bold text-blue-600 mb-6">
                                 {tier.price}
                               </div>
-                              <ul className="space-y-3">
-                                {tier.features && tier.features.map((feature: string, fIdx: number) => (
-                                  <li key={fIdx} className="flex items-start text-gray-600">
-                                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    {feature}
-                                  </li>
-                                ))}
-                              </ul>
+                              {tier.features && Array.isArray(tier.features) && tier.features.length > 0 ? (
+                                <ul className="space-y-3">
+                                  {tier.features.map((feature: string, fIdx: number) => (
+                                    <li key={fIdx} className="flex items-start text-gray-600">
+                                      <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                      </svg>
+                                      {feature}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="text-gray-500 text-sm italic">No features listed</p>
+                              )}
                             </div>
                           </div>
                         ))}
@@ -563,7 +579,7 @@ export default function DepartmentDetailPage() {
                     )}
 
                     {/* Check if using items format (simple list) */}
-                    {pricingTable.data.items && (
+                    {pricingTable.data.items && Array.isArray(pricingTable.data.items) && pricingTable.data.items.length > 0 && (
                       <div className="bg-white rounded-lg shadow-md overflow-hidden">
                         <div className="overflow-x-auto">
                           <table className="min-w-full divide-y divide-gray-200">
@@ -599,10 +615,29 @@ export default function DepartmentDetailPage() {
                         </div>
                       </div>
                     )}
+
+                    {/* Show message if no pricing data found */}
+                    {!pricingTable.data.tiers && !pricingTable.data.items && (
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
+                        <p className="text-gray-700">
+                          No pricing information available for this table. Please contact admin to add pricing details.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Show message if table type is not recognized */}
+                {pricingTable.tableType !== 'simple' && pricingTable.tableType !== 'academic' && (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                    <p className="text-gray-700">
+                      Pricing table type "{pricingTable.tableType}" is not yet supported.
+                    </p>
                   </div>
                 )}
               </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
