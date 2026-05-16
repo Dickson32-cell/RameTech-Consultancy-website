@@ -46,6 +46,13 @@ interface PricingPhase {
   }>
 }
 
+interface PricingTier {
+  name: string
+  price: string
+  features: string[]
+  highlighted: boolean
+}
+
 interface PricingTable {
   id: string
   name: string
@@ -54,6 +61,7 @@ interface PricingTable {
   data: {
     phases?: PricingPhase[]
     items?: any[]
+    tiers?: PricingTier[]
   }
 }
 
