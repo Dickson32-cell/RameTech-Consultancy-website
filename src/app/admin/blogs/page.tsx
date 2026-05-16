@@ -33,7 +33,9 @@ export default function AdminBlogsPage() {
 
   const fetchBlogs = async () => {
     try {
-      const res = await fetch('/api/v1/admin/blogs')
+      const res = await fetch('/api/v1/admin/blogs', {
+        credentials: 'include' // Important: Include cookies for authentication
+      })
       const data = await res.json()
       if (data.success) setBlogs(data.data)
     } catch (error) {
@@ -46,7 +48,10 @@ export default function AdminBlogsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this blog post?')) return
     try {
-      const res = await fetch(`/api/v1/admin/blogs/${id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/v1/admin/blogs/${id}`, {
+        method: 'DELETE',
+        credentials: 'include' // Important: Include cookies for authentication
+      })
       const data = await res.json()
       if (data.success) setBlogs(blogs.filter(b => b.id !== id))
       else alert(data.error || 'Failed to delete')

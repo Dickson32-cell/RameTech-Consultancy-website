@@ -1,5 +1,6 @@
 // src/app/api/v1/admin/blogs/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import prisma from '@/lib/db'
 import { verifyToken } from '@/lib/auth'
 
@@ -52,6 +53,19 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       }
     })
 
+    console.log('✅ Blog post updated:', blog.id, blog.title)
+
+    // Revalidate blog pages
+    try {
+      revalidatePath('/blog')
+      revalidatePath(`/blog/${blog.slug}`)
+      revalidatePath('/api/v1/blogs')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for blog pages')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
+
     return NextResponse.json({ success: true, data: blog })
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
@@ -63,7 +77,25 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const admin = await checkAdmin()
     if (!admin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
 
+    const blog = await prisma.blogPost.findUnique({ where: { id: params.id } })
+    if (!blog) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 })
+
+    console.log('🗑️ Deleting blog post:', blog.id, blog.title)
+
     await prisma.blogPost.delete({ where: { id: params.id } })
+
+    console.log('✅ Blog post deleted successfully')
+
+    // Revalidate blog pages
+    try {
+      revalidatePath('/blog')
+      revalidatePath('/api/v1/blogs')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for blog pages')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
+
     return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })

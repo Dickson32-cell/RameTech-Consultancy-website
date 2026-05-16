@@ -40,9 +40,8 @@ export default function EditBlogPostPage() {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const token = localStorage.getItem('admin_token')
         const res = await fetch(`/api/v1/admin/blogs/${blogId}`, {
-          headers: { Authorization: `Bearer ${token}` }
+          credentials: 'include' // Important: Include cookies for authentication
         })
         const data = await res.json()
         if (!data.success) { setError(data.error || 'Blog not found'); return }
@@ -89,10 +88,10 @@ export default function EditBlogPostPage() {
     setError('')
     setIsSaving(true)
     try {
-      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/v1/admin/blogs/${blogId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // Important: Include cookies for authentication
         body: JSON.stringify(formData)
       })
       const data = await res.json()

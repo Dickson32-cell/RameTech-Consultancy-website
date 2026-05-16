@@ -1,5 +1,6 @@
 // src/app/api/v1/admin/blogs/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import prisma from '@/lib/db'
 import { verifyToken } from '@/lib/auth'
 
@@ -46,6 +47,18 @@ export async function POST(request: NextRequest) {
         publishedAt: isPublished ? new Date() : null
       }
     })
+
+    console.log('✅ Blog post created:', blog.id, blog.title)
+
+    // Revalidate blog pages
+    try {
+      revalidatePath('/blog')
+      revalidatePath('/api/v1/blogs')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for blog pages')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
 
     return NextResponse.json({ success: true, data: blog }, { status: 201 })
   } catch (error: any) {
