@@ -25,13 +25,16 @@ export default function PortfolioPreview() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('/api/v1/portfolio')
+        const res = await fetch(`/api/v1/portfolio?t=${Date.now()}`, {
+          cache: 'no-store'
+        })
         const data = await res.json()
         if (data.success && data.data) {
           setProjects(data.data.slice(0, 3))
+          console.log('✅ Homepage: Loaded', data.data.length, 'projects (showing 3)')
         }
       } catch (error) {
-        console.error('Error fetching portfolio:', error)
+        console.error('❌ Error fetching portfolio:', error)
       }
     }
     fetchProjects()
@@ -78,15 +81,17 @@ export default function PortfolioPreview() {
               {/* Image/Video Container */}
               <div className="relative h-56 md:h-64 bg-gray-200 overflow-hidden group/video">
                 {project.videoUrl ? (
-                  <div className="relative w-full h-full" onClick={(e) => e.stopPropagation()}>
+                  <div className="relative w-full h-full bg-gray-900" onClick={(e) => e.stopPropagation()}>
                     <video
-                      src={project.videoUrl}
                       className="w-full h-full object-cover"
                       controls
                       controlsList="nodownload"
-                      loop
                       playsInline
-                      preload="metadata"
+                      preload="auto"
+                      crossOrigin="anonymous"
+                      onError={(e) => {
+                        console.error('❌ Homepage video error:', project.videoUrl, e)
+                      }}
                       style={{
                         display: 'block',
                         maxWidth: '100%',
@@ -94,6 +99,7 @@ export default function PortfolioPreview() {
                       }}
                     >
                       <source src={project.videoUrl} type="video/mp4" />
+                      <source src={project.videoUrl} type="video/webm" />
                       Your browser does not support the video tag.
                     </video>
                   </div>

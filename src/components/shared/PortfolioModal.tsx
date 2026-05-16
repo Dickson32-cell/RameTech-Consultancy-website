@@ -79,15 +79,17 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({ project, isOpen, onClos
           {project.videoUrl ? (
             <video
               key={project.videoUrl}
-              src={project.videoUrl}
               controls
-              loop
               playsInline
-              preload="metadata"
+              preload="auto"
               controlsList="nodownload"
+              crossOrigin="anonymous"
               className="w-full h-full object-contain bg-black"
               onError={(e) => {
-                console.error('Modal video error:', project.videoUrl)
+                console.error('❌ Modal video error:', {
+                  url: project.videoUrl,
+                  error: e.currentTarget.error
+                })
                 const target = e.currentTarget
                 target.style.display = 'none'
                 const errorDiv = document.createElement('div')
@@ -96,13 +98,16 @@ const PortfolioModal: React.FC<PortfolioModalProps> = ({ project, isOpen, onClos
                   <svg class="w-16 h-16 mb-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
-                  <p class="text-sm text-center mb-2">Unable to load video</p>
-                  <p class="text-xs text-gray-400 text-center break-all px-4">${project.videoUrl}</p>
+                  <p class="text-sm text-center mb-2 font-semibold">Unable to load video</p>
+                  <p class="text-xs text-gray-400 text-center break-all px-4 max-w-md">URL: ${project.videoUrl}</p>
+                  <p class="text-xs text-gray-500 mt-2">Check browser console for error details</p>
                 `
                 target.parentElement?.appendChild(errorDiv)
               }}
-              onCanPlay={() => console.log('Modal video ready:', project.videoUrl)}
+              onCanPlay={() => console.log('✅ Modal video ready:', project.videoUrl)}
             >
+              <source src={project.videoUrl} type="video/mp4" />
+              <source src={project.videoUrl} type="video/webm" />
               Your browser does not support the video tag.
             </video>
           ) : project.imageUrl ? (

@@ -183,16 +183,25 @@ export default function PortfolioPage() {
                           className="w-full h-full object-cover"
                           controls
                           controlsList="nodownload"
-                          loop
                           playsInline
-                          preload="metadata"
-                          src={project.videoUrl}
-                          onError={(e) => {
-                            console.error('Video load error:', {
+                          preload="auto"
+                          crossOrigin="anonymous"
+                          onLoadStart={(e) => {
+                            console.log('🎬 Video loading:', {
                               url: project.videoUrl,
-                              error: e,
                               networkState: e.currentTarget.networkState,
                               readyState: e.currentTarget.readyState
+                            })
+                          }}
+                          onCanPlay={(e) => {
+                            console.log('✅ Video ready to play:', project.videoUrl)
+                          }}
+                          onError={(e) => {
+                            console.error('❌ Video load error:', {
+                              url: project.videoUrl,
+                              networkState: e.currentTarget.networkState,
+                              readyState: e.currentTarget.readyState,
+                              error: e.currentTarget.error
                             })
                             // Show error message
                             const container = e.currentTarget.parentElement
@@ -202,20 +211,21 @@ export default function PortfolioPage() {
                                   <svg class="w-16 h-16 mb-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                   </svg>
-                                  <p class="text-sm text-center">Video cannot be loaded</p>
-                                  <p class="text-xs text-gray-400 mt-2 text-center break-all px-2">${project.videoUrl}</p>
+                                  <p class="text-sm text-center font-semibold mb-2">Video Failed to Load</p>
+                                  <p class="text-xs text-gray-400 mt-2 text-center break-all px-2 max-w-md">URL: ${project.videoUrl}</p>
+                                  <p class="text-xs text-gray-500 mt-1">Check browser console for details</p>
                                 </div>
                               `
                             }
                           }}
-                          onLoadStart={() => console.log('Video loading:', project.videoUrl)}
-                          onCanPlay={() => console.log('Video ready:', project.videoUrl)}
                           style={{
                             display: 'block',
                             maxWidth: '100%',
                             maxHeight: '100%'
                           }}
                         >
+                          <source src={project.videoUrl} type="video/mp4" />
+                          <source src={project.videoUrl} type="video/webm" />
                           Your browser does not support the video tag.
                         </video>
                       </div>

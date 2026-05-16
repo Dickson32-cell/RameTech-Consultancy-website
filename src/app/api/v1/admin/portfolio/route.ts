@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import prisma from '@/lib/db'
 import { successResponse, errorResponse } from '@/lib/auth'
 
@@ -54,7 +55,18 @@ export async function POST(request: NextRequest) {
       data: projectData
     })
 
-    console.log('Project created successfully:', project.id)
+    console.log('✅ Project created successfully:', project.id)
+
+    // Revalidate relevant paths to clear cache
+    try {
+      revalidatePath('/portfolio')
+      revalidatePath('/api/v1/portfolio')
+      revalidatePath('/')
+      console.log('✅ Cache revalidated for portfolio pages after create')
+    } catch (revalidateError) {
+      console.error('Warning: Failed to revalidate cache:', revalidateError)
+    }
+
     return NextResponse.json(successResponse(project), { status: 201 })
   } catch (error: any) {
     console.error('Error creating portfolio project:', error)
