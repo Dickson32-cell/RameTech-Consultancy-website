@@ -78,7 +78,10 @@ export default function NewBlogPostPage() {
     try {
       const res = await fetch('/api/v1/admin/blogs', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // Send token in header as backup
+        },
         credentials: 'include', // Important: Include cookies for authentication
         body: JSON.stringify(formData)
       })

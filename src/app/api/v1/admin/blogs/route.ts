@@ -4,19 +4,34 @@ import { revalidatePath } from 'next/cache'
 import prisma from '@/lib/db'
 import { verifyToken } from '@/lib/auth'
 
-async function checkAdmin() {
+async function checkAdmin(request?: NextRequest) {
   try {
-    const cookieStore = await import('next/headers').then(m => m.cookies())
-    const token = cookieStore.get('rametech_token')?.value
+    let token: string | null = null
+
+    // Try to get token from Authorization header first
+    if (request) {
+      const authHeader = request.headers.get('authorization')
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7)
+        console.log('🔐 Auth: Using token from Authorization header')
+      }
+    }
+
+    // If no header token, try cookie
+    if (!token) {
+      const cookieStore = await import('next/headers').then(m => m.cookies())
+      token = cookieStore.get('rametech_token')?.value
+      console.log('🔐 Auth: Checking cookie for token')
+    }
 
     console.log('🔐 Auth check:', {
-      hasCookie: !!token,
-      cookieName: 'rametech_token',
+      hasToken: !!token,
+      tokenSource: token ? (request?.headers.get('authorization') ? 'header' : 'cookie') : 'none',
       tokenPreview: token ? token.substring(0, 20) + '...' : 'NO TOKEN'
     })
 
     if (!token) {
-      console.log('❌ No token found in cookies')
+      console.log('❌ No token found in cookies or headers')
       return null
     }
 
@@ -40,9 +55,9 @@ async function checkAdmin() {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const admin = await checkAdmin()
+    const admin = await checkAdmin(request)
     if (!admin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
 
     const blogs = await prisma.blogPost.findMany({ orderBy: { createdAt: 'desc' } })
@@ -54,7 +69,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const admin = await checkAdmin()
+    const admin = await checkAdmin(request)
     if (!admin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
 
     const body = await request.json()

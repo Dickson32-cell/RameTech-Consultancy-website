@@ -40,7 +40,9 @@ export default function EditBlogPostPage() {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
+        const token = localStorage.getItem('admin_token')
         const res = await fetch(`/api/v1/admin/blogs/${blogId}`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
           credentials: 'include' // Important: Include cookies for authentication
         })
         const data = await res.json()
@@ -88,9 +90,13 @@ export default function EditBlogPostPage() {
     setError('')
     setIsSaving(true)
     try {
+      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/v1/admin/blogs/${blogId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         credentials: 'include', // Important: Include cookies for authentication
         body: JSON.stringify(formData)
       })

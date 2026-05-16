@@ -33,7 +33,9 @@ export default function AdminBlogsPage() {
 
   const fetchBlogs = async () => {
     try {
+      const token = localStorage.getItem('admin_token')
       const res = await fetch('/api/v1/admin/blogs', {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         credentials: 'include' // Important: Include cookies for authentication
       })
       const data = await res.json()
@@ -48,8 +50,10 @@ export default function AdminBlogsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this blog post?')) return
     try {
+      const token = localStorage.getItem('admin_token')
       const res = await fetch(`/api/v1/admin/blogs/${id}`, {
         method: 'DELETE',
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         credentials: 'include' // Important: Include cookies for authentication
       })
       const data = await res.json()
