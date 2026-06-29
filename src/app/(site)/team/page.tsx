@@ -16,7 +16,9 @@ export default function TeamPage() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch('/api/v1/team')
+    fetch(`/api/v1/team?t=${Date.now()}`, {
+      cache: 'no-store'
+    })
       .then(res => res.json())
       .then(data => {
         if (data.success) setMembers(data.data)
