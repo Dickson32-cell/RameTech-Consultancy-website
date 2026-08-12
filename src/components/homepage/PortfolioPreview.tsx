@@ -128,7 +128,7 @@ export default function PortfolioPreview() {
                 <div className="absolute inset-0 flex items-end p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                   <div className="text-white">
                     <p className="text-sm text-accent font-medium mb-1">{project.category}</p>
-                    <h3 className="text-xl font-heading font-semibold">{project.title}</h3>
+                    <p className="text-xl font-heading font-semibold">{project.title}</p>
                     {project.projectUrl && (
                       <a
                         href={project.projectUrl}

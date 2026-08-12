@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && prisma db push --accept-data-loss && npm run db:seed && next build",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "postinstall": "prisma generate",
     "db:push": "prisma db push --accept-data-loss",
@@ -29,6 +30,7 @@
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "latest",
     "next": "^14.2.0",
+    "next-sitemap": "^4.2.3",
     "nodemailer": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
