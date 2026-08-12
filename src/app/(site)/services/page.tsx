@@ -113,7 +113,7 @@ export default function ServicesPage() {
   }
 
   // Merge database services with default services
-  const services = defaultServices.map(defaultService => {
+  const mergedServices = defaultServices.map(defaultService => {
     // Find matching service from database
     const dbService = dbServices.find(db => db.slug === defaultService.slug)
 
@@ -129,6 +129,13 @@ export default function ServicesPage() {
     // Otherwise use default
     return defaultService
   })
+
+  // Add any new services from the database that aren't in defaultServices
+  const newServices = dbServices.filter(dbService =>
+    !defaultServices.some(defaultService => defaultService.slug === dbService.slug)
+  )
+
+  const services = [...mergedServices, ...newServices].sort((a, b) => a.order - b.order)
 
   const fetchAcademicWriting = async () => {
     console.log('fetchAcademicWriting() called')

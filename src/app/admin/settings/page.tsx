@@ -84,8 +84,28 @@ export default function SettingsPage() {
             const data = await res.json()
 
             if (data.success && data.data?.url) {
-                setSettings({ ...settings, businessRegistrationUrl: data.data.url })
-                setMessage({ type: 'success', text: 'Document uploaded successfully! Don\'t forget to save settings.' })
+                const newSettings = { ...settings, businessRegistrationUrl: data.data.url }
+                setSettings(newSettings)
+
+                // Auto-save the settings
+                try {
+                    const saveRes = await fetch('/api/v1/admin/settings', {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newSettings)
+                    })
+                    const saveData = await saveRes.json()
+                    if (saveData.success) {
+                        setMessage({ type: 'success', text: 'Document uploaded and settings saved successfully!' })
+                    } else {
+                        setMessage({ type: 'error', text: 'Document uploaded but failed to save settings.' })
+                    }
+                } catch (e) {
+                    setMessage({ type: 'error', text: 'Document uploaded but failed to save settings.' })
+                }
             } else {
                 setMessage({ type: 'error', text: data.error || 'Failed to upload document' })
             }

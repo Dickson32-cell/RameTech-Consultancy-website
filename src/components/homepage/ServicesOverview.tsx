@@ -76,7 +76,7 @@ export default function ServicesOverview() {
         const data = await res.json()
         console.log('Homepage services fetched:', data)
         if (data.success && data.data) {
-          const mappedServices = data.data.slice(0, 6).map((s: Service) => ({
+          const mappedServices = data.data.slice(0, 9).map((s: Service) => ({
             ...s,
             link: s.slug === 'academic-writing' ? '/services/academic-writing' : '/services'
           }))
