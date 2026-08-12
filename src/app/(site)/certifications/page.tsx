@@ -83,45 +83,58 @@ export default function CertificationsPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {/* Always show Business Registration if uploaded */}
                             {businessCertUrl && (
-                                <div className="bento-card hover:shadow-card-hover transition-all duration-300">
+                                <a
+                                    href={businessCertUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bento-card hover:shadow-card-hover transition-all duration-300 group block cursor-pointer"
+                                >
                                     <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
                                         <FaFileContract className="w-8 h-8 text-primary" />
                                     </div>
                                     <h3 className="text-xl font-heading font-semibold text-text mb-2">Business Registration</h3>
                                     <p className="text-sm font-medium text-primary mb-4">Registrar General's Department, Ghana</p>
                                     <p className="text-gray-600 mb-6">Officially registered and incorporated as a Limited Liability Company in Ghana.</p>
-                                    <a
-                                        href={businessCertUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 text-primary font-medium hover:text-primaryDark transition-colors"
-                                    >
+                                    <span className="inline-flex items-center gap-2 text-primary font-medium group-hover:text-primaryDark transition-colors">
                                         View Certificate <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                                    </a>
-                                </div>
+                                    </span>
+                                </a>
                             )}
 
                             {/* Dynamic Certifications */}
-                            {certifications.map((cert) => (
-                                <div key={cert.id} className="bento-card hover:shadow-card-hover transition-all duration-300">
-                                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
-                                        {cert.icon && iconMap[cert.icon] ? iconMap[cert.icon] : <FaCertificate className="w-8 h-8 text-primary" />}
+                            {certifications.map((cert) => {
+                                const CardContent = (
+                                    <>
+                                        <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+                                            {cert.icon && iconMap[cert.icon] ? iconMap[cert.icon] : <FaCertificate className="w-8 h-8 text-primary" />}
+                                        </div>
+                                        <h3 className="text-xl font-heading font-semibold text-text mb-2">{cert.title}</h3>
+                                        <p className="text-sm font-medium text-primary mb-4">{cert.issuer}</p>
+                                        <p className="text-gray-600 mb-6">{cert.description}</p>
+                                        {cert.imageUrl && (
+                                            <span className="inline-flex items-center gap-2 text-primary font-medium group-hover:text-primaryDark transition-colors">
+                                                View Certificate <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                            </span>
+                                        )}
+                                    </>
+                                )
+
+                                return cert.imageUrl ? (
+                                    <a
+                                        key={cert.id}
+                                        href={cert.imageUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="bento-card hover:shadow-card-hover transition-all duration-300 group block cursor-pointer"
+                                    >
+                                        {CardContent}
+                                    </a>
+                                ) : (
+                                    <div key={cert.id} className="bento-card hover:shadow-card-hover transition-all duration-300">
+                                        {CardContent}
                                     </div>
-                                    <h3 className="text-xl font-heading font-semibold text-text mb-2">{cert.title}</h3>
-                                    <p className="text-sm font-medium text-primary mb-4">{cert.issuer}</p>
-                                    <p className="text-gray-600 mb-6">{cert.description}</p>
-                                    {cert.imageUrl && (
-                                        <a
-                                            href={cert.imageUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-2 text-primary font-medium hover:text-primaryDark transition-colors"
-                                        >
-                                            View Certificate <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                                        </a>
-                                    )}
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     )}
                 </div>
