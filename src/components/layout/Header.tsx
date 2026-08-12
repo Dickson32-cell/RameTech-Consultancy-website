@@ -18,11 +18,10 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
           ? 'glass-tech shadow-lg border-b border-primary/10 py-2'
           : 'bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 py-0'
-      }`}
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
@@ -64,6 +63,10 @@ export default function Header() {
               <span className="relative z-10">FAQ</span>
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-3/4 transition-all duration-300"></div>
             </Link>
+            <Link href="/certifications" className="relative px-4 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer rounded-lg hover:bg-gradient-to-r hover:from-primary/5 hover:to-cyan/5 group">
+              <span className="relative z-10">Certifications</span>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-cyan group-hover:w-3/4 transition-all duration-300"></div>
+            </Link>
             <Link href="/contact" className="ml-2 group relative btn-primary text-sm py-2.5 px-5 overflow-hidden">
               <span className="relative z-10">Get a Quote</span>
               <div className="absolute inset-0 bg-gradient-to-r from-primary via-cyan to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -75,6 +78,7 @@ export default function Header() {
             <Link href="/services" className="px-3 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer">Services</Link>
             <Link href="/departments" className="px-3 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer">Departments</Link>
             <Link href="/team" className="px-3 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer">Team</Link>
+            <Link href="/certifications" className="px-3 py-2 text-text hover:text-primary font-medium transition-colors duration-200 cursor-pointer">Certifications</Link>
             <Link href="/contact" className="btn-primary text-sm py-2 px-4">
               Quote
             </Link>
@@ -97,10 +101,9 @@ export default function Header() {
         </div>
 
         {/* Mobile Menu */}
-        <div 
-          className={`md:hidden overflow-hidden transition-all duration-300 ${
-            isMenuOpen ? 'max-h-96 pb-4' : 'max-h-0'
-          }`}
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ${isMenuOpen ? 'max-h-96 pb-4' : 'max-h-0'
+            }`}
         >
           <nav className="flex flex-col space-y-1 pt-2">
             <Link href="/" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Home</Link>
@@ -109,6 +112,7 @@ export default function Header() {
             <Link href="/team" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Team</Link>
             <Link href="/blog" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Blog</Link>
             <Link href="/faq" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
+            <Link href="/certifications" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Certifications</Link>
             <Link href="/contact" className="mt-2 btn-primary text-center cursor-pointer" onClick={() => setIsMenuOpen(false)}>Get a Quote</Link>
           </nav>
         </div>

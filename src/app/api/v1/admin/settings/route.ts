@@ -3,18 +3,30 @@ import prisma from '@/lib/db'
 import { verifyToken } from '@/lib/auth'
 import { cookies } from 'next/headers'
 
-async function checkAdmin() {
-    const cookieStore = cookies()
-    const token = cookieStore.get('rametech_token')?.value
+async function checkAdmin(request?: NextRequest) {
+    let token: string | null = null
+
+    if (request) {
+        const authHeader = request.headers.get('authorization')
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            token = authHeader.substring(7)
+        }
+    }
+
+    if (!token) {
+        const cookieStore = cookies()
+        token = cookieStore.get('rametech_token')?.value || null
+    }
+
     if (!token) return null
     const payload = verifyToken(token)
     if (!payload || payload.role !== 'admin') return null
     return payload
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
-        const admin = await checkAdmin()
+        const admin = await checkAdmin(request)
         if (!admin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
 
         let settings = await prisma.siteSettings.findUnique({
@@ -36,7 +48,7 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
     try {
-        const admin = await checkAdmin()
+        const admin = await checkAdmin(request)
         if (!admin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
 
         const body = await request.json()
