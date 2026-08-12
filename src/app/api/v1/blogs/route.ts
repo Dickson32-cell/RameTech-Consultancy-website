@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // Public blog listing API
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // src/app/api/v1/portfolio/route.ts
 // GET /api/v1/portfolio - Get portfolio projects only (NOT department projects)
 // Department projects are shown on their respective department pages

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // src/app/api/v1/services/route.ts
 // GET /api/v1/services - Get all services
 import { NextRequest, NextResponse } from 'next/server'

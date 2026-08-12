@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // src/app/api/v1/team/route.ts
 // GET /api/v1/team - Get all team members
 import { NextRequest, NextResponse } from 'next/server'
