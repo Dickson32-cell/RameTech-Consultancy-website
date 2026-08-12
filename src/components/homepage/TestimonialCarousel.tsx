@@ -11,22 +11,7 @@ interface Review {
   rating: number
 }
 
-const defaultTestimonials: Review[] = [
-  {
-    id: '1',
-    clientName: 'Kwame Asante',
-    clientCompany: 'TechStart Ghana',
-    content: 'RAME Tech transformed our outdated systems into a modern, efficient platform. Their analytics solutions helped us increase revenue by 40% in just 6 months.',
-    rating: 5
-  },
-  {
-    id: '2',
-    clientName: 'Ama Serwaa',
-    clientCompany: 'MKT Solutions',
-    content: 'The marketing research from RAME Tech gave us insights we never knew existed. Their data-driven approach revolutionized our entire marketing strategy.',
-    rating: 5
-  }
-]
+const defaultTestimonials: Review[] = []
 
 export default function TestimonialCarousel() {
   const [testimonials, setTestimonials] = useState<Review[]>(defaultTestimonials)
@@ -206,8 +191,8 @@ export default function TestimonialCarousel() {
                     key={index}
                     onClick={() => goToSlide(index)}
                     className={`h-3 rounded-full transition-all duration-300 cursor-pointer ${index === currentIndex
-                        ? 'bg-primary w-8'
-                        : 'bg-gray-300 hover:bg-gray-400 w-3'
+                      ? 'bg-primary w-8'
+                      : 'bg-gray-300 hover:bg-gray-400 w-3'
                       }`}
                     aria-label={`Go to testimonial ${index + 1}`}
                   />
