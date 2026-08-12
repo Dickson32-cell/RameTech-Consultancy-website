@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { FaArrowLeft, FaSave } from 'react-icons/fa'
+import { FaArrowLeft, FaSave, FaUpload, FaCheck } from 'react-icons/fa'
 
 export default function NewCertificationPage() {
     const router = useRouter()
@@ -14,9 +14,50 @@ export default function NewCertificationPage() {
         issuer: '',
         description: '',
         icon: 'FaCertificate',
+        imageUrl: '',
         order: 0,
         isActive: true
     })
+    const [uploading, setUploading] = useState(false)
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        setUploading(true)
+        setError('')
+
+        const uploadData = new FormData()
+        uploadData.append('file', file)
+
+        try {
+            const token = localStorage.getItem('admin_token')
+            const res = await fetch('/api/v1/admin/upload/document', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: uploadData
+            })
+
+            const data = await res.json()
+
+            if (data.success && data.data?.url) {
+                setFormData(prev => ({ ...prev, imageUrl: data.data.url }))
+            } else {
+                setError(data.error || 'Failed to upload document')
+            }
+        } catch (error) {
+            console.error('Upload error:', error)
+            setError('An error occurred during upload')
+        } finally {
+            setUploading(false)
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -139,6 +180,48 @@ export default function NewCertificationPage() {
                                     onChange={handleChange}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
                                 />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Certificate Document</label>
+                            <p className="text-sm text-gray-500 mb-4">Upload the certificate file (PDF, JPG, PNG) to display it on the website.</p>
+
+                            <div className="flex items-center gap-4">
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileUpload}
+                                    className="hidden"
+                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={uploading}
+                                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                                >
+                                    {uploading ? (
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-700"></div>
+                                    ) : (
+                                        <FaUpload />
+                                    )}
+                                    {uploading ? 'Uploading...' : 'Upload Document'}
+                                </button>
+
+                                {formData.imageUrl && (
+                                    <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 px-3 py-1.5 rounded-md border border-green-200">
+                                        <FaCheck /> Document uploaded
+                                        <a
+                                            href={formData.imageUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="ml-2 text-primary hover:underline"
+                                        >
+                                            View
+                                        </a>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
