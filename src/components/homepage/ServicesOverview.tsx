@@ -9,6 +9,7 @@ interface Service {
   slug: string
   description: string
   icon: string | null
+  startingPrice: string | null
   link?: string
 }
 
@@ -117,9 +118,8 @@ export default function ServicesOverview() {
             <Link
               href={service.link || '/services'}
               key={service.id}
-              className={`group relative bg-white rounded-2xl p-6 border border-gray-200 hover:border-primary/30 shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer overflow-hidden ${
-                index === 0 || index === 3 ? 'sm:col-span-2 lg:col-span-1' : ''
-              }`}
+              className={`group relative bg-white rounded-2xl p-6 border border-gray-200 hover:border-primary/30 shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer overflow-hidden ${index === 0 || index === 3 ? 'sm:col-span-2 lg:col-span-1' : ''
+                }`}
             >
               {/* Gradient Overlay on Hover */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-cyan/0 to-purple/0 group-hover:from-primary/5 group-hover:via-cyan/5 group-hover:to-purple/5 transition-all duration-500"></div>
@@ -145,12 +145,19 @@ export default function ServicesOverview() {
                   {service.description}
                 </p>
 
-                {/* Arrow Indicator */}
-                <div className="flex items-center text-primary gap-2 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-2 transition-all duration-300">
-                  <span className="text-sm font-semibold">Learn more</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
+                {/* Pricing & Arrow Indicator */}
+                <div className="flex items-center justify-between mt-4 border-t border-gray-100 pt-4">
+                  {service.startingPrice ? (
+                    <span className="text-sm font-semibold text-accent">{service.startingPrice}</span>
+                  ) : (
+                    <span className="text-sm font-semibold text-transparent">No price</span>
+                  )}
+                  <div className="flex items-center text-primary gap-2 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-2 transition-all duration-300">
+                    <span className="text-sm font-semibold">Learn more</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </div>
                 </div>
               </div>
             </Link>

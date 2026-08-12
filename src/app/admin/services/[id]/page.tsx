@@ -16,6 +16,7 @@ interface Service {
   slug: string
   description: string
   icon: string | null
+  startingPrice: string | null
   features: string[]
   order: number
   isActive: boolean
@@ -31,6 +32,7 @@ export default function EditServicePage() {
     slug: '',
     description: '',
     icon: 'FaCode',
+    startingPrice: '',
     features: '',
     order: 0,
     isActive: true
@@ -57,6 +59,7 @@ export default function EditServicePage() {
           slug: service.slug,
           description: service.description,
           icon: service.icon || 'FaCode',
+          startingPrice: service.startingPrice || '',
           features: service.features?.join(', ') || '',
           order: service.order,
           isActive: service.isActive
@@ -170,7 +173,7 @@ export default function EditServicePage() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Icon
@@ -184,6 +187,19 @@ export default function EditServicePage() {
                   <option key={icon} value={icon}>{icon}</option>
                 ))}
               </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Starting Price
+              </label>
+              <input
+                type="text"
+                value={formData.startingPrice}
+                onChange={(e) => setFormData({ ...formData, startingPrice: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                placeholder="e.g., From GHS 5,000"
+              />
             </div>
 
             <div>

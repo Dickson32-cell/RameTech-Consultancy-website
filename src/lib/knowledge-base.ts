@@ -212,6 +212,40 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
   try {
     const chunks: KnowledgeChunk[] = []
 
+    // Fetch SiteSettings
+    const siteSettings = await prisma.siteSettings.findUnique({
+      where: { id: 'default' }
+    })
+
+    if (siteSettings) {
+      chunks.push({
+        id: 'site-settings-dynamic',
+        category: 'Company Stats',
+        content: `RAMEDIC Company Statistics:\n- Years of Experience: ${siteSettings.statsExperience}\n- Projects Completed: ${siteSettings.statsProjects}\n- Happy Clients: ${siteSettings.statsClients}\n- Support: ${siteSettings.statsSupport}\n\nOur Mission: ${siteSettings.heroSubtitle}`,
+        keywords: ['stats', 'statistics', 'years', 'experience', 'projects', 'completed', 'clients', 'happy', 'support', 'mission', 'hero']
+      })
+    }
+
+    // Fetch Approved Reviews
+    const reviews = await prisma.review.findMany({
+      where: { isApproved: true },
+      orderBy: { createdAt: 'desc' },
+      take: 10
+    })
+
+    if (reviews.length > 0) {
+      const reviewsContent = reviews.map(review =>
+        `"${review.content}" - ${review.clientName}${review.clientCompany ? ` (${review.clientCompany})` : ''} [Rating: ${review.rating}/5]`
+      ).join('\n\n')
+
+      chunks.push({
+        id: 'reviews-dynamic',
+        category: 'Testimonials',
+        content: `Client Testimonials and Reviews:\n${reviewsContent}`,
+        keywords: ['reviews', 'testimonials', 'feedback', 'clients', 'say', 'rating', 'stars']
+      })
+    }
+
     // Fetch Academic Writing Services
     const academicWriting = await prisma.academicWritingPhase.findMany({
       where: { isActive: true },

@@ -1,8 +1,57 @@
 'use client'
 
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
+
+interface SiteSettings {
+  heroTitle: string
+  heroSubtitle: string
+  statsProjects: string
+  statsClients: string
+  statsExperience: string
+  statsSupport: string
+}
 
 export default function HeroSection() {
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch(`/api/v1/settings?t=${Date.now()}`, { cache: 'no-store' })
+        const data = await res.json()
+        if (data.success && data.data) {
+          setSettings(data.data)
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error)
+      }
+    }
+    fetchSettings()
+  }, [])
+
+  const title = settings?.heroTitle || 'Innovative Tech Solutions for Your Business'
+  const subtitle = settings?.heroSubtitle || 'RAMEDIC Consultancy and Creative LTD delivers cutting-edge software development, hardware & IT solutions, creative services, and research to help your business thrive.'
+
+  // Split title to highlight the word "Solutions" if it exists, otherwise just highlight the last word
+  const titleWords = title.split(' ')
+  const solutionsIndex = titleWords.findIndex(w => w.toLowerCase().includes('solutions'))
+
+  let beforeHighlight = ''
+  let highlightedWord = 'Solutions'
+  let afterHighlight = ''
+
+  if (solutionsIndex !== -1) {
+    beforeHighlight = titleWords.slice(0, solutionsIndex).join(' ')
+    highlightedWord = titleWords[solutionsIndex]
+    afterHighlight = titleWords.slice(solutionsIndex + 1).join(' ')
+  } else if (titleWords.length > 1) {
+    beforeHighlight = titleWords.slice(0, -1).join(' ')
+    highlightedWord = titleWords[titleWords.length - 1]
+  } else {
+    highlightedWord = title
+  }
+
   return (
     <section className="relative bg-gradient-to-br from-primary-dark via-primary to-secondary overflow-hidden">
       {/* Animated Background Elements */}
@@ -34,22 +83,22 @@ export default function HeroSection() {
               <svg className="w-5 h-5 text-cyan group-hover:text-neon-blue transition-colors" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span className="text-white text-sm font-semibold tracking-wide">Trusted by 30+ Businesses</span>
+              <span className="text-white text-sm font-semibold tracking-wide">Trusted by {settings?.statsClients || '30+'} Businesses</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-6 leading-tight">
-              Innovative Tech{' '}
+              {beforeHighlight}{' '}
               <span className="relative inline-block">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan via-accent to-accent-glow">Solutions</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan via-accent to-accent-glow">{highlightedWord}</span>
                 <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-cyan via-accent to-transparent rounded-full"></div>
               </span>{' '}
-              for Your Business
+              {afterHighlight}
             </h1>
-            
+
             <p className="text-lg md:text-xl text-white/80 mb-8 max-w-xl mx-auto lg:mx-0">
-              RAMEDIC Consultancy and Creative LTD delivers cutting-edge software development, hardware & IT solutions, creative services, and research to help your business thrive.
+              {subtitle}
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
                 href="/contact"
@@ -77,13 +126,13 @@ export default function HeroSection() {
                 <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-white/70 text-sm">5+ Years Experience</span>
+                <span className="text-white/70 text-sm">{settings?.statsExperience || '5+'} Years Experience</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-white/70 text-sm">24/7 Support</span>
+                <span className="text-white/70 text-sm">{settings?.statsSupport || '24/7'} Support</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,28 +154,28 @@ export default function HeroSection() {
                 <div className="group/card relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 text-center border border-white/10 hover:border-cyan/50 transition-all duration-300 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-cyan/0 to-cyan/10 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
                   <div className="relative z-10">
-                    <div className="text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-cyan">50+</div>
+                    <div className="text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-cyan">{settings?.statsProjects || '50+'}</div>
                     <div className="text-white/70 text-sm font-medium">Projects Completed</div>
                   </div>
                 </div>
                 <div className="group/card relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 text-center border border-white/10 hover:border-purple/50 transition-all duration-300 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-purple/0 to-purple/10 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
                   <div className="relative z-10">
-                    <div className="text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-purple">30+</div>
+                    <div className="text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-purple">{settings?.statsClients || '30+'}</div>
                     <div className="text-white/70 text-sm font-medium">Happy Clients</div>
                   </div>
                 </div>
                 <div className="group/card relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 text-center border border-white/10 hover:border-accent/50 transition-all duration-300 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-accent/0 to-accent/10 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
                   <div className="relative z-10">
-                    <div className="text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-accent">5+</div>
+                    <div className="text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-accent">{settings?.statsExperience || '5+'}</div>
                     <div className="text-white/70 text-sm font-medium">Years Experience</div>
                   </div>
                 </div>
                 <div className="group/card relative bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 text-center border border-white/10 hover:border-neon-blue/50 transition-all duration-300 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-neon-blue/0 to-neon-blue/10 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
                   <div className="relative z-10">
-                    <div className="text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-neon-blue">24/7</div>
+                    <div className="text-4xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-neon-blue">{settings?.statsSupport || '24/7'}</div>
                     <div className="text-white/70 text-sm font-medium">Support</div>
                   </div>
                 </div>
@@ -139,7 +188,7 @@ export default function HeroSection() {
       {/* Wave Divider */}
       <div className="absolute bottom-0 left-0 right-0">
         <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#F8FAFC"/>
+          <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#F8FAFC" />
         </svg>
       </div>
     </section>

@@ -10,6 +10,7 @@ interface Service {
   slug: string
   description: string
   icon: string | null
+  startingPrice: string | null
   features: string[]
   order: number
   isActive: boolean
@@ -66,16 +67,16 @@ export default function ServicesPage() {
 
   // Default services (hardcoded) - these always show
   const defaultServices: Service[] = [
-    { id: 'software', name: 'Software Development', slug: 'software', icon: 'FaCode', description: 'Custom software solutions built to meet your specific business needs.', features: ['Web Applications', 'Desktop Software', 'API Development', 'System Integration'], order: 0, isActive: true, link: null },
-    { id: 'mobile', name: 'Mobile Development', slug: 'mobile', icon: 'FaMobileAlt', description: 'Native and cross-platform mobile applications for iOS and Android.', features: ['iOS Development', 'Android Development', 'React Native', 'Flutter Apps'], order: 1, isActive: true, link: null },
-    { id: 'academic', name: 'Academic Writing', slug: 'academic-writing', icon: 'FaGraduationCap', description: 'Professional academic writing support for Bachelor, Master, and PhD level research.', features: ['Research Proposals', 'Literature Reviews', 'Data Analysis', 'Thesis Compilation'], order: 2, isActive: true, link: '/services/academic-writing' },
-    { id: 'hardware', name: 'Hardware & IT', slug: 'hardware', icon: 'FaServer', description: 'Complete IT infrastructure solutions and hardware procurement.', features: ['Network Setup', 'Server Management', 'Hardware Procurement', 'IT Support'], order: 3, isActive: true, link: null },
-    { id: 'cloud', name: 'Cloud Services', slug: 'cloud', icon: 'FaCloud', description: 'Scalable cloud solutions for modern businesses.', features: ['Cloud Migration', 'AWS/Azure Setup', 'Cloud Architecture', 'DevOps'], order: 4, isActive: true, link: null },
-    { id: 'design', name: 'Graphic Design', slug: 'design', icon: 'FaPalette', description: 'Professional design services to elevate your brand.', features: ['Logo Design', 'Brand Identity', 'Marketing Materials', 'UI/UX Design'], order: 5, isActive: true, link: null },
-    { id: 'analytics', name: 'Advanced Analytics', slug: 'analytics', icon: 'FaChartLine', description: 'Data-driven insights to make smarter business decisions.', features: ['Business Intelligence', 'Data Visualization', 'Predictive Analytics', 'Custom Dashboards'], order: 6, isActive: true, link: null },
-    { id: 'marketing', name: 'Marketing Research', slug: 'marketing', icon: 'FaSearch', description: 'In-depth market research and competitor analysis.', features: ['Market Research', 'Competitor Analysis', 'Customer Insights', 'Brand Strategy'], order: 7, isActive: true, link: null },
-    { id: 'digital', name: 'Digital Marketing', slug: 'digital', icon: 'FaBullhorn', description: 'Comprehensive digital marketing strategies to grow your reach.', features: ['SEO Optimization', 'Social Media', 'Content Marketing', 'PPC Campaigns'], order: 8, isActive: true, link: null },
-    { id: 'ai', name: 'AI & Automation', slug: 'ai', icon: 'FaRobot', description: 'Intelligent automation solutions powered by artificial intelligence.', features: ['Machine Learning', 'Process Automation', 'Chatbots', 'Predictive Models'], order: 9, isActive: true, link: null },
+    { id: 'software', name: 'Software Development', slug: 'software', icon: 'FaCode', description: 'Custom software solutions built to meet your specific business needs.', startingPrice: null, features: ['Web Applications', 'Desktop Software', 'API Development', 'System Integration'], order: 0, isActive: true, link: null },
+    { id: 'mobile', name: 'Mobile Development', slug: 'mobile', icon: 'FaMobileAlt', description: 'Native and cross-platform mobile applications for iOS and Android.', startingPrice: null, features: ['iOS Development', 'Android Development', 'React Native', 'Flutter Apps'], order: 1, isActive: true, link: null },
+    { id: 'academic', name: 'Academic Writing', slug: 'academic-writing', icon: 'FaGraduationCap', description: 'Professional academic writing support for Bachelor, Master, and PhD level research.', startingPrice: null, features: ['Research Proposals', 'Literature Reviews', 'Data Analysis', 'Thesis Compilation'], order: 2, isActive: true, link: '/services/academic-writing' },
+    { id: 'hardware', name: 'Hardware & IT', slug: 'hardware', icon: 'FaServer', description: 'Complete IT infrastructure solutions and hardware procurement.', startingPrice: null, features: ['Network Setup', 'Server Management', 'Hardware Procurement', 'IT Support'], order: 3, isActive: true, link: null },
+    { id: 'cloud', name: 'Cloud Services', slug: 'cloud', icon: 'FaCloud', description: 'Scalable cloud solutions for modern businesses.', startingPrice: null, features: ['Cloud Migration', 'AWS/Azure Setup', 'Cloud Architecture', 'DevOps'], order: 4, isActive: true, link: null },
+    { id: 'design', name: 'Graphic Design', slug: 'design', icon: 'FaPalette', description: 'Professional design services to elevate your brand.', startingPrice: null, features: ['Logo Design', 'Brand Identity', 'Marketing Materials', 'UI/UX Design'], order: 5, isActive: true, link: null },
+    { id: 'analytics', name: 'Advanced Analytics', slug: 'analytics', icon: 'FaChartLine', description: 'Data-driven insights to make smarter business decisions.', startingPrice: null, features: ['Business Intelligence', 'Data Visualization', 'Predictive Analytics', 'Custom Dashboards'], order: 6, isActive: true, link: null },
+    { id: 'marketing', name: 'Marketing Research', slug: 'marketing', icon: 'FaSearch', description: 'In-depth market research and competitor analysis.', startingPrice: null, features: ['Market Research', 'Competitor Analysis', 'Customer Insights', 'Brand Strategy'], order: 7, isActive: true, link: null },
+    { id: 'digital', name: 'Digital Marketing', slug: 'digital', icon: 'FaBullhorn', description: 'Comprehensive digital marketing strategies to grow your reach.', startingPrice: null, features: ['SEO Optimization', 'Social Media', 'Content Marketing', 'PPC Campaigns'], order: 8, isActive: true, link: null },
+    { id: 'ai', name: 'AI & Automation', slug: 'ai', icon: 'FaRobot', description: 'Intelligent automation solutions powered by artificial intelligence.', startingPrice: null, features: ['Machine Learning', 'Process Automation', 'Chatbots', 'Predictive Models'], order: 9, isActive: true, link: null },
   ]
 
   const [dbServices, setDbServices] = useState<Service[]>([])
@@ -194,11 +195,11 @@ export default function ServicesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {services.map((service) => (
-                <div
-                  key={service.id}
-                  className={`bento-card cursor-pointer transition-all duration-300 ${activeService === service.slug ? 'ring-2 ring-primary' : ''}`}
-                >
-                  {service.slug === 'academic-writing' ? (
+              <div
+                key={service.id}
+                className={`bento-card cursor-pointer transition-all duration-300 ${activeService === service.slug ? 'ring-2 ring-primary' : ''}`}
+              >
+                {service.slug === 'academic-writing' ? (
                   // Academic Writing - expandable
                   <div onClick={() => {
                     console.log('Academic Writing card clicked! Current active:', activeService)
@@ -211,6 +212,9 @@ export default function ServicesPage() {
                     </div>
                     <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
                     <p className="text-gray-600 mb-4">{service.description}</p>
+                    {service.startingPrice && (
+                      <p className="text-sm font-semibold text-accent mb-2">{service.startingPrice}</p>
+                    )}
                     <p className="text-xs text-primary font-medium">
                       {activeService === service.slug ? '▼ Click to collapse' : '▶ Click to view pricing'}
                     </p>
@@ -222,6 +226,9 @@ export default function ServicesPage() {
                     </div>
                     <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
                     <p className="text-gray-600 mb-4">{service.description}</p>
+                    {service.startingPrice && (
+                      <p className="text-sm font-semibold text-accent mb-2">{service.startingPrice}</p>
+                    )}
                   </Link>
                 ) : (
                   <div onClick={() => setActiveService(activeService === service.slug ? null : service.slug)}>
@@ -230,6 +237,9 @@ export default function ServicesPage() {
                     </div>
                     <h3 className="text-xl font-heading font-semibold text-text mb-3">{service.name}</h3>
                     <p className="text-gray-600 mb-4">{service.description}</p>
+                    {service.startingPrice && (
+                      <p className="text-sm font-semibold text-accent mb-2">{service.startingPrice}</p>
+                    )}
                   </div>
                 )}
 
@@ -247,9 +257,9 @@ export default function ServicesPage() {
                             Debug: No document or phases loaded
                           </p>
                           <p className="text-xs text-yellow-700">
-                            • Document: {academicWritingDocument ? 'EXISTS' : 'NULL'}<br/>
-                            • Phases: {academicWritingPhases.length}<br/>
-                            • Data fetched: {academicDataFetched ? 'Yes' : 'No'}<br/>
+                            • Document: {academicWritingDocument ? 'EXISTS' : 'NULL'}<br />
+                            • Phases: {academicWritingPhases.length}<br />
+                            • Data fetched: {academicDataFetched ? 'Yes' : 'No'}<br />
                             • Loading: {loadingAcademic ? 'Yes' : 'No'}
                           </p>
                           <button
@@ -390,7 +400,7 @@ export default function ServicesPage() {
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-text mt-3 mb-4">Our Process</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">A structured approach to delivering exceptional results for your business.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { step: '01', title: 'Discovery', desc: 'We learn about your business, goals, and challenges' },

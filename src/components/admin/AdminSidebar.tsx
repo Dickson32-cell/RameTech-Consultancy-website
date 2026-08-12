@@ -7,6 +7,7 @@ import { FaHome, FaBriefcase, FaUsers, FaProjectDiagram, FaSignOutAlt, FaBars, F
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: FaHome },
+  { name: 'Settings', href: '/admin/settings', icon: FaProjectDiagram },
   { name: 'Services', href: '/admin/services', icon: FaBriefcase },
   { name: 'Team', href: '/admin/team', icon: FaUsers },
   { name: 'Departments', href: '/admin/departments', icon: FaBuilding },
@@ -17,6 +18,7 @@ const navigation = [
   { name: 'News Updates', href: '/admin/news', icon: FaNewspaper },
   { name: 'Social Links', href: '/admin/social-links', icon: FaShareAlt },
   { name: 'Messages', href: '/admin/messages', icon: FaEnvelope, badge: true },
+  { name: 'Reviews', href: '/admin/reviews', icon: FaUsers },
 ]
 
 export default function AdminSidebar() {
@@ -39,7 +41,7 @@ export default function AdminSidebar() {
 
   useEffect(() => {
     if (!isAuthenticated) return
-    
+
     const fetchUnreadCount = async () => {
       try {
         const res = await fetch('/api/v1/contact')
@@ -52,7 +54,7 @@ export default function AdminSidebar() {
         console.error('Failed to fetch unread count:', error)
       }
     }
-    
+
     fetchUnreadCount()
     const interval = setInterval(fetchUnreadCount, 30000)
     return () => clearInterval(interval)
@@ -81,16 +83,15 @@ export default function AdminSidebar() {
     <>
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-30 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 w-64 bg-primary text-white transition-transform duration-300 z-40 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      } md:translate-x-0 md:shadow-2xl`}>
+      <aside className={`fixed inset-y-0 left-0 w-64 bg-primary text-white transition-transform duration-300 z-40 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:translate-x-0 md:shadow-2xl`}>
         <div className="flex flex-col h-full overflow-y-auto">
           {/* Logo */}
           <div className="p-4 md:p-6 border-b border-white/20 flex-shrink-0">
@@ -117,11 +118,10 @@ export default function AdminSidebar() {
                   key={item.name}
                   href={item.href}
                   onClick={handleNavClick}
-                  className={`flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base ${
-                    isActive
+                  className={`flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base ${isActive
                       ? 'bg-white/25 text-white font-semibold'
                       : 'text-white/90 hover:bg-white/15 hover:text-white'
-                  }`}
+                    }`}
                 >
                   <item.icon className="w-5 h-5 flex-shrink-0" />
                   <span className="truncate">{item.name}</span>
