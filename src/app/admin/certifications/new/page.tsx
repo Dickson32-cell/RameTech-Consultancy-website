@@ -81,6 +81,11 @@ export default function NewCertificationPage() {
                 router.push('/admin/certifications')
             } else {
                 setError(data.error || 'Something went wrong')
+                if (res.status === 401) {
+                    localStorage.removeItem('admin_token')
+                    localStorage.removeItem('admin_user')
+                    router.push('/admin/login')
+                }
             }
         } catch (err) {
             setError('Failed to create certification')

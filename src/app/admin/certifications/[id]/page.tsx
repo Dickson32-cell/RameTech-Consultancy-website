@@ -113,6 +113,11 @@ export default function EditCertificationPage({ params }: { params: { id: string
                 router.push('/admin/certifications')
             } else {
                 setError(data.error || 'Something went wrong')
+                if (res.status === 401) {
+                    localStorage.removeItem('admin_token')
+                    localStorage.removeItem('admin_user')
+                    router.push('/admin/login')
+                }
             }
         } catch (err) {
             setError('Failed to update certification')
