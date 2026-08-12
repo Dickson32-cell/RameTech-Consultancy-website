@@ -1,32 +1,57 @@
-import type { Metadata } from 'next'
+'use client'
 
-export const metadata: Metadata = {
-    title: 'Certifications | RAME Tech Consultancy',
-    description: 'Our professional certifications and accreditations.',
+import { useState, useEffect } from 'react'
+import { FaFileContract, FaCode, FaCloud, FaCertificate } from 'react-icons/fa'
+
+interface Certification {
+    id: string
+    title: string
+    issuer: string
+    description: string
+    icon: string | null
+    imageUrl: string | null
+    order: number
+    isActive: boolean
 }
 
-const certifications = [
-    {
-        title: 'Business Registration',
-        issuer: 'Registrar General\'s Department, Ghana',
-        description: 'Officially registered and incorporated as a Limited Liability Company in Ghana.',
-        icon: 'FaFileContract'
-    },
-    {
-        title: 'Software Engineering Professional',
-        issuer: 'Industry Standard',
-        description: 'Certified professionals in modern software engineering practices and methodologies.',
-        icon: 'FaCode'
-    },
-    {
-        title: 'Cloud Architecture',
-        issuer: 'Cloud Providers',
-        description: 'Certified in designing and implementing scalable cloud solutions.',
-        icon: 'FaCloud'
-    }
-]
+const iconMap: Record<string, React.ReactNode> = {
+    FaFileContract: <FaFileContract className="w-8 h-8 text-primary" />,
+    FaCode: <FaCode className="w-8 h-8 text-primary" />,
+    FaCloud: <FaCloud className="w-8 h-8 text-primary" />,
+    FaCertificate: <FaCertificate className="w-8 h-8 text-primary" />
+}
 
 export default function CertificationsPage() {
+    const [certifications, setCertifications] = useState<Certification[]>([])
+    const [businessCertUrl, setBusinessCertUrl] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Fetch dynamic certifications
+                const certsRes = await fetch(`/api/v1/certifications?t=${Date.now()}`)
+                const certsData = await certsRes.json()
+                if (certsData.success) {
+                    setCertifications(certsData.data)
+                }
+
+                // Fetch business certificate from settings
+                const settingsRes = await fetch(`/api/v1/settings?t=${Date.now()}`)
+                const settingsData = await settingsRes.json()
+                if (settingsData.success && settingsData.data?.businessRegistrationUrl) {
+                    setBusinessCertUrl(settingsData.data.businessRegistrationUrl)
+                }
+            } catch (error) {
+                console.error('Failed to fetch certifications data:', error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchData()
+    }, [])
+
     return (
         <div>
             {/* Hero Section */}
@@ -50,20 +75,55 @@ export default function CertificationsPage() {
             {/* Certifications Content */}
             <section className="py-16 md:py-24 bg-background">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {certifications.map((cert, index) => (
-                            <div key={index} className="bento-card hover:shadow-card-hover transition-all duration-300">
-                                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
-                                    <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                                    </svg>
+                    {isLoading ? (
+                        <div className="flex justify-center py-20">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {/* Always show Business Registration if uploaded */}
+                            {businessCertUrl && (
+                                <div className="bento-card hover:shadow-card-hover transition-all duration-300">
+                                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+                                        <FaFileContract className="w-8 h-8 text-primary" />
+                                    </div>
+                                    <h3 className="text-xl font-heading font-semibold text-text mb-2">Business Registration</h3>
+                                    <p className="text-sm font-medium text-primary mb-4">Registrar General's Department, Ghana</p>
+                                    <p className="text-gray-600 mb-6">Officially registered and incorporated as a Limited Liability Company in Ghana.</p>
+                                    <a
+                                        href={businessCertUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 text-primary font-medium hover:text-primaryDark transition-colors"
+                                    >
+                                        View Certificate <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                    </a>
                                 </div>
-                                <h3 className="text-xl font-heading font-semibold text-text mb-2">{cert.title}</h3>
-                                <p className="text-sm font-medium text-primary mb-4">{cert.issuer}</p>
-                                <p className="text-gray-600">{cert.description}</p>
-                            </div>
-                        ))}
-                    </div>
+                            )}
+
+                            {/* Dynamic Certifications */}
+                            {certifications.map((cert) => (
+                                <div key={cert.id} className="bento-card hover:shadow-card-hover transition-all duration-300">
+                                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+                                        {cert.icon && iconMap[cert.icon] ? iconMap[cert.icon] : <FaCertificate className="w-8 h-8 text-primary" />}
+                                    </div>
+                                    <h3 className="text-xl font-heading font-semibold text-text mb-2">{cert.title}</h3>
+                                    <p className="text-sm font-medium text-primary mb-4">{cert.issuer}</p>
+                                    <p className="text-gray-600 mb-6">{cert.description}</p>
+                                    {cert.imageUrl && (
+                                        <a
+                                            href={cert.imageUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 text-primary font-medium hover:text-primaryDark transition-colors"
+                                        >
+                                            View Certificate <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                        </a>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 

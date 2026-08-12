@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FaHome, FaBriefcase, FaUsers, FaProjectDiagram, FaSignOutAlt, FaBars, FaBlog, FaEnvelope, FaShareAlt, FaTimes, FaBuilding, FaBook, FaGraduationCap, FaNewspaper } from 'react-icons/fa'
+import { FaHome, FaBriefcase, FaUsers, FaProjectDiagram, FaSignOutAlt, FaBars, FaBlog, FaEnvelope, FaShareAlt, FaTimes, FaBuilding, FaBook, FaGraduationCap, FaNewspaper, FaCertificate } from 'react-icons/fa'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: FaHome },
@@ -19,6 +19,7 @@ const navigation = [
   { name: 'Social Links', href: '/admin/social-links', icon: FaShareAlt },
   { name: 'Messages', href: '/admin/messages', icon: FaEnvelope, badge: true },
   { name: 'Reviews', href: '/admin/reviews', icon: FaUsers },
+  { name: 'Certifications', href: '/admin/certifications', icon: FaCertificate },
 ]
 
 export default function AdminSidebar() {
@@ -119,8 +120,8 @@ export default function AdminSidebar() {
                   href={item.href}
                   onClick={handleNavClick}
                   className={`flex items-center gap-3 px-3 md:px-4 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base ${isActive
-                      ? 'bg-white/25 text-white font-semibold'
-                      : 'text-white/90 hover:bg-white/15 hover:text-white'
+                    ? 'bg-white/25 text-white font-semibold'
+                    : 'text-white/90 hover:bg-white/15 hover:text-white'
                     }`}
                 >
                   <item.icon className="w-5 h-5 flex-shrink-0" />

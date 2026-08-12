@@ -465,7 +465,7 @@ model AcademicWritingDocument {
 }
 
 // ============================================
-// SITE SETTINGS
+// SETTINGS TABLES
 // ============================================
 
 model SiteSettings {
@@ -478,6 +478,22 @@ model SiteSettings {
   statsSupport            String   @default("24/7")
   businessRegistrationUrl String?
   updatedAt               DateTime @updatedAt @db.Timestamptz()
+}
+
+model Certification {
+  id          String   @id @default(uuid())
+  title       String
+  issuer      String
+  description String   @db.Text
+  icon        String?
+  imageUrl    String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now()) @db.Timestamptz()
+  updatedAt   DateTime @updatedAt @db.Timestamptz()
+
+  @@index([order])
+  @@index([isActive])
 }
 
 // ============================================
