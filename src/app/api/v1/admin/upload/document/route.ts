@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import cloudinary from '@/lib/cloudinary'
+import { ensureCloudinaryConfigured } from '@/lib/cloudinary'
 import { successResponse, errorResponse } from '@/lib/api-response'
 
 // POST /api/v1/admin/upload/document - Upload new document
@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
         // Upload to Cloudinary
         let uploadResult
         try {
+            const cloudinary = ensureCloudinaryConfigured()
             uploadResult = await cloudinary.uploader.upload(dataURI, {
                 resource_type: 'auto', // Auto handles images, raw handles docs
                 folder: 'rametech/business-registration',
