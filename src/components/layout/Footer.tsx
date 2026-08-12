@@ -50,7 +50,7 @@ export default function Footer() {
       })
       .catch(() => { })
 
-    fetch('/api/v1/settings')
+    fetch(`/api/v1/settings?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data?.businessRegistrationUrl) {
