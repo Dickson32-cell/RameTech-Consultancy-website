@@ -40,7 +40,7 @@ export async function PUT(request: NextRequest) {
         if (!admin) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
 
         const body = await request.json()
-        const { heroTitle, heroSubtitle, statsProjects, statsClients, statsExperience, statsSupport } = body
+        const { heroTitle, heroSubtitle, statsProjects, statsClients, statsExperience, statsSupport, businessRegistrationUrl } = body
 
         const settings = await prisma.siteSettings.upsert({
             where: { id: 'default' },
@@ -50,7 +50,8 @@ export async function PUT(request: NextRequest) {
                 statsProjects,
                 statsClients,
                 statsExperience,
-                statsSupport
+                statsSupport,
+                businessRegistrationUrl
             },
             create: {
                 id: 'default',
@@ -59,7 +60,8 @@ export async function PUT(request: NextRequest) {
                 statsProjects,
                 statsClients,
                 statsExperience,
-                statsSupport
+                statsSupport,
+                businessRegistrationUrl
             }
         })
 

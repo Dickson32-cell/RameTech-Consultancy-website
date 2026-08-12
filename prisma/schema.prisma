@@ -469,14 +469,15 @@ model AcademicWritingDocument {
 // ============================================
 
 model SiteSettings {
-  id              String   @id @default("default")
-  heroTitle       String   @default("Innovative Tech Solutions for Your Business")
-  heroSubtitle    String   @default("RAMEDIC Consultancy and Creative LTD delivers cutting-edge software development, hardware & IT solutions, creative services, and research to help your business thrive.")
-  statsProjects   String   @default("50+")
-  statsClients    String   @default("30+")
-  statsExperience String   @default("5+")
-  statsSupport    String   @default("24/7")
-  updatedAt       DateTime @updatedAt @db.Timestamptz()
+  id                      String   @id @default("default")
+  heroTitle               String   @default("Innovative Tech Solutions for Your Business")
+  heroSubtitle            String   @default("RAMEDIC Consultancy and Creative LTD delivers cutting-edge software development, hardware & IT solutions, creative services, and research to help your business thrive.")
+  statsProjects           String   @default("50+")
+  statsClients            String   @default("30+")
+  statsExperience         String   @default("5+")
+  statsSupport            String   @default("24/7")
+  businessRegistrationUrl String?
+  updatedAt               DateTime @updatedAt @db.Timestamptz()
 }
 
 // ============================================

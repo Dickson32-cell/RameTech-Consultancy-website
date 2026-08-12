@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { FaSave, FaCheck, FaTimes } from 'react-icons/fa'
+import { FaSave, FaCheck, FaTimes, FaUpload, FaFilePdf, FaImage, FaFileWord } from 'react-icons/fa'
 
 interface SiteSettings {
     heroTitle: string
@@ -11,6 +11,7 @@ interface SiteSettings {
     statsClients: string
     statsExperience: string
     statsSupport: string
+    businessRegistrationUrl: string | null
 }
 
 export default function SettingsPage() {
@@ -21,11 +22,14 @@ export default function SettingsPage() {
         statsProjects: '',
         statsClients: '',
         statsExperience: '',
-        statsSupport: ''
+        statsSupport: '',
+        businessRegistrationUrl: null
     })
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [uploading, setUploading] = useState(false)
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         const token = localStorage.getItem('admin_token')
@@ -55,6 +59,45 @@ export default function SettingsPage() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setSettings({ ...settings, [e.target.name]: e.target.value })
+    }
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        setUploading(true)
+        setMessage(null)
+
+        const formData = new FormData()
+        formData.append('file', file)
+
+        try {
+            const token = localStorage.getItem('admin_token')
+            const res = await fetch('/api/v1/admin/upload/document', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            })
+
+            const data = await res.json()
+
+            if (data.success && data.data?.url) {
+                setSettings({ ...settings, businessRegistrationUrl: data.data.url })
+                setMessage({ type: 'success', text: 'Document uploaded successfully! Don\'t forget to save settings.' })
+            } else {
+                setMessage({ type: 'error', text: data.error || 'Failed to upload document' })
+            }
+        } catch (error) {
+            console.error('Upload error:', error)
+            setMessage({ type: 'error', text: 'An error occurred during upload' })
+        } finally {
+            setUploading(false)
+            if (fileInputRef.current) {
+                fileInputRef.current.value = ''
+            }
+        }
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -189,6 +232,56 @@ export default function SettingsPage() {
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
                                 required
                             />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Documents Settings */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h2 className="font-semibold text-gray-800">Company Documents</h2>
+                    </div>
+                    <div className="p-6 space-y-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Business Registration Document</label>
+                            <p className="text-sm text-gray-500 mb-4">Upload your company's business registration document to display it on the main website footer.</p>
+
+                            <div className="flex items-center gap-4">
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileUpload}
+                                    className="hidden"
+                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={uploading}
+                                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                                >
+                                    {uploading ? (
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-700"></div>
+                                    ) : (
+                                        <FaUpload />
+                                    )}
+                                    {uploading ? 'Uploading...' : 'Upload Document'}
+                                </button>
+
+                                {settings.businessRegistrationUrl && (
+                                    <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 px-3 py-1.5 rounded-md border border-green-200">
+                                        <FaCheck /> Document uploaded
+                                        <a
+                                            href={settings.businessRegistrationUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="ml-2 text-primary hover:underline"
+                                        >
+                                            View
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
