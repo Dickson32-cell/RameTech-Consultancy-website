@@ -9,7 +9,10 @@ async function checkAdmin(request?: NextRequest) {
     if (request) {
         const authHeader = request.headers.get('authorization')
         if (authHeader && authHeader.startsWith('Bearer ')) {
-            token = authHeader.substring(7)
+            const extracted = authHeader.substring(7)
+            if (extracted !== 'null' && extracted !== 'undefined') {
+                token = extracted
+            }
         }
     }
 
