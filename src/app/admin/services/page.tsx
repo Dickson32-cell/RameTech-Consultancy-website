@@ -11,6 +11,7 @@ interface Service {
   slug: string
   description: string
   icon: string | null
+  startingPrice: string | null
   features: string[]
   order: number
   isActive: boolean
@@ -85,6 +86,7 @@ export default function AdminServicesPage() {
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Order</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Slug</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Price</th>
                   <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
@@ -98,6 +100,7 @@ export default function AdminServicesPage() {
                       <div className="text-sm text-gray-500 truncate max-w-xs">{service.description}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500 font-mono">{service.slug}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{service.startingPrice || '-'}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1 text-sm ${service.isActive ? 'text-green-600' : 'text-red-500'}`}>
                         {service.isActive ? <FaCheck /> : <FaTimes />} {service.isActive ? 'Active' : 'Inactive'}
@@ -124,6 +127,9 @@ export default function AdminServicesPage() {
                     <h3 className="font-medium text-gray-900">{service.name}</h3>
                     <p className="text-sm text-gray-500 line-clamp-2 mt-1">{service.description}</p>
                     <p className="text-xs text-gray-400 font-mono mt-1">/{service.slug}</p>
+                    {service.startingPrice && (
+                      <p className="text-sm font-medium text-accent mt-2">{service.startingPrice}</p>
+                    )}
                   </div>
                   <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded flex-shrink-0">
                     #{service.order}

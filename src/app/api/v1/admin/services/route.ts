@@ -17,7 +17,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, slug, description, icon, features, order, isActive } = body
+    const { name, slug, description, icon, startingPrice, features, order, isActive } = body
 
     if (!name || !slug || !description) {
       return NextResponse.json(errorResponse('Name, slug, and description are required'), { status: 400 })
@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
         slug,
         description,
         icon: icon || null,
+        startingPrice: startingPrice || null,
         features: features || [],
         order: order ?? 0,
         isActive: isActive ?? true
