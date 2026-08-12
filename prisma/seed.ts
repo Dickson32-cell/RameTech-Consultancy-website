@@ -185,6 +185,22 @@ async function main() {
       ],
       order: 6,
       isActive: true
+    },
+    {
+      name: 'Kraft Paper Bags',
+      slug: 'kraft-paper-bags',
+      description: 'Custom-designed paper bags for weddings, funerals, parties, food deliveries, engagements, and more. Based in Koforidua, Eastern Region.',
+      icon: 'FaPalette',
+      startingPrice: 'From GHS 4.00 per bag',
+      features: [
+        'Custom Branding',
+        'A4 / A3 / A2 Sizes',
+        'Screen Printing (Nylon Bags)',
+        'Brown Kraft Bags',
+        'Bulk Orders Available'
+      ],
+      order: 10,
+      isActive: true
     }
   ]
 

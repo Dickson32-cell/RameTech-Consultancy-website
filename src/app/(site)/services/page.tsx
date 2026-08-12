@@ -77,6 +77,7 @@ export default function ServicesPage() {
     { id: 'marketing', name: 'Marketing Research', slug: 'marketing', icon: 'FaSearch', description: 'In-depth market research and competitor analysis.', startingPrice: null, features: ['Market Research', 'Competitor Analysis', 'Customer Insights', 'Brand Strategy'], order: 7, isActive: true, link: null },
     { id: 'digital', name: 'Digital Marketing', slug: 'digital', icon: 'FaBullhorn', description: 'Comprehensive digital marketing strategies to grow your reach.', startingPrice: null, features: ['SEO Optimization', 'Social Media', 'Content Marketing', 'PPC Campaigns'], order: 8, isActive: true, link: null },
     { id: 'ai', name: 'AI & Automation', slug: 'ai', icon: 'FaRobot', description: 'Intelligent automation solutions powered by artificial intelligence.', startingPrice: null, features: ['Machine Learning', 'Process Automation', 'Chatbots', 'Predictive Models'], order: 9, isActive: true, link: null },
+    { id: 'kraft', name: 'Kraft Paper Bags', slug: 'kraft-paper-bags', icon: 'FaPalette', description: 'Custom-designed paper bags for weddings, funerals, parties, food deliveries, and more. Based in Koforidua, Eastern Region.', startingPrice: 'From GHS 4.00 per bag', features: ['Custom Branding', 'A4 / A3 / A2 Sizes', 'Screen Printing', 'Brown Kraft Bags'], order: 10, isActive: true, link: '/services/kraft-paper-bags' },
   ]
 
   const [dbServices, setDbServices] = useState<Service[]>([])
