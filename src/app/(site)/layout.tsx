@@ -3,6 +3,7 @@ import Footer from '@/components/layout/Footer'
 import ScrollProgress from '@/components/shared/ScrollProgress'
 import Chatbot from '@/components/chatbot/Chatbot'
 import NewsletterPopup from '@/components/shared/NewsletterPopup'
+import PWAInstallPrompt from '@/components/shared/PWAInstallPrompt'
 
 export default function SiteLayout({
   children,
@@ -17,6 +18,7 @@ export default function SiteLayout({
       <Footer />
       <Chatbot />
       <NewsletterPopup />
+      <PWAInstallPrompt />
     </>
   )
 }

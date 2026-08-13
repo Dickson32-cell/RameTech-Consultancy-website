@@ -6,6 +6,12 @@ export const metadata: Metadata = {
   title: 'RAMEDIC Consultancy and Creative LTD | Software Development, IT Solutions, Creative Services, Research',
   description: 'Professional consultancy offering software development, IT solutions, creative services including paper craft, and research services in Ghana.',
   keywords: 'software development, hardware IT, graphic design, paper craft, research, Ghana, website, mobile app, creative services',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    title: 'RAMEDIC',
+    statusBarStyle: 'default',
+  },
   alternates: {
     canonical: '/',
   },
@@ -33,6 +39,12 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport = {
+  themeColor: '#1E40AF',
+  width: 'device-width',
+  initialScale: 1,
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -47,6 +59,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
           rel="stylesheet"
         />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="font-sans antialiased">
         {children}
