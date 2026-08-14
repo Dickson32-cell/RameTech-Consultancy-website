@@ -446,8 +446,15 @@ export default function DepartmentViewPage() {
               </tbody>
             </table>
           ) : (
-            <div className="text-center py-12 text-gray-500">
-              No projects yet. Add one to get started.
+            <div className="text-center py-12">
+              <p className="text-gray-500 mb-4">No projects yet. Add one to get started.</p>
+              <Link
+                href={`/admin/projects/new?departmentId=${departmentId}`}
+                className="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition"
+              >
+                <FaPlus className="mr-2" size={12} />
+                Add Project
+              </Link>
             </div>
           )}
         </div>
