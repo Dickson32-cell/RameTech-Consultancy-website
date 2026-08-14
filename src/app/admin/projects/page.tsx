@@ -85,13 +85,14 @@ export default function ProjectsListPage() {
           <h1 className="text-2xl font-bold text-gray-900">Projects &amp; Works</h1>
           <p className="text-gray-600 mt-1">Upload images and videos for department projects — visible on the public website</p>
         </div>
-        <Link
+        <a
           href="/admin/projects/new"
-          className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+          className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition no-underline"
+          style={{ display: 'inline-flex', textDecoration: 'none', backgroundColor: '#7B2D8E', color: 'white', padding: '8px 16px', borderRadius: '8px', fontWeight: 600 }}
         >
           <FaPlus className="mr-2" />
           Add Project
-        </Link>
+        </a>
       </div>
 
       {error && (
@@ -220,13 +221,14 @@ export default function ProjectsListPage() {
               <h3 className="text-lg font-semibold text-gray-900">No projects yet</h3>
               <p className="text-gray-500 mt-1">Add your first project with images and videos to showcase your work.</p>
             </div>
-            <Link
+            <a
               href="/admin/projects/new"
-              className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+              className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition no-underline"
+              style={{ display: 'inline-flex', textDecoration: 'none', backgroundColor: '#7B2D8E', color: 'white', padding: '12px 24px', borderRadius: '8px', fontWeight: 600 }}
             >
               <FaPlus className="mr-2" />
               Add Your First Project
-            </Link>
+            </a>
           </div>
         </div>
       )}
