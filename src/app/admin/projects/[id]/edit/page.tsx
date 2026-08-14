@@ -1,29 +1,23 @@
 'use client'
 
-import { useState, useEffect, useRef, FormEvent, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useEffect, useRef, FormEvent } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { FaArrowLeft, FaTimes } from 'react-icons/fa'
 
-interface Department {
-  id: string
-  name: string
-}
+interface Department { id: string; name: string }
+interface SubDepartment { id: string; name: string }
 
-interface SubDepartment {
-  id: string
-  name: string
-}
-
-function NewProjectForm() {
+export default function EditProjectPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const departmentIdFromUrl = searchParams.get('departmentId')
+  const params = useParams()
+  const projectId = params.id as string
 
   const imageInputRef = useRef<HTMLInputElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
 
   const [loading, setLoading] = useState(false)
+  const [fetching, setFetching] = useState(true)
   const [error, setError] = useState('')
   const [departments, setDepartments] = useState<Department[]>([])
   const [subDepartments, setSubDepartments] = useState<SubDepartment[]>([])
@@ -31,7 +25,7 @@ function NewProjectForm() {
   const [uploadingVideo, setUploadingVideo] = useState(false)
 
   const [formData, setFormData] = useState({
-    departmentId: departmentIdFromUrl || '',
+    departmentId: '',
     subDepartmentId: '',
     title: '',
     slug: '',
@@ -52,14 +46,49 @@ function NewProjectForm() {
       router.push('/admin/login')
       return
     }
+    fetchProject()
     fetchDepartments()
-  }, [router])
+  }, [router, projectId])
 
   useEffect(() => {
     if (formData.departmentId) {
       fetchSubDepartments(formData.departmentId)
     }
   }, [formData.departmentId])
+
+  const fetchProject = async () => {
+    try {
+      const token = localStorage.getItem('admin_token')
+      const res = await fetch(`/api/v1/admin/department-projects/${projectId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      const result = await res.json()
+      if (result.success && result.data) {
+        const p = result.data
+        setFormData({
+          departmentId: p.departmentId || '',
+          subDepartmentId: p.subDepartmentId || '',
+          title: p.title || '',
+          slug: p.slug || '',
+          description: p.description || '',
+          imageUrl: p.imageUrl || '',
+          videoUrl: p.videoUrl || '',
+          technologies: p.technologies?.join(', ') || '',
+          clientName: p.clientName || '',
+          projectUrl: p.projectUrl || '',
+          completedDate: p.completedDate ? new Date(p.completedDate).toISOString().split('T')[0] : '',
+          order: p.order || 0,
+          isActive: p.isActive
+        })
+      } else {
+        setError('Project not found')
+      }
+    } catch (err) {
+      setError('Failed to load project')
+    } finally {
+      setFetching(false)
+    }
+  }
 
   const fetchDepartments = async () => {
     try {
@@ -68,12 +97,8 @@ function NewProjectForm() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       const result = await response.json()
-      if (result.success) {
-        setDepartments(result.data || [])
-      }
-    } catch (err) {
-      console.error('Error fetching departments:', err)
-    }
+      if (result.success) setDepartments(result.data || [])
+    } catch (err) { console.error('Error fetching departments:', err) }
   }
 
   const fetchSubDepartments = async (departmentId: string) => {
@@ -83,21 +108,15 @@ function NewProjectForm() {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       const result = await response.json()
-      if (result.success) {
-        setSubDepartments(result.data || [])
-      }
-    } catch (err) {
-      console.error('Error fetching sub-departments:', err)
-    }
+      if (result.success) setSubDepartments(result.data || [])
+    } catch (err) { console.error('Error fetching sub-departments:', err) }
   }
 
-  const generateSlug = (title: string) => {
-    return title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-  }
+  const generateSlug = (title: string) => title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const title = e.target.value
-    setFormData({ ...formData, title, slug: generateSlug(title) })
+    setFormData(prev => ({ ...prev, title, slug: generateSlug(title) }))
   }
 
   // ─── Image Upload ───
@@ -163,10 +182,7 @@ function NewProjectForm() {
 
     try {
       const token = localStorage.getItem('admin_token')
-      if (!token) {
-        router.push('/admin/login')
-        return
-      }
+      if (!token) { router.push('/admin/login'); return }
 
       const submitData = {
         ...formData,
@@ -177,12 +193,9 @@ function NewProjectForm() {
         videoUrl: formData.videoUrl || null
       }
 
-      const response = await fetch('/api/v1/admin/department-projects', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+      const response = await fetch(`/api/v1/admin/department-projects/${projectId}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(submitData)
       })
 
@@ -191,10 +204,10 @@ function NewProjectForm() {
       if (result.success) {
         router.push(`/admin/departments/${formData.departmentId}`)
       } else {
-        setError(result.error || 'Failed to create project')
+        setError(result.error || 'Failed to update project')
       }
     } catch (err) {
-      setError('An error occurred while creating the project')
+      setError('An error occurred while updating the project')
       console.error(err)
     } finally {
       setLoading(false)
@@ -204,78 +217,59 @@ function NewProjectForm() {
   const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
   const labelClass = "block text-sm font-medium text-gray-700 mb-2"
 
+  if (fetching) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
-        <Link
-          href={departmentIdFromUrl ? `/admin/departments/${departmentIdFromUrl}` : '/admin/departments'}
-          className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-2"
-        >
+        <Link href={formData.departmentId ? `/admin/departments/${formData.departmentId}` : '/admin/departments'} className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-2">
           <FaArrowLeft /> Back
         </Link>
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Add New Project</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Project</h1>
 
-        {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-            {error}
-          </div>
-        )}
+        {error && <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">{error}</div>}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Department */}
           <div>
             <label htmlFor="departmentId" className={labelClass}>Department *</label>
-            <select
-              id="departmentId"
-              value={formData.departmentId}
-              onChange={(e) => setFormData({ ...formData, departmentId: e.target.value, subDepartmentId: '' })}
-              required
-              className={inputClass}
-            >
+            <select id="departmentId" value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value, subDepartmentId: '' })} required className={inputClass}>
               <option value="">Select Department</option>
-              {departments.map((dept) => (
-                <option key={dept.id} value={dept.id}>{dept.name}</option>
-              ))}
+              {departments.map((dept) => <option key={dept.id} value={dept.id}>{dept.name}</option>)}
             </select>
           </div>
 
-          {/* Sub-Department (Optional) */}
           {formData.departmentId && subDepartments.length > 0 && (
             <div>
               <label htmlFor="subDepartmentId" className={labelClass}>Sub-Department (Optional)</label>
-              <select
-                id="subDepartmentId"
-                value={formData.subDepartmentId}
-                onChange={(e) => setFormData({ ...formData, subDepartmentId: e.target.value })}
-                className={inputClass}
-              >
+              <select id="subDepartmentId" value={formData.subDepartmentId} onChange={(e) => setFormData({ ...formData, subDepartmentId: e.target.value })} className={inputClass}>
                 <option value="">None</option>
-                {subDepartments.map((subDept) => (
-                  <option key={subDept.id} value={subDept.id}>{subDept.name}</option>
-                ))}
+                {subDepartments.map((subDept) => <option key={subDept.id} value={subDept.id}>{subDept.name}</option>)}
               </select>
             </div>
           )}
 
-          {/* Title */}
           <div>
             <label htmlFor="title" className={labelClass}>Project Title *</label>
-            <input type="text" id="title" value={formData.title} onChange={handleTitleChange} required className={inputClass} placeholder="e.g., E-Commerce Platform for ABC Corp" />
+            <input type="text" id="title" value={formData.title} onChange={handleTitleChange} required className={inputClass} />
           </div>
 
-          {/* Slug */}
           <div>
-            <label htmlFor="slug" className={labelClass}>Slug * <span className="text-gray-500 text-xs">(URL-friendly identifier)</span></label>
-            <input type="text" id="slug" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} required className={inputClass} placeholder="e.g., e-commerce-platform-abc-corp" />
+            <label htmlFor="slug" className={labelClass}>Slug *</label>
+            <input type="text" id="slug" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value })} required className={inputClass} />
           </div>
 
-          {/* Description */}
           <div>
             <label htmlFor="description" className={labelClass}>Description *</label>
-            <textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required rows={6} className={inputClass} placeholder="Detailed description of the project..." />
+            <textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required rows={6} className={inputClass} />
           </div>
 
           {/* ─── Image Upload ─── */}
@@ -322,65 +316,46 @@ function NewProjectForm() {
             )}
           </div>
 
-          {/* Technologies */}
           <div>
             <label htmlFor="technologies" className={labelClass}>Technologies <span className="text-gray-500 text-xs">(comma-separated)</span></label>
-            <input type="text" id="technologies" value={formData.technologies} onChange={(e) => setFormData({ ...formData, technologies: e.target.value })} className={inputClass} placeholder="e.g., React, Node.js, MongoDB, AWS" />
+            <input type="text" id="technologies" value={formData.technologies} onChange={(e) => setFormData({ ...formData, technologies: e.target.value })} className={inputClass} placeholder="e.g., React, Node.js, MongoDB" />
           </div>
 
-          {/* Client Name */}
           <div>
             <label htmlFor="clientName" className={labelClass}>Client Name</label>
-            <input type="text" id="clientName" value={formData.clientName} onChange={(e) => setFormData({ ...formData, clientName: e.target.value })} className={inputClass} placeholder="e.g., ABC Corporation" />
+            <input type="text" id="clientName" value={formData.clientName} onChange={(e) => setFormData({ ...formData, clientName: e.target.value })} className={inputClass} />
           </div>
 
-          {/* Project URL */}
           <div>
             <label htmlFor="projectUrl" className={labelClass}>Project URL (Live Link)</label>
             <input type="url" id="projectUrl" value={formData.projectUrl} onChange={(e) => setFormData({ ...formData, projectUrl: e.target.value })} className={inputClass} placeholder="https://..." />
           </div>
 
-          {/* Completed Date */}
           <div>
             <label htmlFor="completedDate" className={labelClass}>Completion Date</label>
             <input type="date" id="completedDate" value={formData.completedDate} onChange={(e) => setFormData({ ...formData, completedDate: e.target.value })} className={inputClass} />
           </div>
 
-          {/* Order */}
           <div>
             <label htmlFor="order" className={labelClass}>Display Order</label>
             <input type="number" id="order" value={formData.order} onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })} className={inputClass} min="0" />
           </div>
 
-          {/* Active Status */}
           <div className="flex items-center">
             <input type="checkbox" id="isActive" checked={formData.isActive} onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })} className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
             <label htmlFor="isActive" className="ml-2 block text-sm text-gray-900">Active (visible to public)</label>
           </div>
 
-          {/* Submit Button */}
           <div className="flex gap-4">
             <button type="submit" disabled={loading} className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition">
-              {loading ? 'Creating...' : 'Create Project'}
+              {loading ? 'Saving...' : 'Save Changes'}
             </button>
-            <Link href={departmentIdFromUrl ? `/admin/departments/${departmentIdFromUrl}` : '/admin/departments'} className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition text-center">
+            <Link href={formData.departmentId ? `/admin/departments/${formData.departmentId}` : '/admin/departments'} className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition text-center">
               Cancel
             </Link>
           </div>
         </form>
       </div>
     </div>
-  )
-}
-
-export default function NewProjectPage() {
-  return (
-    <Suspense fallback={
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    }>
-      <NewProjectForm />
-    </Suspense>
   )
 }
