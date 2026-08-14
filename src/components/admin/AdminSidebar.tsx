@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FaHome, FaBriefcase, FaUsers, FaProjectDiagram, FaSignOutAlt, FaBars, FaBlog, FaEnvelope, FaShareAlt, FaTimes, FaBuilding, FaBook, FaGraduationCap, FaNewspaper, FaCertificate } from 'react-icons/fa'
+import { FaHome, FaBriefcase, FaUsers, FaProjectDiagram, FaSignOutAlt, FaBars, FaBlog, FaEnvelope, FaShareAlt, FaTimes, FaBuilding, FaBook, FaGraduationCap, FaNewspaper, FaCertificate, FaImages } from 'react-icons/fa'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: FaHome },
@@ -11,6 +11,7 @@ const navigation = [
   { name: 'Services', href: '/admin/services', icon: FaBriefcase },
   { name: 'Team', href: '/admin/team', icon: FaUsers },
   { name: 'Departments', href: '/admin/departments', icon: FaBuilding },
+  { name: 'Projects & Works', href: '/admin/projects', icon: FaImages },
   { name: 'Portfolio', href: '/admin/portfolio', icon: FaProjectDiagram },
   { name: 'Publications', href: '/admin/publications', icon: FaBook },
   { name: 'Academic Writing', href: '/admin/academic-writing', icon: FaGraduationCap },
