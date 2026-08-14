@@ -270,10 +270,10 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-700/50 mt-10 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm text-center md:text-left">
               {new Date().getFullYear()} RAMEDIC Consultancy and Creative LTD. All rights reserved.
             </p>
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
               {businessRegistrationUrl && (
                 <a href={businessRegistrationUrl} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 cursor-pointer flex items-center gap-1">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

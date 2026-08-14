@@ -103,14 +103,14 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
                 href="/contact"
-                className="group relative btn-accent text-center text-lg px-8 py-4 shadow-lg shadow-accent/30 hover:shadow-accent/50 transition-all duration-300 overflow-hidden"
+                className="group relative btn-accent text-center text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 shadow-lg shadow-accent/30 hover:shadow-accent/50 transition-all duration-300 overflow-hidden w-full sm:w-auto"
               >
                 <span className="relative z-10">Get a Free Quote</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-accent via-accent-glow to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </Link>
               <Link
                 href="/portfolio"
-                className="group relative glass-tech neon-border text-white px-8 py-4 rounded-lg font-semibold hover:shadow-neon transition-all duration-300 cursor-pointer text-center text-lg overflow-hidden"
+                className="group relative glass-tech neon-border text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold hover:shadow-neon transition-all duration-300 cursor-pointer text-center text-base sm:text-lg overflow-hidden w-full sm:w-auto"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   View Our Work
@@ -122,7 +122,7 @@ export default function HeroSection() {
             </div>
 
             {/* Trust Signals */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 mt-10">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 mt-8 sm:mt-10">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />

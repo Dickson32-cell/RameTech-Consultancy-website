@@ -102,7 +102,7 @@ export default function Header() {
 
         {/* Mobile Menu */}
         <div
-          className={`md:hidden overflow-hidden transition-all duration-300 ${isMenuOpen ? 'max-h-96 pb-4' : 'max-h-0'
+          className={`md:hidden overflow-hidden transition-all duration-300 ${isMenuOpen ? 'max-h-[32rem] pb-4' : 'max-h-0'
             }`}
         >
           <nav className="flex flex-col space-y-1 pt-2">
@@ -113,7 +113,7 @@ export default function Header() {
             <Link href="/blog" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Blog</Link>
             <Link href="/faq" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>FAQ</Link>
             <Link href="/certifications" className="px-4 py-3 text-text hover:bg-primary/5 hover:text-primary rounded-lg transition-colors duration-200 cursor-pointer" onClick={() => setIsMenuOpen(false)}>Certifications</Link>
-            <Link href="/contact" className="mt-2 btn-primary text-center cursor-pointer" onClick={() => setIsMenuOpen(false)}>Get a Quote</Link>
+            <Link href="/contact" className="mt-2 btn-primary text-center cursor-pointer w-full block py-3" onClick={() => setIsMenuOpen(false)}>Get a Quote</Link>
           </nav>
         </div>
       </div>

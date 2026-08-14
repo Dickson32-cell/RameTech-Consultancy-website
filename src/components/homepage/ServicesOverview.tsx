@@ -166,7 +166,7 @@ export default function ServicesOverview() {
 
         {/* View All Button */}
         <div className="text-center mt-12 md:mt-16">
-          <Link href="/services" className="group inline-flex items-center gap-3 glass-tech neon-border px-8 py-4 rounded-lg font-semibold hover:shadow-neon transition-all duration-300">
+          <Link href="/services" className="group inline-flex items-center gap-3 glass-tech neon-border px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold hover:shadow-neon transition-all duration-300 w-full sm:w-auto justify-center">
             <span className="text-primary">View All Services</span>
             <svg className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

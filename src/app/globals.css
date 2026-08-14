@@ -377,10 +377,6 @@ a:focus, button:focus, input:focus, textarea:focus, select:focus {
     align-items: center;
     justify-content: center;
   }
-  
-  a, button {
-    min-height: 44px;
-  }
 
   body {
     font-size: 16px;
@@ -468,8 +464,7 @@ img {
 
 /* Touch-friendly tap targets on mobile */
 @media (pointer: coarse) {
-  .btn-primary, .btn-secondary, .btn-accent,
-  nav a, .card, [role="button"] {
+  .btn-primary, .btn-secondary, .btn-accent {
     min-height: 44px;
     min-width: 44px;
   }
