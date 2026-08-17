@@ -12,6 +12,7 @@ interface SiteSettings {
     statsExperience: string
     statsSupport: string
     businessRegistrationUrl: string | null
+    logoUrl: string | null
 }
 
 export default function SettingsPage() {
@@ -23,13 +24,16 @@ export default function SettingsPage() {
         statsClients: '',
         statsExperience: '',
         statsSupport: '',
-        businessRegistrationUrl: null
+        businessRegistrationUrl: null,
+        logoUrl: null
     })
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [uploading, setUploading] = useState(false)
+    const [uploadingLogo, setUploadingLogo] = useState(false)
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const logoInputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         const token = localStorage.getItem('admin_token')
@@ -149,6 +153,65 @@ export default function SettingsPage() {
         }
     }
 
+    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        setUploadingLogo(true)
+        setMessage(null)
+
+        const formData = new FormData()
+        formData.append('file', file)
+
+        try {
+            const token = localStorage.getItem('admin_token')
+            const res = await fetch('/api/v1/admin/upload/logo', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            })
+
+            const data = await res.json()
+
+            if (data.success && data.url) {
+                const newSettings = { ...settings, logoUrl: data.url }
+                setSettings(newSettings)
+
+                // Auto-save the settings with new logo URL
+                try {
+                    const saveRes = await fetch('/api/v1/admin/settings', {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newSettings)
+                    })
+                    const saveData = await saveRes.json()
+                    if (saveData.success) {
+                        setMessage({ type: 'success', text: 'Logo uploaded and saved successfully! The website will show the new logo.' })
+                    } else {
+                        setMessage({ type: 'error', text: 'Logo uploaded but failed to save settings. Click Save Settings below.' })
+                    }
+                } catch (e) {
+                    setMessage({ type: 'error', text: 'Logo uploaded but failed to save settings. Click Save Settings below.' })
+                }
+            } else {
+                setMessage({ type: 'error', text: data.error || 'Failed to upload logo' })
+            }
+        } catch (error) {
+            console.error('Logo upload error:', error)
+            setMessage({ type: 'error', text: 'An error occurred during logo upload' })
+        } finally {
+            setUploadingLogo(false)
+            if (logoInputRef.current) {
+                logoInputRef.current.value = ''
+            }
+        }
+    }
+
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
@@ -172,6 +235,73 @@ export default function SettingsPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Logo Upload */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h2 className="font-semibold text-gray-800">Company Logo</h2>
+                    </div>
+                    <div className="p-6 space-y-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Website Logo</label>
+                            <p className="text-sm text-gray-500 mb-4">Upload your company logo. It will appear in the header, footer, and PWA interface across the website. Recommended: transparent PNG, 400×150px or similar.</p>
+
+                            <div className="flex items-center gap-6">
+                                {/* Logo Preview */}
+                                <div className="flex-shrink-0">
+                                    {settings.logoUrl ? (
+                                        <div className="relative w-44 h-16 bg-gray-50 rounded-lg border border-gray-200 p-2">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img
+                                                src={settings.logoUrl}
+                                                alt="Current logo"
+                                                className="w-full h-full object-contain"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-center w-44 h-16 bg-gray-50 rounded-lg border border-dashed border-gray-300 text-xs text-gray-400">
+                                            No logo uploaded
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="flex flex-col gap-3">
+                                    <input
+                                        type="file"
+                                        ref={logoInputRef}
+                                        onChange={handleLogoUpload}
+                                        className="hidden"
+                                        accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => logoInputRef.current?.click()}
+                                        disabled={uploadingLogo}
+                                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                                    >
+                                        {uploadingLogo ? (
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-700"></div>
+                                        ) : (
+                                            <FaUpload />
+                                        )}
+                                        {uploadingLogo ? 'Uploading...' : 'Upload New Logo'}
+                                    </button>
+                                    {settings.logoUrl && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setSettings({ ...settings, logoUrl: null })
+                                            }}
+                                            className="text-sm text-red-600 hover:text-red-800 transition-colors"
+                                        >
+                                            Remove logo (revert to default)
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Hero Section Settings */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">

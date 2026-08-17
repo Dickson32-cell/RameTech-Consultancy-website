@@ -477,6 +477,7 @@ model SiteSettings {
   statsExperience         String   @default("5+")
   statsSupport            String   @default("24/7")
   businessRegistrationUrl String?
+  logoUrl                 String?
   updatedAt               DateTime @updatedAt @db.Timestamptz()
 }
 

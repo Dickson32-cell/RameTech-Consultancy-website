@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { FaHome, FaProjectDiagram, FaFileInvoice, FaUser, FaSignOutAlt } from 'react-icons/fa'
+import { useState, useEffect } from 'react'
 
 const navigation = [
   { name: 'Dashboard', href: '/portal/dashboard', icon: FaHome },
@@ -14,6 +15,18 @@ const navigation = [
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch(`/api/v1/settings?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data?.logoUrl) {
+          setLogoUrl(data.data.logoUrl)
+        }
+      })
+      .catch(() => { })
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -24,10 +37,11 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           <div className="p-6 border-b border-white/20">
             <Link href="/" className="block relative h-10 w-32">
               <Image 
-                src="/logo.jpg" 
-                alt="RAME Tech"
+                src={logoUrl || '/logo.png'} 
+                alt="RAMEDIC"
                 fill
                 className="object-contain invert"
+                unoptimized={logoUrl ? true : false}
               />
             </Link>
             <p className="text-sm text-gray-300 mt-1">Client Portal</p>

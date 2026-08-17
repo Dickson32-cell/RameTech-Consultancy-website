@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,6 +15,17 @@ export default function Header() {
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    fetch(`/api/v1/settings?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data?.logoUrl) {
+          setLogoUrl(data.data.logoUrl)
+        }
+      })
+      .catch(() => { })
   }, [])
 
   return (
@@ -29,10 +41,11 @@ export default function Header() {
           <Link href="/" className="flex items-center py-2 -ml-2 cursor-pointer">
             <div className="relative h-12 w-36 sm:h-14 sm:w-44">
               <Image
-                src="/logo.png"
+                src={logoUrl || '/logo.png'}
                 alt="RAMEDIC Consultancy and Creative LTD"
                 fill
                 className="object-contain"
+                unoptimized={logoUrl ? true : false}
               />
             </div>
           </Link>

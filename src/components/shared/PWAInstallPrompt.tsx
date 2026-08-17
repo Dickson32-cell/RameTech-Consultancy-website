@@ -11,6 +11,18 @@ export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [showPrompt, setShowPrompt] = useState(false)
   const [isInstalled, setIsInstalled] = useState(false)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch(`/api/v1/settings?t=${Date.now()}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data?.logoUrl) {
+          setLogoUrl(data.data.logoUrl)
+        }
+      })
+      .catch(() => { })
+  }, [])
 
   useEffect(() => {
     // Check if already installed (standalone mode)
@@ -62,7 +74,7 @@ export default function PWAInstallPrompt() {
       `}</style>
       <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-4 max-w-md mx-auto border border-gray-200">
         <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 overflow-hidden">
-          <img src="/logo.png" alt="RAMEDIC" className="w-full h-full object-contain" />
+          <img src={logoUrl || '/logo.png'} alt="RAMEDIC" className="w-full h-full object-contain" />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-heading font-semibold text-sm text-text">Install RAMEDIC App</h3>

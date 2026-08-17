@@ -39,6 +39,7 @@ const getIcon = (icon: string) => {
 export default function Footer() {
   const [socials, setSocials] = useState<SocialLink[]>([])
   const [businessRegistrationUrl, setBusinessRegistrationUrl] = useState<string | null>(null)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/v1/social-links')
@@ -53,8 +54,13 @@ export default function Footer() {
     fetch(`/api/v1/settings?t=${Date.now()}`)
       .then(res => res.json())
       .then(data => {
-        if (data.success && data.data?.businessRegistrationUrl) {
-          setBusinessRegistrationUrl(data.data.businessRegistrationUrl)
+        if (data.success && data.data) {
+          if (data.data.businessRegistrationUrl) {
+            setBusinessRegistrationUrl(data.data.businessRegistrationUrl)
+          }
+          if (data.data.logoUrl) {
+            setLogoUrl(data.data.logoUrl)
+          }
         }
       })
       .catch(() => { })
@@ -73,10 +79,11 @@ export default function Footer() {
           <div>
             <div className="relative h-12 w-40">
               <Image
-                src="/logo.png"
+                src={logoUrl || '/logo.png'}
                 alt="RAMEDIC Consultancy and Creative LTD"
                 fill
                 className="object-contain"
+                unoptimized={logoUrl ? true : false}
               />
             </div>
             <p className="text-gray-400 mb-4">
