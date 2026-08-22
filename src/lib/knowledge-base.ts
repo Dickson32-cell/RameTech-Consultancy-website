@@ -207,356 +207,121 @@ export function retrieveRelevantKnowledge(query: string, topK: number = 3): stri
   return relevantChunks.map(c => c.content)
 }
 
-// Fetch dynamic knowledge from database
-async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
+// Fetch dynamic knowledge from database — lightweight, query-aware
+async function fetchDynamicKnowledge(query?: string): Promise<KnowledgeChunk[]> {
   try {
     const chunks: KnowledgeChunk[] = []
+    const q = (query || '').toLowerCase()
 
-    // Fetch SiteSettings
-    const siteSettings = await prisma.siteSettings.findUnique({
-      where: { id: 'default' }
-    })
+    // Determine what to fetch based on query intent — avoid fetching everything
+    const wantsDepartments = /department|service|paper|bag|craft|offer|what do you do|provide/i.test(q)
+    const wantsPricing = /price|pricing|cost|how much|charge|fee|quote/i.test(q)
+    const wantsTeam = /team|staff|people|who works|ceo|director/i.test(q)
+    const wantsFaq = /faq|question|how|what|why|when|where/i.test(q)
+    const wantsAcademic = /academic|writing|thesis|dissertation|research|phd|bachelor|master/i.test(q)
 
+    // Always fetch site settings (1 fast query)
+    const siteSettings = await prisma.siteSettings.findUnique({ where: { id: 'default' } })
     if (siteSettings) {
       chunks.push({
         id: 'site-settings-dynamic',
         category: 'Company Stats',
-        content: `RAMEDIC Company Statistics:\n- Years of Experience: ${siteSettings.statsExperience}\n- Projects Completed: ${siteSettings.statsProjects}\n- Happy Clients: ${siteSettings.statsClients}\n- Support: ${siteSettings.statsSupport}\n\nOur Mission: ${siteSettings.heroSubtitle}`,
-        keywords: ['stats', 'statistics', 'years', 'experience', 'projects', 'completed', 'clients', 'happy', 'support', 'mission', 'hero']
+        content: `RAMEDIC Stats: ${siteSettings.statsExperience} experience, ${siteSettings.statsProjects} projects, ${siteSettings.statsClients} clients. Mission: ${siteSettings.heroSubtitle}`,
+        keywords: ['stats', 'experience', 'projects', 'clients', 'mission']
       })
     }
 
-    // Fetch Approved Reviews
-    const reviews = await prisma.review.findMany({
-      where: { isApproved: true },
-      orderBy: { createdAt: 'desc' },
-      take: 10
-    })
-
-    if (reviews.length > 0) {
-      const reviewsContent = reviews.map(review =>
-        `"${review.content}" - ${review.clientName}${review.clientCompany ? ` (${review.clientCompany})` : ''} [Rating: ${review.rating}/5]`
-      ).join('\n\n')
-
-      chunks.push({
-        id: 'reviews-dynamic',
-        category: 'Testimonials',
-        content: `Client Testimonials and Reviews:\n${reviewsContent}`,
-        keywords: ['reviews', 'testimonials', 'feedback', 'clients', 'say', 'rating', 'stars']
-      })
-    }
-
-    // Fetch Academic Writing Services
-    const academicWriting = await prisma.academicWritingPhase.findMany({
-      where: { isActive: true },
-      include: {
-        serviceItems: {
-          where: { isActive: true },
-          orderBy: { order: 'asc' }
-        }
-      },
-      orderBy: { order: 'asc' }
-    })
-
-    if (academicWriting.length > 0) {
-      const academicContent = academicWriting.map(phase => {
-        const items = phase.serviceItems.map(item =>
-          `${item.name}: ${item.description} - Bachelor: GHS ${item.bachelorPrice}, Master: GHS ${item.masterPrice}, PhD: GHS ${item.phdPrice}`
-        ).join('\n  ')
-        return `${phase.name}:\n  ${items}`
-      }).join('\n\n')
-
-      chunks.push({
-        id: 'academic-writing-dynamic',
-        category: 'Academic Writing',
-        content: `Academic Writing Services: RAMEDIC offers comprehensive academic writing support for Bachelor, Master, and PhD level research.\n\n${academicContent}`,
-        keywords: ['academic', 'writing', 'thesis', 'dissertation', 'research', 'bachelor', 'master', 'phd', 'proposal', 'literature review', 'methodology', 'data analysis', 'defense']
-      })
-    }
-
-    // Fetch Publications
-    const publications = await prisma.publication.findMany({
-      where: { isActive: true, isFeatured: true },
-      take: 5,
-      orderBy: { order: 'asc' }
-    })
-
-    if (publications.length > 0) {
-      const pubContent = publications.map(pub =>
-        `"${pub.title}" (${pub.type}) - ${pub.description || 'Research publication'}`
-      ).join('\n')
-
-      chunks.push({
-        id: 'publications-dynamic',
-        category: 'Publications',
-        content: `Recent Publications by RAMEDIC:\n${pubContent}\n\nView all publications at our Publications page.`,
-        keywords: ['publication', 'research', 'paper', 'article', 'journal', 'zenodo', 'doi', 'academic']
-      })
-    }
-
-    // Fetch Services
-    const services = await prisma.service.findMany({
-      where: { isActive: true },
-      orderBy: { order: 'asc' }
-    })
-
-    if (services.length > 0) {
-      const servicesContent = services.map(service =>
-        `${service.name}: ${service.description}`
-      ).join('\n')
-
-      chunks.push({
-        id: 'services-dynamic',
-        category: 'Services',
-        content: `RAMEDIC Services:\n${servicesContent}`,
-        keywords: ['service', 'services', 'offer', 'provide', 'solution']
-      })
-    }
-
-    // Fetch FAQs
-    const faqs = await prisma.fAQ.findMany({
-      where: { isActive: true },
-      orderBy: { order: 'asc' },
-      take: 10
-    })
-
-    if (faqs.length > 0) {
-      const faqContent = faqs.map(faq =>
-        `Q: ${faq.question}\nA: ${faq.answer}`
-      ).join('\n\n')
-
-      chunks.push({
-        id: 'faq-dynamic',
-        category: 'FAQ',
-        content: `Frequently Asked Questions:\n${faqContent}`,
-        keywords: ['faq', 'question', 'answer', 'help', 'how', 'what', 'why', 'when']
-      })
-    }
-
-    // Fetch Departments with Services, Sub-Departments, and Pricing Tables
-    const departments = await prisma.department.findMany({
-      where: { isActive: true },
-      include: {
-        services: {
-          where: { isActive: true },
-          orderBy: { order: 'asc' }
-        },
-        subDepartments: {
-          where: { isActive: true },
-          include: {
-            services: {
-              where: { isActive: true },
-              orderBy: { order: 'asc' }
-            }
+    // Fetch departments + services ONLY if query is about services/departments/pricing
+    if (wantsDepartments || wantsPricing || q === '') {
+      const departments = await prisma.department.findMany({
+        where: { isActive: true },
+        include: {
+          services: { where: { isActive: true }, orderBy: { order: 'asc' } },
+          subDepartments: {
+            where: { isActive: true },
+            include: { services: { where: { isActive: true }, orderBy: { order: 'asc' } } },
+            orderBy: { order: 'asc' }
           },
-          orderBy: { order: 'asc' }
+          pricingTables: { where: { isActive: true } }
         },
-        projects: {
-          where: { isActive: true },
-          take: 3,
-          orderBy: { order: 'asc' }
-        },
-        pricingTables: {
-          where: { isActive: true },
-          orderBy: { createdAt: 'desc' }
-        }
-      },
-      orderBy: { order: 'asc' }
-    })
-
-    console.log(`Chatbot Knowledge: Fetched ${departments.length} departments`)
-
-    if (departments.length > 0) {
-      // Create a comprehensive department overview chunk
-      const deptOverview = departments.map(dept => {
-        const servicesList = dept.services.map(s => s.title).join(', ')
-        const subDeptInfo = dept.subDepartments.length > 0
-          ? ` (includes ${dept.subDepartments.map(sd => sd.name).join(', ')})`
-          : ''
-        return `${dept.name}${subDeptInfo}: ${servicesList}`
-      }).join('\n')
-
-      chunks.push({
-        id: 'departments-overview',
-        category: 'Departments',
-        content: `RAMEDIC has ${departments.length} main departments:\n\n${deptOverview}\n\nEach department offers specialized services. We are organized into: Technology Solutions, IT Solutions, Creative Services (including Paper Craft), and Data & Research Services.`,
-        keywords: ['department', 'departments', 'organized', 'structure', 'division', 'how many', 'what departments']
+        orderBy: { order: 'asc' }
       })
 
-      // Individual department details
-      for (const dept of departments) {
-        // Main department services
-        const deptServices = dept.services.map(s => `${s.title}: ${s.description}`).join('\n')
+      if (departments.length > 0) {
+        for (const dept of departments) {
+          const servicesList = dept.services.map(s => `${s.title}: ${s.description}`).join('; ')
+          const subDeptInfo = dept.subDepartments.length > 0
+            ? ` (includes ${dept.subDepartments.map(sd => {
+                const subServices = sd.services.map(s => s.title).join(', ')
+                return `${sd.name} (${subServices})`
+              }).join('; ')})`
+            : ''
+          
+          let pricingContent = ''
+          if (dept.pricingTables && dept.pricingTables.length > 0) {
+            const pricingInfo = dept.pricingTables.map((pt: any) => {
+              if (pt.data?.tiers) return pt.data.tiers.map((t: any) => `${t.name}: ${t.price}`).join(', ')
+              if (pt.data?.items) return pt.data.items.map((i: any) => `${i.name}: ${i.price}`).join(', ')
+              return ''
+            }).filter(Boolean).join('; ')
+            if (pricingInfo) pricingContent = ` | Pricing: ${pricingInfo}`
+          }
 
-        // Sub-department services (like Paper Craft)
-        const subDeptContent = dept.subDepartments.map(subDept => {
-          const subServices = subDept.services.map(s => `  - ${s.title}: ${s.description}`).join('\n')
-          return `${subDept.name}:\n${subServices}`
-        }).join('\n\n')
-
-        // Department projects
-        const projects = dept.projects.length > 0
-          ? `\n\nRecent Projects:\n${dept.projects.map(p => `- ${p.title}`).join('\n')}`
-          : ''
-
-        // Department pricing tables
-        let pricingContent = ''
-        if (dept.pricingTables && dept.pricingTables.length > 0) {
-          const pricingInfo = dept.pricingTables.map((pricingTable: any) => {
-            let tableContent = `${pricingTable.name}${pricingTable.description ? ` - ${pricingTable.description}` : ''}\n`
-
-            // Handle different pricing table formats
-            if (pricingTable.data) {
-              // Tiers format (pricing plans)
-              if (pricingTable.data.tiers && Array.isArray(pricingTable.data.tiers)) {
-                pricingTable.data.tiers.forEach((tier: any) => {
-                  tableContent += `  • ${tier.name}: ${tier.price}\n`
-                  if (tier.features && tier.features.length > 0) {
-                    tableContent += `    Features: ${tier.features.join(', ')}\n`
-                  }
-                })
-              }
-
-              // Items format (simple list)
-              if (pricingTable.data.items && Array.isArray(pricingTable.data.items)) {
-                pricingTable.data.items.forEach((item: any) => {
-                  tableContent += `  • ${item.name}: ${item.price}${item.description ? ` - ${item.description}` : ''}\n`
-                })
-              }
-
-              // Academic format
-              if (pricingTable.data.phases && Array.isArray(pricingTable.data.phases)) {
-                pricingTable.data.phases.forEach((phase: any) => {
-                  tableContent += `  ${phase.name}:\n`
-                  if (phase.items && phase.items.length > 0) {
-                    phase.items.forEach((item: any) => {
-                      tableContent += `    - ${item.serviceItem}: Bachelor GHS ${item.bachelor}, Master GHS ${item.master}, PhD GHS ${item.phd}\n`
-                    })
-                  }
-                })
-              }
-            }
-
-            return tableContent
-          }).join('\n')
-
-          pricingContent = `\n\nPricing:\n${pricingInfo}`
+          chunks.push({
+            id: `dept-${dept.slug}`,
+            category: 'Departments',
+            content: `${dept.name}${subDeptInfo}: ${servicesList}${pricingContent}`,
+            keywords: [dept.name.toLowerCase(), dept.slug, 'department', 'service', 'pricing', ...dept.services.map(s => s.title.toLowerCase())]
+          })
         }
-
-        const fullContent = `Department: ${dept.name}\n${dept.description || ''}\n\nServices:\n${deptServices}${subDeptContent ? `\n\nSub-Departments:\n${subDeptContent}` : ''}${projects}${pricingContent}`
-
-        chunks.push({
-          id: `department-${dept.slug}`,
-          category: 'Departments',
-          content: fullContent,
-          keywords: [dept.name.toLowerCase(), dept.slug, 'department', 'services', 'pricing', 'price', 'cost', 'how much', ...dept.services.map(s => s.title.toLowerCase())]
-        })
-
-        console.log(`  - ${dept.name}: ${dept.services.length} services, ${dept.subDepartments.length} sub-depts, ${dept.pricingTables?.length || 0} pricing tables`)
       }
-    } else {
-      console.log('Chatbot Knowledge: No departments found in database')
     }
 
-    // Create aggregated pricing knowledge chunk
-    const allPricingTables = departments.flatMap(dept =>
-      (dept.pricingTables || []).map((pt: any) => ({
-        department: dept.name,
-        table: pt
-      }))
-    )
-
-    if (allPricingTables.length > 0) {
-      let aggregatedPricing = 'RAMEDIC Pricing Information:\n\n'
-
-      allPricingTables.forEach(({ department, table }) => {
-        aggregatedPricing += `${department} - ${table.name}:\n`
-
-        if (table.data) {
-          // Tiers format
-          if (table.data.tiers && Array.isArray(table.data.tiers)) {
-            table.data.tiers.forEach((tier: any) => {
-              aggregatedPricing += `  • ${tier.name}: ${tier.price}\n`
-              if (tier.features && tier.features.length > 0) {
-                aggregatedPricing += `    (${tier.features.slice(0, 3).join(', ')}${tier.features.length > 3 ? ', ...' : ''})\n`
-              }
-            })
-          }
-
-          // Items format
-          if (table.data.items && Array.isArray(table.data.items)) {
-            table.data.items.forEach((item: any) => {
-              aggregatedPricing += `  • ${item.name}: ${item.price}\n`
-            })
-          }
-        }
-
-        aggregatedPricing += '\n'
-      })
-
-      chunks.push({
-        id: 'all-pricing-tables',
-        category: 'Pricing',
-        content: aggregatedPricing + 'Note: Prices may vary based on project complexity and requirements. Contact us for a detailed quote.',
-        keywords: ['pricing', 'price', 'cost', 'how much', 'charge', 'fee', 'rate', 'quote', 'budget', 'afford', 'expensive', 'cheap']
-      })
-
-      console.log(`✅ Aggregated ${allPricingTables.length} pricing tables into chatbot knowledge`)
+    // Fetch FAQs ONLY if query is a question
+    if (wantsFaq || q === '') {
+      const faqs = await prisma.fAQ.findMany({ where: { isActive: true }, orderBy: { order: 'asc' }, take: 5 })
+      if (faqs.length > 0) {
+        chunks.push({
+          id: 'faq-dynamic',
+          category: 'FAQ',
+          content: faqs.map(f => `Q: ${f.question} A: ${f.answer}`).join('\n'),
+          keywords: ['faq', 'question', 'how', 'what', 'why', 'when']
+        })
+      }
     }
 
-    // Fetch Team Members (Department Heads)
-    const team = await prisma.teamMember.findMany({
-      where: { isActive: true },
-      orderBy: { order: 'asc' },
-      take: 10
-    })
-
-    if (team.length > 0) {
-      const teamContent = team.map(member =>
-        `${member.name} - ${member.role}\n${member.bio}\nEmail: ${member.email}${member.phone ? ` | Phone: ${member.phone}` : ''}`
-      ).join('\n\n')
-
-      chunks.push({
-        id: 'team-dynamic',
-        category: 'Team',
-        content: `Our Team:\n${teamContent}`,
-        keywords: ['team', 'staff', 'member', 'who', 'people', 'ceo', 'director', 'head', 'lead', 'specialist']
+    // Fetch academic writing ONLY if asked
+    if (wantsAcademic) {
+      const aw = await prisma.academicWritingPhase.findMany({
+        where: { isActive: true },
+        include: { serviceItems: { where: { isActive: true }, orderBy: { order: 'asc' } } },
+        orderBy: { order: 'asc' }
       })
+      if (aw.length > 0) {
+        const content = aw.map(phase => {
+          const items = phase.serviceItems.map(item => `${item.name}: B GHS ${item.bachelorPrice}, M GHS ${item.masterPrice}, PhD GHS ${item.phdPrice}`).join('; ')
+          return `${phase.name}: ${items}`
+        }).join('\n')
+        chunks.push({
+          id: 'academic-dynamic',
+          category: 'Academic Writing',
+          content: `Academic Writing: ${content}`,
+          keywords: ['academic', 'writing', 'thesis', 'phd', 'bachelor', 'master', 'pricing']
+        })
+      }
     }
 
-    // Fetch Blog Posts
-    const blogs = await prisma.blogPost.findMany({
-      where: { isPublished: true },
-      orderBy: { publishedAt: 'desc' },
-      take: 5
-    })
-
-    if (blogs.length > 0) {
-      const blogContent = blogs.map(blog =>
-        `"${blog.title}" - ${blog.excerpt}`
-      ).join('\n')
-
-      chunks.push({
-        id: 'blog-dynamic',
-        category: 'Blog',
-        content: `Recent Blog Posts:\n${blogContent}\n\nVisit our blog for more articles.`,
-        keywords: ['blog', 'article', 'post', 'news', 'update', 'insights']
-      })
-    }
-
-    // Fetch Academic Writing Document if exists
-    const academicDoc = await prisma.academicWritingDocument.findFirst({
-      where: { isActive: true },
-      orderBy: { createdAt: 'desc' }
-    })
-
-    if (academicDoc) {
-      chunks.push({
-        id: 'academic-doc-dynamic',
-        category: 'Academic Writing',
-        content: `Academic Writing Price List: Download our complete price list document "${academicDoc.fileName}". Available at /services/academic-writing`,
-        keywords: ['academic', 'writing', 'price', 'pricing', 'cost', 'document', 'download', 'thesis', 'dissertation']
-      })
+    // Fetch team ONLY if asked
+    if (wantsTeam) {
+      const team = await prisma.teamMember.findMany({ where: { isActive: true }, orderBy: { order: 'asc' }, take: 5 })
+      if (team.length > 0) {
+        chunks.push({
+          id: 'team-dynamic',
+          category: 'Team',
+          content: `Our Team: ${team.map(m => `${m.name} - ${m.role}`).join('; ')}`,
+          keywords: ['team', 'staff', 'ceo', 'director', 'head']
+        })
+      }
     }
 
     return chunks
@@ -572,7 +337,7 @@ export async function buildRAGContext(query: string): Promise<string> {
   const relevantStaticInfo = retrieveRelevantKnowledge(query, 2)
 
   // Get dynamic knowledge (database fetch)
-  const dynamicKnowledge = await fetchDynamicKnowledge()
+  const dynamicKnowledge = await fetchDynamicKnowledge(query)
 
   // Score and filter dynamic knowledge — only return TOP 2 most relevant
   const queryLower = query.toLowerCase()
