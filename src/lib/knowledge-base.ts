@@ -566,16 +566,15 @@ async function fetchDynamicKnowledge(): Promise<KnowledgeChunk[]> {
   }
 }
 
-// Build RAG context for prompts (async version)
+// Build RAG context for prompts (async version) — lightweight for speed
 export async function buildRAGContext(query: string): Promise<string> {
-  // Get static knowledge
+  // Get relevant static knowledge (fast, in-memory)
   const relevantStaticInfo = retrieveRelevantKnowledge(query, 2)
 
-  // Get dynamic knowledge
+  // Get dynamic knowledge (database fetch)
   const dynamicKnowledge = await fetchDynamicKnowledge()
-  const allKnowledge = [...companyKnowledge, ...dynamicKnowledge]
 
-  // Search dynamic knowledge for relevant info
+  // Score and filter dynamic knowledge — only return TOP 2 most relevant
   const queryLower = query.toLowerCase()
   const queryWords = queryLower.split(/\s+/)
 
@@ -595,7 +594,7 @@ export async function buildRAGContext(query: string): Promise<string> {
   const relevantDynamicInfo = scoredDynamicChunks
     .filter(item => item.score > 0)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 2)
+    .slice(0, 2)  // Only top 2 most relevant chunks
     .map(item => item.chunk.content)
 
   const allRelevantInfo = [...relevantStaticInfo, ...relevantDynamicInfo]
@@ -604,5 +603,5 @@ export async function buildRAGContext(query: string): Promise<string> {
     return ''
   }
 
-  return `\n\nRelevant Company Information:\n${allRelevantInfo.map((info, i) => `${i + 1}. ${info}`).join('\n')}\n\nUse this information to provide accurate responses about RAMEDIC Consultancy and Creative LTD.`
+  return allRelevantInfo.map((info, i) => `${i + 1}. ${info}`).join('\n')
 }
