@@ -23,8 +23,21 @@ export async function POST(request: NextRequest) {
       }, { status: 500 })
     }
 
-    // Build RAG context from company knowledge base (including dynamic data)
-    const ragContext = await buildRAGContext(message)
+    // Simple intent detection — skip RAG for basic questions (faster)
+    const lowerMessage = message.toLowerCase()
+    const isSimpleGreeting = /^(hi|hello|hey|good (morning|afternoon|evening)|howdy|yo|what's up)\b/i.test(lowerMessage)
+    const isSimpleGoodbye = /^(bye|goodbye|thanks|thank you|see you)\b/i.test(lowerMessage)
+    const isContact = /contact|phone|email|whatsapp|reach|call/i.test(lowerMessage)
+
+    // Only build RAG context for complex questions (saves 5-10 seconds)
+    let ragContext = ''
+    if (!isSimpleGreeting && !isSimpleGoodbye && !isContact) {
+      try {
+        ragContext = await buildRAGContext(message)
+      } catch (e) {
+        console.error('RAG fetch failed, continuing without:', e)
+      }
+    }
 
     const systemPrompt = `You are a team member at RAMEDIC Consultancy and Creative LTD in Ghana. Speak as "we" and "our". Be friendly, professional, and brief (under 150 tokens). Stay focused on RAMEDIC services only. Contact: WhatsApp wa.me/233537400179, Phone +233 55 733 2615, Email info@ramedic.com. For off-topic questions, redirect to WhatsApp.${ragContext ? `\n\nCompany data:\n${ragContext}` : ''}`
 
@@ -42,8 +55,9 @@ export async function POST(request: NextRequest) {
           { role: 'user', content: message }
         ],
         max_tokens: MAX_TOKENS,
-        temperature: 0.2,
-        top_p: 0.9
+        temperature: 0.3,
+        top_p: 0.9,
+        stream: false
       })
     })
 
