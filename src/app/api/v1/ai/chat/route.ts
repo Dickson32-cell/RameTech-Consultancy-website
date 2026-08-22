@@ -4,7 +4,7 @@ import { buildRAGContext } from '@/lib/knowledge-base'
 // NVIDIA AI API (OpenAI-compatible endpoint)
 const NVIDIA_API_URL = 'https://integrate.api.nvidia.com/v1/chat/completions'
 const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY || ''
-const NVIDIA_MODEL = process.env.NVIDIA_MODEL || 'meta/llama-3.3-70b-instruct'
+const NVIDIA_MODEL = process.env.NVIDIA_MODEL || 'meta/llama-3.1-8b-instruct'
 const MAX_TOKENS = 150
 
 export async function POST(request: NextRequest) {
