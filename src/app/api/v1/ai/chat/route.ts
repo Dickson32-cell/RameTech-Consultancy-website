@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { buildRAGContext } from '@/lib/knowledge-base'
 
-// Custom AI Worker URL (Dickson's Cloudflare Worker)
-const AI_WORKER_URL = process.env.AI_WORKER_URL || 'https://billowing-wood-0415.kojonyamekyedickson.workers.dev/'
+// NVIDIA AI API (OpenAI-compatible endpoint)
+const NVIDIA_API_URL = 'https://integrate.api.nvidia.com/v1/chat/completions'
+const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY || ''
+const NVIDIA_MODEL = process.env.NVIDIA_MODEL || 'meta/llama-3.3-70b-instruct'
 const MAX_TOKENS = 250
 
 export async function POST(request: NextRequest) {
@@ -13,11 +15,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 })
     }
 
-    // Check if Worker URL exists
-    if (!AI_WORKER_URL) {
+    // Check if NVIDIA API key exists
+    if (!NVIDIA_API_KEY) {
       return NextResponse.json({
         response: 'AI service not configured. Please contact us via WhatsApp: wa.me/233537400179',
-        error: 'Worker URL missing'
+        error: 'NVIDIA API key missing'
       }, { status: 500 })
     }
 
@@ -64,13 +66,15 @@ ALWAYS use this current information when answering questions about our departmen
 
 For questions outside our business scope, respond with: "I'm part of the RAMEDIC team and can best help you with questions about our services. For other inquiries, please contact us at wa.me/233537400179"`
 
-    // Call your Cloudflare Worker
-    const response = await fetch(AI_WORKER_URL, {
+    // Call NVIDIA AI API (OpenAI-compatible)
+    const response = await fetch(NVIDIA_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${NVIDIA_API_KEY}`
       },
       body: JSON.stringify({
+        model: NVIDIA_MODEL,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: message }
@@ -83,20 +87,18 @@ For questions outside our business scope, respond with: "I'm part of the RAMEDIC
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('AI Worker error:', response.status, errorText)
-      throw new Error(`AI Worker error: ${response.status}`)
+      console.error('NVIDIA API error:', response.status, errorText)
+      throw new Error(`NVIDIA API error: ${response.status}`)
     }
 
-    // Parse the response - format is: [{"response":{"response":"text","usage":{}}}]
+    // Parse OpenAI-compatible response
     const data = await response.json()
     
     let aiResponse = ''
-    if (data && data.length > 0 && data[0].response && data[0].response.response) {
-      aiResponse = data[0].response.response
+    if (data.choices && data.choices[0] && data.choices[0].message) {
+      aiResponse = data.choices[0].message.content
     } else if (data.response) {
       aiResponse = data.response
-    } else if (typeof data === 'string') {
-      aiResponse = data
     } else {
       aiResponse = "I'm here to help! Ask me about our services or click WhatsApp for instant support."
     }
@@ -110,7 +112,7 @@ For questions outside our business scope, respond with: "I'm part of the RAMEDIC
     console.error('AI API Error:', error)
     
     return NextResponse.json({
-      response: "I'm having trouble connecting to my AI brain right now. For immediate help, please WhatsApp us: wa.me/233537400179",
+      response: "I'm having trouble connecting right now. For immediate help, please WhatsApp us: wa.me/233537400179",
       error: error.message || 'Unknown error'
     })
   }
