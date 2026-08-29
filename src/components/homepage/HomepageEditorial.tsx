@@ -69,7 +69,7 @@ interface ReviewItem {
 const DEFAULT_HERO_BG = '/ed/hero-bg.jpg'
 
 // Service panel palette shades (progressive depth)
-const PANEL_SHADES = ['ed-sp1', 'ed-sp2', 'ed-sp3', 'ed-sp4', 'ed-sp5', 'ed-sp6', 'ed-sp7']
+const PANEL_SHADES = ['ed-sp1', 'ed-sp2', 'ed-sp3', 'ed-sp4', 'ed-sp5', 'ed-sp6', 'ed-sp7', 'ed-sp8']
 
 // Background word for each panel (fallback, from service name)
 const bgWord = (name: string) => name.split(' ')[0].toUpperCase()
@@ -114,7 +114,7 @@ export default function HomepageEditorial() {
         fetchJSON('/api/v1/reviews'),
       ])
       if (s) setSettings(s)
-      if (sv) setServices(sv.slice(0, 7))
+      if (sv) setServices(sv.slice(0, 8))
       if (d) setDepartments(d.slice(0, 6))
       if (p) setProjects(p.slice(0, 6))
       if (b) setPosts(b.slice(0, 3))
@@ -273,7 +273,7 @@ export default function HomepageEditorial() {
   )
 
   const panelServices = services.length
-    ? services.slice(0, 7)
+    ? services.slice(0, 8)
     : [
         { id: 'f1', name: 'Software Development', slug: 'software-development', description: 'Custom web platforms, mobile apps and internal tools — engineered to production standard, not prototype standard.', startingPrice: null },
         { id: 'f2', name: 'Hardware & IT', slug: 'hardware-it', description: 'Workstations, networks, POS systems — and the on-call support that keeps them running day after day.', startingPrice: null },
