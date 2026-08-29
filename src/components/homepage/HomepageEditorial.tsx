@@ -149,10 +149,6 @@ export default function HomepageEditorial() {
     }, { threshold: 0.12 })
     root?.querySelectorAll('.ed-rv').forEach((el) => io.observe(el))
 
-    // Marquee: duplicate track for seamless loop
-    const mq = root?.querySelector('.ed-mq-track')
-    if (mq) mq.innerHTML += mq.innerHTML
-
     const frame = () => {
       const y = window.scrollY
       const vh = window.innerHeight
@@ -401,11 +397,13 @@ export default function HomepageEditorial() {
       {/* ---------- MARQUEE ---------- */}
       <div className="ed-marquee" aria-hidden="true">
         <div className="ed-mq-track">
-          {panelServices.map((s, i) => (
-            <span key={i} className="ed-mq-item">
-              {s.name}
-            </span>
-          ))}
+          {[0, 1].map((copy) =>
+            panelServices.map((s, i) => (
+              <span key={`${copy}-${i}`} aria-hidden={copy === 1} className="ed-mq-item">
+                {s.name}
+              </span>
+            ))
+          )}
         </div>
       </div>
 
