@@ -445,7 +445,7 @@ export default function HomepageEditorial() {
             <div className="ed-num">{String(i + 1).padStart(2, '0')} — {String(panelServices.length).padStart(2, '0')}</div>
             <div className="ed-word">{s.name}</div>
             <div className="ed-desc">{s.description}</div>
-            <Link href={`/services/${s.slug}`} className="ed-panel-cta">
+            <Link href={s.slug === 'kraft-paper-bags' || s.slug === 'academic-writing' ? `/services/${s.slug}` : '/services'} className="ed-panel-cta">
               Explore {s.name.split(' ')[0]} <span>→</span>
             </Link>
             <div className="ed-meta">
