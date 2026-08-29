@@ -502,7 +502,7 @@ export default function HomepageEditorial() {
           {projects.length ? (
             <div className="ed-work-grid">
               {projects.slice(0, 3).map((proj) => (
-                <Link href={`/portfolio/${proj.slug}`} key={proj.id} className="ed-dept-card ed-rv">
+                <Link href="/portfolio" key={proj.id} className="ed-dept-card ed-rv">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={proj.imageUrl || '/ed/hero.jpg'} alt={proj.title} data-ed-parallax />
                   <div className="ed-veil" />
