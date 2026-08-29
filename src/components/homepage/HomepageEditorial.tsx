@@ -76,6 +76,7 @@ const bgWord = (name: string) => name.split(' ')[0].toUpperCase()
 
 export default function HomepageEditorial() {
   const [settings, setSettings] = useState<SiteSettings | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
   const [services, setServices] = useState<Service[]>([])
   const [departments, setDepartments] = useState<Department[]>([])
   const [projects, setProjects] = useState<Project[]>([])
@@ -126,45 +127,7 @@ export default function HomepageEditorial() {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
     const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
 
-    // Smooth wheel scroll (Lenis-style; touch unaffected)
-    let target = window.scrollY
-    let current = window.scrollY
-    let animating = false
-    const maxScroll = () => document.documentElement.scrollHeight - window.innerHeight
-
-    const onWheel = (e: WheelEvent) => {
-      if (reduce || e.ctrlKey) return
-      e.preventDefault()
-      target = clamp(target + e.deltaY, 0, maxScroll())
-      if (!animating) { animating = true; requestAnimationFrame(tick) }
-    }
-    const onScrollResync = () => {
-      if (Math.abs(window.scrollY - current) > 1.5) target = current = window.scrollY
-    }
-    window.addEventListener('wheel', onWheel, { passive: false })
-    window.addEventListener('scroll', onScrollResync, { passive: true })
-
-    const tick = () => {
-      current += (target - current) * 0.085
-      if (Math.abs(target - current) < 0.4) { current = target; animating = false }
-      window.scrollTo(0, current)
-      if (animating) requestAnimationFrame(tick)
-    }
-
-    // Anchor links → smooth
     const root = revealRootRef.current
-    const anchorHandler = (e: Event) => {
-      const a = (e.target as HTMLElement).closest('a[href^="#"]') as HTMLAnchorElement | null
-      if (!a) return
-      const el = document.querySelector(a.getAttribute('href') || '')
-      if (!el) return
-      e.preventDefault()
-      const y = clamp(el.getBoundingClientRect().top + window.scrollY, 0, maxScroll())
-      if (reduce) { window.scrollTo(0, y); return }
-      target = y
-      if (!animating) { animating = true; requestAnimationFrame(tick) }
-    }
-    root?.addEventListener('click', anchorHandler)
 
     // Reveal on scroll
     const io = new IntersectionObserver((es) => {
@@ -195,49 +158,47 @@ export default function HomepageEditorial() {
         const wr = wmSec.getBoundingClientRect()
         const total = wr.height - vh
         const p = clamp(-wr.top / total, 0, 1)
-        if (p > 0 && p < 1) {
-          const scale = 0.72 + p * 0.34
-          wmWord.style.transform = `scale(${scale})`
-          wmWord.style.letterSpacing = `${(0.06 - p * 0.05).toFixed(3)}em`
-          wmWord.style.opacity = String(clamp(p * 2.2, 0, 1))
-          const tagP = clamp((p - 0.45) * 2.6, 0, 1)
-          wmTag.style.opacity = String(tagP)
-          wmTag.style.transform = `translateY(${(1 - tagP) * 18}px)`
-          wmCap.style.opacity = String(clamp((p - 0.7) * 3, 0, 1))
-        } else if (p >= 1) {
-          wmWord.style.transform = 'scale(1.06)'
-          wmWord.style.opacity = '1'
-          wmTag.style.opacity = '1'
-          wmTag.style.transform = 'none'
-          wmCap.style.opacity = '1'
-        }
 
-        // Flyer rotation: 4 flyers cycle across the pin progress (p 0.12 → 0.95)
+        // Flyers: each gets an equal window across the pin; solid crossfade (no half-fades)
         const flyers = flyerRefs.current.filter(Boolean) as HTMLDivElement[]
         const n = flyers.length
-        if (n > 0) {
-          const seg = 0.95 - 0.12
+        const HAS_FLYERS = n > 0
+
+        // RAMEDIC wordmark: fades in early, fades OUT the instant flyers take over
+        const flyerStart = HAS_FLYERS ? 0.1 : 1.1   // with flyers: word only before 0.1
+        let wordVis: number
+        if (HAS_FLYERS && p >= 0.1) {
+          wordVis = 0
+        } else {
+          wordVis = clamp(p * 2.4, 0, 1)
+        }
+        const scale = 0.72 + Math.min(p, 0.1) * 3.2
+        wmWord.style.transform = `scale(${scale.toFixed(3)})`
+        wmWord.style.opacity = String(wordVis.toFixed(3))
+        wmTag.style.opacity = wordVis >= 1 && (p < flyerStart) ? '1' : String(wordVis.toFixed(3))
+        wmCap.style.opacity = wordVis >= 1 && (p < flyerStart) ? '1' : '0'
+
+        if (HAS_FLYERS) {
           flyers.forEach((el, i) => {
-            const start = 0.12 + (seg * i) / n
-            const end = start + seg / n
-            // fade in at start of its window, out at end (except first fades from p=0.05, last holds till end)
+            const start = 0.1 + (0.9 * i) / n
+            const end = start + 0.9 / n
+            const fadeIn = 0.02, fadeOut = 0.02 // quick crossfade at window edges
             let vis = 0
-            let ty = 40
-            if (p >= start && p < end) {
-              const local = (p - start) / (end - start)
-              vis = clamp(local * 4, 0, 1) * clamp((1 - local) * 4, 0, 1)
-              ty = (1 - clamp(local * 4, 0, 1)) * 40 + (1 - clamp((1 - local) * 4, 0, 1)) * -40
-              vis = Math.min(1, vis === 0 ? 1 : vis) // hold full visibility mid-window
-              if (local > 0.2 && local < 0.8) vis = 1
-              ty = local < 0.5 ? (0.5 - local) * 2 * 40 : -(local - 0.5) * 2 * 40
-            } else if (i === 0 && p < start) {
-              vis = clamp(p / 0.08, 0, 1) * (0) // not yet
-              vis = 0
-            } else if (i === n - 1 && p >= end) {
+            let ty = 0
+            if (p >= start + fadeIn && p <= end - fadeOut) {
+              vis = 1; ty = 0
+            } else if (p > start - fadeIn && p < start + fadeIn) {
+              vis = (p - (start - fadeIn)) / (2 * fadeIn)
+              ty = (1 - vis) * 30
+            } else if (p > end - fadeOut && p < end + fadeOut) {
+              vis = 1 - (p - (end - fadeOut)) / (2 * fadeIn)
+              ty = -(1 - vis) * 30
+            } else if (i === n - 1 && p >= end + fadeOut) {
+              // last flyer holds until the section ends
               vis = 1; ty = 0
             }
-            el.style.opacity = String(vis)
-            el.style.transform = `translateY(${ty}px) scale(${0.92 + vis * 0.08})`
+            el.style.opacity = vis.toFixed(3)
+            el.style.transform = `translateY(${ty.toFixed(1)}px)`
             el.style.pointerEvents = vis > 0.5 ? 'auto' : 'none'
           })
         }
@@ -282,9 +243,6 @@ export default function HomepageEditorial() {
 
     return () => {
       cancelAnimationFrame(raf)
-      window.removeEventListener('wheel', onWheel)
-      window.removeEventListener('scroll', onScrollResync)
-      root?.removeEventListener('click', anchorHandler)
       io.disconnect()
     }
   }, [])
@@ -341,10 +299,39 @@ export default function HomepageEditorial() {
           <Link href="/portfolio">Work</Link>
           <Link href="/contact">Contact</Link>
         </div>
-        <Link href="/contact" className="ed-cta">
-          Get a Quote
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <Link href="/contact" className="ed-cta">
+            Get a Quote
+          </Link>
+          <button
+            className="ed-burger"
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(v => !v)}
+          >
+            <span /><span /><span />
+          </button>
+        </div>
       </nav>
+
+      {/* Mobile menu drawer */}
+      <div className={`ed-drawer${menuOpen ? ' open' : ''}`}>
+        <button className="ed-drawer-close" aria-label="Close menu" onClick={() => setMenuOpen(false)}>×</button>
+        <nav className="ed-drawer-links">
+          <Link href="/services" onClick={() => setMenuOpen(false)}>Services</Link>
+          <Link href="/departments" onClick={() => setMenuOpen(false)}>Departments</Link>
+          <Link href="/portfolio" onClick={() => setMenuOpen(false)}>Portfolio</Link>
+          <Link href="/team" onClick={() => setMenuOpen(false)}>Team</Link>
+          <Link href="/blog" onClick={() => setMenuOpen(false)}>Blog</Link>
+          <Link href="/faq" onClick={() => setMenuOpen(false)}>FAQ</Link>
+          <Link href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</Link>
+          <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+        </nav>
+        <Link href="/contact" className="ed-btn ed-btn-primary" onClick={() => setMenuOpen(false)}>
+          Get a Free Quote
+        </Link>
+      </div>
+      {menuOpen && <div className="ed-drawer-veil" onClick={() => setMenuOpen(false)} />}
 
       {/* ---------- HERO ---------- */}
       <section className="ed-hero" id="ed-top">
