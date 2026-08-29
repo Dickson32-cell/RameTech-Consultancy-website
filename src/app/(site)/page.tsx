@@ -21,7 +21,7 @@ export default async function Home() {
     },
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: '+233-24-123-4567',
+      telephone: '+233557332615',
       contactType: 'customer service',
     },
     sameAs: [],
