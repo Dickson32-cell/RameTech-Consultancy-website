@@ -726,7 +726,7 @@ video::-webkit-media-controls-fullscreen-button {
 .ed-wm-word {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 600;
-  font-size: clamp(64px, 17vw, 250px);
+  font-size: clamp(64px, 19.5vw, 320px);
   line-height: 0.9;
   letter-spacing: 0.02em;
   background-size: cover;
@@ -783,8 +783,8 @@ video::-webkit-media-controls-fullscreen-button {
   margin: auto;
   height: auto;
   width: auto;
-  max-height: 74vh;
-  max-width: min(84vw, 560px);
+  max-height: 86vh;
+  max-width: min(86vw, 640px);
   object-fit: contain;
   border-radius: 12px;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
@@ -795,8 +795,8 @@ video::-webkit-media-controls-fullscreen-button {
     padding: 0 22px;
   }
   .ed-flyer img {
-    max-height: 64vh;
-    max-width: calc(100vw - 44px);
+    max-height: 74vh;
+    max-width: calc(100vw - 36px);
     width: auto;
     height: auto;
     border-radius: 10px;

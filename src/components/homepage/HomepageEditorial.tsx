@@ -109,7 +109,7 @@ export default function HomepageEditorial() {
         fetchJSON('/api/v1/settings'),
         fetchJSON('/api/v1/services'),
         fetchJSON('/api/v1/departments'),
-        fetchJSON('/api/v1/projects'),
+        fetchJSON('/api/v1/portfolio'),
         fetchJSON('/api/v1/blog'),
         fetchJSON('/api/v1/reviews'),
       ])
@@ -182,17 +182,17 @@ export default function HomepageEditorial() {
           flyers.forEach((el, i) => {
             const start = 0.1 + (0.9 * i) / n
             const end = start + 0.9 / n
-            const fadeIn = 0.02, fadeOut = 0.02 // quick crossfade at window edges
+            const fadeIn = 0.045, fadeOut = 0.045 // smooth cinematic crossfade
             let vis = 0
             let ty = 0
             if (p >= start + fadeIn && p <= end - fadeOut) {
               vis = 1; ty = 0
             } else if (p > start - fadeIn && p < start + fadeIn) {
               vis = (p - (start - fadeIn)) / (2 * fadeIn)
-              ty = (1 - vis) * 30
+              ty = (1 - vis) * 70
             } else if (p > end - fadeOut && p < end + fadeOut) {
               vis = 1 - (p - (end - fadeOut)) / (2 * fadeIn)
-              ty = -(1 - vis) * 30
+              ty = -(1 - vis) * 70
             } else if (i === n - 1 && p >= end + fadeOut) {
               // last flyer holds until the section ends
               vis = 1; ty = 0
@@ -470,7 +470,7 @@ export default function HomepageEditorial() {
           </div>
           <div className="ed-dept-grid">
             {departments.length ? (
-              departments.slice(0, 3).map((d) => (
+              departments.slice(0, 4).map((d) => (
                 <Link href={`/departments/${d.slug}`} key={d.id} className="ed-dept-card ed-rv">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={d.imageUrl || '/ed/hero.jpg'} alt={d.name} data-ed-parallax />
