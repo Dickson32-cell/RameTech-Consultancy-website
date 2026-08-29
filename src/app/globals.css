@@ -1447,3 +1447,24 @@ body:has(.ed-root) > header:first-of-type { display: none !important; }
   border-color: var(--ed-blue);
   gap: 16px;
 }
+
+/* Slideshow end card: solid brand blue RAMEDIC */
+.ed-flyer-end {
+  background: var(--ed-blue);
+}
+.ed-end-word {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(56px, 15vw, 240px);
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  line-height: 0.9;
+  white-space: nowrap;
+}
+.ed-dot-end {
+  border-radius: 999px;
+}
+.ed-dot-end.on {
+  background: #ffffff;
+  border-color: #ffffff;
+}

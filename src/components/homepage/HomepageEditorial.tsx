@@ -22,6 +22,9 @@ interface SiteSettings {
   flyer2Url?: string | null
   flyer3Url?: string | null
   flyer4Url?: string | null
+  flyer5Url?: string | null
+  quoteBgUrl?: string | null
+  statementBgUrl?: string | null
 }
 
 interface Service {
@@ -111,17 +114,19 @@ export default function HomepageEditorial({
   const [publications, setPublications] = useState<PubItem[]>((initialData?.publications as PubItem[] | undefined) ?? [])
   const [flyerIdx, setFlyerIdx] = useState(0)
   const flyerUrls = useMemo(
-    () => [settings?.flyer1Url, settings?.flyer2Url, settings?.flyer3Url, settings?.flyer4Url]
+    () => [settings?.flyer1Url, settings?.flyer2Url, settings?.flyer3Url, settings?.flyer4Url, settings?.flyer5Url]
       .filter((u): u is string => !!u),
     [settings]
   )
 
   /* Auto-advance slideshow every 4.5s; pauses when tab hidden */
   useEffect(() => {
-    if (flyerUrls.length < 2) return
+    // slides = flyers + 1 RAMEDIC end-card; after the end-card the show restarts at flyer 1
+    const slideCount = flyerUrls.length + (flyerUrls.length > 0 ? 1 : 0)
+    if (slideCount < 2) return
     const id = window.setInterval(() => {
       if (document.hidden) return
-      setFlyerIdx((v) => (v + 1) % flyerUrls.length)
+      setFlyerIdx((v) => (v + 1) % slideCount)
     }, 4500)
     return () => window.clearInterval(id)
   }, [flyerUrls.length])
@@ -413,6 +418,14 @@ export default function HomepageEditorial({
                   <img src={url} alt={`RAMEDIC flyer ${i + 1}`} />
                 </div>
               ))}
+              {/* End card: brand-blue RAMEDIC, then the show loops */}
+              <div
+                className={`ed-flyer ed-flyer-end${flyerIdx === flyerUrls.length ? ' ed-flyer-on' : ''}`}
+                style={{ opacity: flyerIdx === flyerUrls.length ? 1 : 0 }}
+                aria-hidden="true"
+              >
+                <span className="ed-end-word">RAMEDIC</span>
+              </div>
               <div className="ed-flyer-dots" role="tablist" aria-label="Company flyers">
                 {flyerUrls.map((_, i) => (
                   <button
@@ -423,6 +436,12 @@ export default function HomepageEditorial({
                     onClick={() => setFlyerIdx(i)}
                   />
                 ))}
+                <button
+                  type="button"
+                  aria-label="Show RAMEDIC"
+                  className={`ed-dot ed-dot-end${flyerIdx === flyerUrls.length ? ' on' : ''}`}
+                  onClick={() => setFlyerIdx(flyerUrls.length)}
+                />
               </div>
             </>
           )}
@@ -443,7 +462,18 @@ export default function HomepageEditorial({
       </div>
 
       {/* ---------- STATEMENT ---------- */}
-      <section className="ed-statement">
+      <section
+        className="ed-statement"
+        style={
+          settings?.statementBgUrl
+            ? {
+                backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('${settings.statementBgUrl}')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }
+            : undefined
+        }
+      >
         <div className="ed-shell">
           <div className="ed-sec-label">Who we are</div>
           <h2 className="ed-rv">
@@ -642,7 +672,18 @@ export default function HomepageEditorial({
       </section>
 
       {/* ---------- QUOTE ---------- */}
-      <section className="ed-quote">
+      <section
+        className="ed-quote"
+        style={
+          settings?.quoteBgUrl
+            ? {
+                backgroundImage: `linear-gradient(rgba(23, 29, 58, 0.82), rgba(23, 29, 58, 0.82)), url('${settings.quoteBgUrl}')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }
+            : undefined
+        }
+      >
         <blockquote className="ed-rv">
           &ldquo;Tech. Innovate. Grow — it&apos;s not a slogan, it&apos;s the order we do things in.&rdquo;
         </blockquote>

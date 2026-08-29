@@ -42,8 +42,9 @@ export default function SettingsPage() {
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
     const logoInputRef = useRef<HTMLInputElement>(null)
-    const flyerInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null])
+    const flyerInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null, null])
     const [uploadingFlyer, setUploadingFlyer] = useState<number | null>(null)
+    const [uploadingBanner, setUploadingBanner] = useState<'quote' | 'statement' | null>(null)
 
     useEffect(() => {
         const token = localStorage.getItem('admin_token')
@@ -260,6 +261,59 @@ export default function SettingsPage() {
             }
         }
     }
+    const handleBannerUpload = async (target: 'quote' | 'statement', file: File) => {
+        setUploadingBanner(target)
+        setMessage(null)
+
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('target', target)
+
+        try {
+            const token = localStorage.getItem('admin_token')
+            const res = await fetch('/api/v1/admin/upload/banner', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            })
+
+            const data = await res.json()
+
+            if (data.success && data.data?.url) {
+                const field = target === 'quote' ? 'quoteBgUrl' : 'statementBgUrl'
+                setSettings({ ...settings, [field]: data.data.url })
+                setMessage({ type: 'success', text: 'Background image updated! It now shows behind the section text on the homepage.' })
+            } else if (res.status === 401) {
+                setMessage({ type: 'error', text: 'Session expired. Please log out and log back in, then try again.' })
+            } else {
+                setMessage({ type: 'error', text: data.error || 'Upload failed' })
+            }
+        } catch {
+            setMessage({ type: 'error', text: 'Upload failed. Please try again.' })
+        } finally {
+            setUploadingBanner(null)
+        }
+    }
+
+    const handleBannerRemove = async (target: 'quote' | 'statement') => {
+        setMessage(null)
+        try {
+            const token = localStorage.getItem('admin_token')
+            const res = await fetch(`/api/v1/admin/upload/banner?target=${target}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            const data = await res.json()
+            if (data.success) {
+                const field = target === 'quote' ? 'quoteBgUrl' : 'statementBgUrl'
+                setSettings({ ...settings, [field]: null })
+                setMessage({ type: 'success', text: 'Background image removed.' })
+            }
+        } catch {
+            setMessage({ type: 'error', text: 'Could not remove background image.' })
+        }
+    }
+
 
     const handleFlyerRemove = async (slot: number) => {
         setMessage(null)
@@ -463,11 +517,11 @@ export default function SettingsPage() {
                     </div>
                     <div className="p-6 space-y-6">
                         <p className="text-sm text-gray-500">
-                            Upload up to 4 company flyers. They rotate one-by-one inside the blue RAMEDIC section
-                            on the homepage as visitors scroll. Recommended: portrait flyers (A4 ratio), JPEG/PNG/PDF, under 10MB.
+                            Upload up to 5 company flyers for the homepage slideshow. After the last flyer, a blue
+                            RAMEDIC end-card shows, then the slideshow loops. Recommended: portrait (A4 ratio), JPEG/PNG/PDF, under 10MB.
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            {[1, 2, 3, 4].map((slot) => {
+                            {[1, 2, 3, 4, 5].map((slot) => {
                                 const url = (settings as unknown as Record<string, string | null>)[`flyer${slot}Url`] || null
                                 return (
                                     <div key={slot} className="border border-gray-200 rounded-lg p-4">
@@ -519,6 +573,66 @@ export default function SettingsPage() {
                                                 )}
                                             </div>
                                         </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Homepage Section Backgrounds */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h2 className="font-semibold text-gray-800">Homepage Section Backgrounds</h2>
+                    </div>
+                    <div className="p-6 space-y-6">
+                        <p className="text-sm text-gray-500">
+                            Optional background images behind homepage text sections. JPEG/PNG/WebP, under 10MB.
+                            A dark/blue overlay is applied automatically so text stays readable.
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            {([
+                                { key: 'quote' as const, label: 'Quote section', field: 'quoteBgUrl', hint: 'The blue "Tech. Innovate. Grow" band' },
+                                { key: 'statement' as const, label: '"Who we are" section', field: 'statementBgUrl', hint: 'The white section with "Build a system."' },
+                            ]).map(({ key, label, field, hint }) => {
+                                const url = (settings as unknown as Record<string, string | null>)[field] || null
+                                return (
+                                    <div key={key} className="border border-gray-200 rounded-lg p-4">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-sm font-semibold text-gray-700">{label}</span>
+                                            {url && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleBannerRemove(key)}
+                                                    className="text-xs text-red-600 hover:text-red-800"
+                                                >
+                                                    Remove
+                                                </button>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-gray-400 mb-3">{hint}</p>
+                                        <div className="h-28 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden mb-3">
+                                            {url ? (
+                                                /* eslint-disable-next-line @next/next/no-img-element */
+                                                <img src={url} alt={label} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <span className="text-xs text-gray-400">No background set</span>
+                                            )}
+                                        </div>
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/png,image/webp"
+                                            className="block w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                            onChange={(e) => {
+                                                const f = e.target.files?.[0]
+                                                if (f) handleBannerUpload(key, f)
+                                                e.target.value = ''
+                                            }}
+                                            disabled={uploadingBanner !== null}
+                                        />
+                                        {uploadingBanner === key && (
+                                            <p className="text-xs text-blue-600 mt-2">Uploading…</p>
+                                        )}
                                     </div>
                                 )
                             })}

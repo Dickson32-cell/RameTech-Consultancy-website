@@ -482,6 +482,9 @@ model SiteSettings {
   flyer2Url               String?
   flyer3Url               String?
   flyer4Url               String?
+  flyer5Url               String?
+  quoteBgUrl              String?
+  statementBgUrl          String?
   updatedAt               DateTime @updatedAt @db.Timestamptz()
 }
 
