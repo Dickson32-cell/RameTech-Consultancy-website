@@ -1134,6 +1134,16 @@ video::-webkit-media-controls-fullscreen-button {
   margin-top: 46px;
   flex-wrap: wrap;
 }
+.ed-cta .ed-btn-ghost {
+  border: 1px solid var(--ed-gold);
+  background: var(--ed-gold);
+  color: #12409b;
+  font-weight: 700;
+}
+.ed-cta .ed-btn-ghost:hover {
+  border-color: #ffffff;
+  background: #f0d545;
+}
 .ed-cta .ed-micro {
   margin-top: 22px;
   font-size: 12.5px;
