@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 
 /*
  * Editorial Homepage v2 — FIND-style scroll choreography with RAMEDIC brand.
@@ -109,11 +109,26 @@ export default function HomepageEditorial({
   const [posts, setPosts] = useState<BlogPost[]>(initialData?.posts ?? [])
   const [reviews, setReviews] = useState<ReviewItem[]>(initialData?.reviews ?? [])
   const [publications, setPublications] = useState<PubItem[]>((initialData?.publications as PubItem[] | undefined) ?? [])
+  const [flyerIdx, setFlyerIdx] = useState(0)
+  const flyerUrls = useMemo(
+    () => [settings?.flyer1Url, settings?.flyer2Url, settings?.flyer3Url, settings?.flyer4Url]
+      .filter((u): u is string => !!u),
+    [settings]
+  )
+
+  /* Auto-advance slideshow every 4.5s; pauses when tab hidden */
+  useEffect(() => {
+    if (flyerUrls.length < 2) return
+    const id = window.setInterval(() => {
+      if (document.hidden) return
+      setFlyerIdx((v) => (v + 1) % flyerUrls.length)
+    }, 4500)
+    return () => window.clearInterval(id)
+  }, [flyerUrls.length])
   const heroBgRef = useRef<HTMLDivElement>(null)
   const wmWordRef = useRef<HTMLDivElement>(null)
   const wmTagRef = useRef<HTMLDivElement>(null)
   const wmCapRef = useRef<HTMLDivElement>(null)
-  const flyerRefs = useRef<(HTMLDivElement | null)[]>([])
   const wmSecRef = useRef<HTMLElement>(null)
   const navRef = useRef<HTMLElement>(null)
   const panelsRef = useRef<HTMLDivElement[]>([])
@@ -190,48 +205,15 @@ export default function HomepageEditorial({
         const p = clamp(-wr.top / total, 0, 1)
 
         // Flyers: each gets an equal window across the pin; solid crossfade (no half-fades)
-        const flyers = flyerRefs.current.filter(Boolean) as HTMLDivElement[]
-        const n = flyers.length
-        const HAS_FLYERS = n > 0
-
-        // RAMEDIC wordmark: fades in early, fades OUT the instant flyers take over
-        const flyerStart = HAS_FLYERS ? 0.1 : 1.1   // with flyers: word only before 0.1
-        let wordVis: number
-        if (HAS_FLYERS && p >= 0.1) {
-          wordVis = 0
-        } else {
-          wordVis = clamp(p * 2.4, 0, 1)
-        }
+        // RAMEDIC wordmark: fades in early, fades OUT as the slideshow takes over
+        const HAS_FLYERS = flyerUrls.length > 0
+        const flyerStart = HAS_FLYERS ? 0.1 : 1.1
+        const wordVis = HAS_FLYERS && p >= 0.1 ? 0 : clamp(p * 2.4, 0, 1)
         const scale = 0.72 + Math.min(p, 0.1) * 3.2
         wmWord.style.transform = `scale(${scale.toFixed(3)})`
         wmWord.style.opacity = String(wordVis.toFixed(3))
         wmTag.style.opacity = wordVis >= 1 && (p < flyerStart) ? '1' : String(wordVis.toFixed(3))
         wmCap.style.opacity = wordVis >= 1 && (p < flyerStart) ? '1' : '0'
-
-        if (HAS_FLYERS) {
-          flyers.forEach((el, i) => {
-            const start = 0.1 + (0.9 * i) / n
-            const end = start + 0.9 / n
-            const fadeIn = 0.045, fadeOut = 0.045 // smooth cinematic crossfade
-            let vis = 0
-            let ty = 0
-            if (p >= start + fadeIn && p <= end - fadeOut) {
-              vis = 1; ty = 0
-            } else if (p > start - fadeIn && p < start + fadeIn) {
-              vis = (p - (start - fadeIn)) / (2 * fadeIn)
-              ty = (1 - vis) * 70
-            } else if (p > end - fadeOut && p < end + fadeOut) {
-              vis = 1 - (p - (end - fadeOut)) / (2 * fadeIn)
-              ty = -(1 - vis) * 70
-            } else if (i === n - 1 && p >= end + fadeOut) {
-              // last flyer holds until the section ends
-              vis = 1; ty = 0
-            }
-            el.style.opacity = vis.toFixed(3)
-            el.style.transform = `translateY(${ty.toFixed(1)}px)`
-            el.style.pointerEvents = vis > 0.5 ? 'auto' : 'none'
-          })
-        }
       }
 
       // Stacking panels
@@ -326,7 +308,10 @@ export default function HomepageEditorial({
         <div className="ed-links">
           <Link href="/services">Services</Link>
           <Link href="/departments">Departments</Link>
-          <Link href="/portfolio">Work</Link>
+          <Link href="/portfolio">Portfolio</Link>
+          <Link href="/team">Team</Link>
+          <Link href="/blog">Blog</Link>
+          <Link href="/certifications">Certifications</Link>
           <Link href="/contact">Contact</Link>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -353,6 +338,7 @@ export default function HomepageEditorial({
           <Link href="/portfolio" onClick={() => setMenuOpen(false)}>Portfolio</Link>
           <Link href="/team" onClick={() => setMenuOpen(false)}>Team</Link>
           <Link href="/blog" onClick={() => setMenuOpen(false)}>Blog</Link>
+          <Link href="/certifications" onClick={() => setMenuOpen(false)}>Certifications</Link>
           <Link href="/faq" onClick={() => setMenuOpen(false)}>FAQ</Link>
           <Link href="/pricing" onClick={() => setMenuOpen(false)}>Pricing</Link>
           <Link href="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
@@ -414,25 +400,32 @@ export default function HomepageEditorial({
             RAMEDIC Consultancy &amp; Creative Ltd — Koforidua, Eastern Region
           </div>
 
-          {/* Admin-uploaded company flyers — rotate with scroll */}
-          {[
-            settings?.flyer1Url,
-            settings?.flyer2Url,
-            settings?.flyer3Url,
-            settings?.flyer4Url,
-          ]
-            .filter((u): u is string => !!u)
-            .map((url, i) => (
-              <div
-                key={url}
-                ref={(el) => { flyerRefs.current[i] = el }}
-                className="ed-flyer"
-                style={{ opacity: 0 }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={url} alt={`RAMEDIC flyer ${i + 1}`} />
+          {/* Admin-uploaded company flyers — auto slideshow (independent of scroll) */}
+          {flyerUrls.length > 0 && (
+            <>
+              {flyerUrls.map((url, i) => (
+                <div
+                  key={url}
+                  className={`ed-flyer${i === flyerIdx ? ' ed-flyer-on' : ''}`}
+                  style={{ opacity: i === flyerIdx ? 1 : 0 }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={url} alt={`RAMEDIC flyer ${i + 1}`} />
+                </div>
+              ))}
+              <div className="ed-flyer-dots" role="tablist" aria-label="Company flyers">
+                {flyerUrls.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    aria-label={`Show flyer ${i + 1}`}
+                    className={`ed-dot${i === flyerIdx ? ' on' : ''}`}
+                    onClick={() => setFlyerIdx(i)}
+                  />
+                ))}
               </div>
-            ))}
+            </>
+          )}
         </div>
       </section>
 
@@ -546,11 +539,12 @@ export default function HomepageEditorial({
             </div>
           ) : (
             <div className="ed-dept-empty">
-              Recent projects are being curated — see the <Link href="/portfolio" style={{ color: 'var(--ed-blue)', fontWeight: 600 }}>full portfolio</Link>.
+              Recent projects are being curated — see the{' '}
+              <Link href="/portfolio" style={{ color: 'var(--ed-blue)', fontWeight: 600 }}>full portfolio</Link>.
             </div>
           )}
-          <div style={{ textAlign: 'center', marginTop: 40 }}>
-            <Link href="/portfolio" className="ed-panel-cta" style={{ margin: '0 auto' }}>
+          <div className="ed-more-row">
+            <Link href="/portfolio" className="ed-more-link">
               View full portfolio <span>→</span>
             </Link>
           </div>
@@ -586,10 +580,10 @@ export default function HomepageEditorial({
       </section>
 
       {/* ---------- BLOG / INSIGHTS ---------- */}
-      <section className="ed-statement" style={{ background: '#eae7df' }}>
+      <section className="ed-statement" >
         <div className="ed-shell">
           <div className="ed-sec-head">
-            <div className="ed-sec-label" style={{ marginBottom: 0 }}>Insights</div>
+            <div className="ed-sec-label" style={{ marginBottom: 0 }}>Blog and News</div>
             <h2 className="ed-rv">
               From the <em>bench.</em>
             </h2>
@@ -615,6 +609,11 @@ export default function HomepageEditorial({
           ) : (
             <div className="ed-dept-empty">New articles are on the way.</div>
           )}
+          <div className="ed-more-row">
+            <a href="/blog" className="ed-more-link">
+              View all articles <span>→</span>
+            </a>
+          </div>
         </div>
       </section>
 
@@ -652,7 +651,7 @@ export default function HomepageEditorial({
 
       {/* ---------- CTA ---------- */}
       
-      <section className="ed-pubs" style={{ background: '#eae7df' }}>
+      <section className="ed-pubs" >
         <div className="ed-shell">
           <div className="ed-sec-head">
             <div className="ed-sec-label" style={{ marginBottom: 0 }}>Publications</div>
@@ -686,6 +685,11 @@ export default function HomepageEditorial({
               <a href="/publications" style={{ textDecoration: 'underline' }}>full list</a>.
             </div>
           )}
+          <div className="ed-more-row">
+            <a href="/publications" className="ed-more-link">
+              View all publications <span>→</span>
+            </a>
+          </div>
         </div>
       </section>
 

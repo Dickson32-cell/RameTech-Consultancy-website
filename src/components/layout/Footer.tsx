@@ -154,6 +154,34 @@ export default function Footer() {
                   </svg>
                   Blog
                 </Link>
+              </li><li>
+                <Link href="/certifications" className="text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer inline-flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  Certifications
+                </Link>
+              </li><li>
+                <Link href="/departments" className="text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer inline-flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  Departments
+                </Link>
+              </li><li>
+                <Link href="/faq" className="text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer inline-flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  FAQ
+                </Link>
+              </li><li>
+                <Link href="/pricing" className="text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer inline-flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  Pricing
+                </Link>
               </li>
               <li>
                 <Link href="/contact" className="text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer inline-flex items-center gap-2">
@@ -216,6 +244,22 @@ export default function Footer() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                   Advanced Analytics
+                </Link>
+              </li>
+              <li>
+                <Link href="/services/kraft-paper-bags" className="text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer inline-flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  Paper Kraft &amp; Nylon Printing
+                </Link>
+              </li>
+              <li>
+                <Link href="/services/academic-writing" className="text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer inline-flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                  Academic Research
                 </Link>
               </li>
             </ul>

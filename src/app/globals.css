@@ -710,7 +710,7 @@ video::-webkit-media-controls-fullscreen-button {
 .ed-wm-section {
   position: relative;
   height: 220vh;
-  background: #f3f1ea;
+  background: #f6f9ff;
   border-top: 1px solid rgba(23, 29, 58, 0.14);
   border-bottom: 1px solid rgba(23, 29, 58, 0.14);
 }
@@ -731,12 +731,8 @@ video::-webkit-media-controls-fullscreen-button {
   font-size: clamp(64px, 19.5vw, 320px);
   line-height: 0.9;
   letter-spacing: 0.02em;
-  background-size: cover;
-  background-position: center;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: var(--ed-blue);
+  -webkit-text-fill-color: var(--ed-blue);
   will-change: transform, opacity;
   white-space: nowrap;
 }
@@ -1061,7 +1057,7 @@ video::-webkit-media-controls-fullscreen-button {
 
 /* ---------- Process ---------- */
 .ed-process {
-  background: #eae7df;
+  background: #ffffff;
   color: var(--ed-ink);
   padding: 120px 44px;
 }
@@ -1073,7 +1069,7 @@ video::-webkit-media-controls-fullscreen-button {
   background: var(--ed-line);
   border: 1px solid var(--ed-line);
 }
-.ed-proc-cell { background: #eae7df; padding: 36px 28px; }
+.ed-proc-cell { background: #ffffff; padding: 36px 28px; }
 .ed-proc-cell .n {
   font-family: 'Fraunces', Georgia, serif;
   font-size: 16px;
@@ -1384,4 +1380,70 @@ body:has(.ed-root) > header:first-of-type { display: none !important; }
 }
 @media (max-width: 960px) {
   .ed-pub-grid { grid-template-columns: 1fr; }
+}
+
+.ed-flyer {
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.ed-flyer-on img {
+  transform: scale(1);
+}
+.ed-flyer img {
+  transition: transform 6s ease;
+}
+.ed-flyer-on img {
+  transform: scale(1.03);
+}
+/* Ken Burns-style slow zoom for life without gimmick */
+
+.ed-flyer-dots {
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 4;
+}
+.ed-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(23, 29, 58, 0.4);
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.3s ease, width 0.3s ease;
+}
+.ed-dot.on {
+  width: 26px;
+  background: var(--ed-blue);
+  border-color: var(--ed-blue);
+}
+@media (max-width: 520px) {
+  .ed-flyer-dots { bottom: 22px; }
+}
+
+/* View-all rows (professional link rows under grids) */
+.ed-more-row {
+  margin-top: 34px;
+  display: flex;
+  justify-content: flex-end;
+}
+.ed-more-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ed-blue);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(23, 29, 58, 0.25);
+  padding-bottom: 4px;
+  transition: border-color 0.25s ease, gap 0.25s ease;
+}
+.ed-more-link:hover {
+  border-color: var(--ed-blue);
+  gap: 16px;
 }
