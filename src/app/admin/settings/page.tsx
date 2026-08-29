@@ -17,6 +17,10 @@ interface SiteSettings {
     flyer2Url?: string | null
     flyer3Url?: string | null
     flyer4Url?: string | null
+    heroBgUrl?: string | null
+    flyer5Url?: string | null
+    quoteBgUrl?: string | null
+    statementBgUrl?: string | null
 }
 
 export default function SettingsPage() {
@@ -44,7 +48,7 @@ export default function SettingsPage() {
     const logoInputRef = useRef<HTMLInputElement>(null)
     const flyerInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null, null])
     const [uploadingFlyer, setUploadingFlyer] = useState<number | null>(null)
-    const [uploadingBanner, setUploadingBanner] = useState<'quote' | 'statement' | null>(null)
+    const [uploadingBanner, setUploadingBanner] = useState<'hero' | 'quote' | 'statement' | null>(null)
 
     useEffect(() => {
         const token = localStorage.getItem('admin_token')
@@ -261,7 +265,7 @@ export default function SettingsPage() {
             }
         }
     }
-    const handleBannerUpload = async (target: 'quote' | 'statement', file: File) => {
+    const handleBannerUpload = async (target: 'hero' | 'quote' | 'statement', file: File) => {
         setUploadingBanner(target)
         setMessage(null)
 
@@ -280,7 +284,7 @@ export default function SettingsPage() {
             const data = await res.json()
 
             if (data.success && data.data?.url) {
-                const field = target === 'quote' ? 'quoteBgUrl' : 'statementBgUrl'
+                const field = target === 'quote' ? 'quoteBgUrl' : target === 'statement' ? 'statementBgUrl' : 'heroBgUrl'
                 setSettings({ ...settings, [field]: data.data.url })
                 setMessage({ type: 'success', text: 'Background image updated! It now shows behind the section text on the homepage.' })
             } else if (res.status === 401) {
@@ -295,7 +299,7 @@ export default function SettingsPage() {
         }
     }
 
-    const handleBannerRemove = async (target: 'quote' | 'statement') => {
+    const handleBannerRemove = async (target: 'hero' | 'quote' | 'statement') => {
         setMessage(null)
         try {
             const token = localStorage.getItem('admin_token')
@@ -305,7 +309,7 @@ export default function SettingsPage() {
             })
             const data = await res.json()
             if (data.success) {
-                const field = target === 'quote' ? 'quoteBgUrl' : 'statementBgUrl'
+                const field = target === 'quote' ? 'quoteBgUrl' : target === 'statement' ? 'statementBgUrl' : 'heroBgUrl'
                 setSettings({ ...settings, [field]: null })
                 setMessage({ type: 'success', text: 'Background image removed.' })
             }
@@ -592,6 +596,7 @@ export default function SettingsPage() {
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             {([
+                                { key: 'hero' as const, label: 'Hero background', field: 'heroBgUrl', hint: 'The big image behind "Innovative Tech Solutions"' },
                                 { key: 'quote' as const, label: 'Quote section', field: 'quoteBgUrl', hint: 'The blue "Tech. Innovate. Grow" band' },
                                 { key: 'statement' as const, label: '"Who we are" section', field: 'statementBgUrl', hint: 'The white section with "Build a system."' },
                             ]).map(({ key, label, field, hint }) => {

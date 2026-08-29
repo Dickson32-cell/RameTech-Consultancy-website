@@ -1,5 +1,5 @@
 // Banner background image upload to Cloudinary (admin-only)
-// targets: "quote" -> quoteBgUrl, "statement" -> statementBgUrl (homepage section backgrounds)
+// targets: "hero" -> heroBgUrl, "quote" -> quoteBgUrl, "statement" -> statementBgUrl (homepage section backgrounds)
 import { NextRequest, NextResponse } from 'next/server'
 import { ensureCloudinaryConfigured } from '@/lib/cloudinary'
 import { verifyToken } from '@/lib/auth'
@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'No file provided' }, { status: 400 })
     }
 
-    if (target !== 'quote' && target !== 'statement') {
-      return NextResponse.json({ success: false, error: 'Invalid target (quote | statement)' }, { status: 400 })
+    if (target !== 'hero' && target !== 'quote' && target !== 'statement') {
+      return NextResponse.json({ success: false, error: 'Invalid target (hero | quote | statement)' }, { status: 400 })
     }
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Upload failed' }, { status: 500 })
     }
 
-    const field = target === 'quote' ? 'quoteBgUrl' : 'statementBgUrl'
+    const field = target === 'quote' ? 'quoteBgUrl' : target === 'statement' ? 'statementBgUrl' : 'heroBgUrl'
     await prisma.siteSettings.upsert({
       where: { id: 'default' },
       update: { [field]: url },
@@ -104,11 +104,11 @@ export async function DELETE(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const target = searchParams.get('target')
-    if (target !== 'quote' && target !== 'statement') {
+    if (target !== 'hero' && target !== 'quote' && target !== 'statement') {
       return NextResponse.json({ success: false, error: 'Invalid target' }, { status: 400 })
     }
 
-    const field = target === 'quote' ? 'quoteBgUrl' : 'statementBgUrl'
+    const field = target === 'quote' ? 'quoteBgUrl' : target === 'statement' ? 'statementBgUrl' : 'heroBgUrl'
     await prisma.siteSettings.upsert({
       where: { id: 'default' },
       update: { [field]: null },

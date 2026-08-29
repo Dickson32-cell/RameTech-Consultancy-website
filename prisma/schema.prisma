@@ -478,6 +478,7 @@ model SiteSettings {
   statsSupport            String   @default("24/7")
   businessRegistrationUrl String?
   logoUrl                 String?
+  heroBgUrl               String?
   flyer1Url               String?
   flyer2Url               String?
   flyer3Url               String?

@@ -25,6 +25,7 @@ interface SiteSettings {
   flyer5Url?: string | null
   quoteBgUrl?: string | null
   statementBgUrl?: string | null
+  heroBgUrl?: string | null
 }
 
 interface Service {
@@ -360,8 +361,9 @@ export default function HomepageEditorial({
           ref={heroBgRef}
           className="ed-hero-bg"
           style={{
-            backgroundImage:
-              'url("/ed/hero.jpg"), linear-gradient(135deg, var(--ed-blue-deep), var(--ed-blue))',
+            backgroundImage: settings?.heroBgUrl
+              ? `url('${settings.heroBgUrl}'), linear-gradient(135deg, rgba(23,29,58,0.55), rgba(23,29,58,0.35))`
+              : 'url("/ed/hero.jpg"), linear-gradient(135deg, var(--ed-blue-deep), var(--ed-blue))',
           }}
         />
         <div className="ed-hero-veil" />
