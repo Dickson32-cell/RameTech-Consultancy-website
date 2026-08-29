@@ -709,7 +709,7 @@ video::-webkit-media-controls-fullscreen-button {
 /* ---------- Wordmark pin ---------- */
 .ed-wm-section {
   position: relative;
-  height: 220vh;
+  height: 165vh;
   background: #f6f9ff;
   border-top: 1px solid rgba(23, 29, 58, 0.14);
   border-bottom: 1px solid rgba(23, 29, 58, 0.14);
