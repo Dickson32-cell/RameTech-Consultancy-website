@@ -1172,3 +1172,80 @@ video::-webkit-media-controls-fullscreen-button {
 
 /* ---------- Editorial homepage: hide the default site header (ed-nav replaces it) ---------- */
 body:has(.ed-root) > header:first-of-type { display: none !important; }
+
+/* ---------- Editorial Work / Testimonials / Blog ---------- */
+.ed-work-sec {
+  background: var(--ed-paper);
+  color: var(--ed-ink);
+  padding: 130px 44px 0 44px;
+}
+.ed-work-sec .ed-shell { max-width: 1240px; margin: 0 auto; }
+.ed-work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+.ed-testi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.ed-testi-card {
+  background: var(--ed-paper);
+  border: 1px solid var(--ed-line);
+  border-radius: 8px;
+  padding: 30px 26px;
+}
+.ed-testi-card .ed-stars { color: var(--ed-gold); font-size: 15px; letter-spacing: 2px; margin-bottom: 14px; }
+.ed-testi-card blockquote {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 300; font-style: italic;
+  font-size: 17.5px; line-height: 1.55; color: var(--ed-ink);
+}
+.ed-testi-card figcaption { margin-top: 18px; font-size: 12.5px; color: rgba(12,15,19,0.6); }
+.ed-testi-card figcaption b { color: var(--ed-blue-deep); }
+
+.ed-blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.ed-blog-card {
+  background: var(--ed-paper);
+  border: 1px solid var(--ed-line);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.2,0.6,0.2,1), box-shadow 0.35s;
+}
+.ed-blog-card:hover { transform: translateY(-4px); }
+.ed-blog-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+.ed-blog-ph {
+  height: 170px;
+  background: var(--ed-blue);
+  color: var(--ed-paper);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', Georgia, serif; font-weight: 600;
+  font-size: 42px; letter-spacing: 0.02em;
+}
+.ed-blog-body { padding: 22px 22px 26px; }
+.ed-blog-card h3 {
+  font-family: 'Fraunces', Georgia, serif; font-weight: 400;
+  font-size: 21px; color: var(--ed-ink); line-height: 1.25;
+}
+.ed-blog-card p { font-size: 13.5px; color: rgba(12,15,19,0.68); margin: 10px 0 14px; line-height: 1.55; }
+
+@media (max-width: 960px) {
+  .ed-testi-card { }
+  .ed-blog-grid { grid-template-columns: 1fr; }
+}
+@media (min-width: 961px) {
+  .ed-testi-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+}
+.ed-testi-card {
+  background: var(--ed-paper);
+  border: 1px solid var(--ed-line);
+  border-radius: 8px;
+  padding: 30px 26px;
+}
+.ed-testi-card blockquote {
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic; font-weight: 300;
+  font-size: 17.5px; line-height: 1.55;
+  color: var(--ed-ink); margin: 0;
+}
+.ed-testi-card .ed-stars { letter-spacing: 3px; }
+.ed-testi-card figcaption { margin-top: 18px; font-size: 13px; }
+.ed-testi-card figcaption b { color: var(--ed-blue-deep); font-weight: 600; }

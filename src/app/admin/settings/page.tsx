@@ -245,6 +245,8 @@ export default function SettingsPage() {
                 const newSettings = { ...settings, [field]: data.data.url }
                 setSettings(newSettings)
                 setMessage({ type: 'success', text: `Flyer ${slot} uploaded and saved! It now rotates in the homepage wordmark section.` })
+            } else if (res.status === 401) {
+                setMessage({ type: 'error', text: 'Session expired. Please log out and log back in, then try again.' })
             } else {
                 setMessage({ type: 'error', text: data.error || `Failed to upload flyer ${slot}` })
             }

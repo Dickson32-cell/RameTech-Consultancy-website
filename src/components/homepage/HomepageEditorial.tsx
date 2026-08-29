@@ -45,6 +45,25 @@ interface Project {
   title: string
   slug: string
   imageUrl: string | null
+  description?: string | null
+}
+
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt?: string | null
+  imageUrl?: string | null
+  createdAt?: string
+}
+
+interface ReviewItem {
+  id: string
+  clientName: string
+  clientCompany?: string | null
+  content: string
+  rating?: number
+  isApproved?: boolean
 }
 
 const DEFAULT_HERO_BG = '/ed/hero-bg.jpg'
@@ -60,6 +79,8 @@ export default function HomepageEditorial() {
   const [services, setServices] = useState<Service[]>([])
   const [departments, setDepartments] = useState<Department[]>([])
   const [projects, setProjects] = useState<Project[]>([])
+  const [posts, setPosts] = useState<BlogPost[]>([])
+  const [reviews, setReviews] = useState<ReviewItem[]>([])
   const heroBgRef = useRef<HTMLDivElement>(null)
   const wmWordRef = useRef<HTMLDivElement>(null)
   const wmTagRef = useRef<HTMLDivElement>(null)
@@ -83,16 +104,20 @@ export default function HomepageEditorial() {
       }
     }
     ;(async () => {
-      const [s, sv, d, p] = await Promise.all([
+      const [s, sv, d, p, b, rv] = await Promise.all([
         fetchJSON('/api/v1/settings'),
         fetchJSON('/api/v1/services'),
         fetchJSON('/api/v1/departments'),
         fetchJSON('/api/v1/projects'),
+        fetchJSON('/api/v1/blog'),
+        fetchJSON('/api/v1/reviews'),
       ])
       if (s) setSettings(s)
-      if (sv) setServices(sv.slice(0, 5))
+      if (sv) setServices(sv.slice(0, 7))
       if (d) setDepartments(d.slice(0, 6))
       if (p) setProjects(p.slice(0, 6))
+      if (b) setPosts(b.slice(0, 3))
+      if (rv) setReviews(rv.filter((r: { isApproved?: boolean }) => r.isApproved !== false).slice(0, 6))
     })()
   }, [])
 
@@ -474,6 +499,105 @@ export default function HomepageEditorial() {
               <div className="ed-dept-empty">Our departments are being prepared — check back shortly.</div>
             )}
           </div>
+        </div>
+      </section>
+
+
+      {/* ---------- WORK (PORTFOLIO) ---------- */}
+      <section className="ed-work-sec" id="ed-portfolio">
+        <div className="ed-shell">
+          <div className="ed-sec-head">
+            <div className="ed-sec-label" style={{ marginBottom: 0 }}>Selected Work</div>
+            <h2 className="ed-rv">
+              Proof, not<br /><em>promises.</em>
+            </h2>
+          </div>
+          {projects.length ? (
+            <div className="ed-work-grid">
+              {projects.slice(0, 3).map((proj) => (
+                <Link href={`/portfolio/${proj.slug}`} key={proj.id} className="ed-dept-card ed-rv">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={proj.imageUrl || '/ed/hero.jpg'} alt={proj.title} data-ed-parallax />
+                  <div className="ed-veil" />
+                  <div className="ed-tag">Project</div>
+                  <div className="ed-info">
+                    <h3>{proj.title}</h3>
+                    <p>{proj.description?.slice(0, 90) || 'View the full case study.'}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="ed-dept-empty">
+              Recent projects are being curated — see the <Link href="/portfolio" style={{ color: 'var(--ed-blue)', fontWeight: 600 }}>full portfolio</Link>.
+            </div>
+          )}
+          <div style={{ textAlign: 'center', marginTop: 40 }}>
+            <Link href="/portfolio" className="ed-panel-cta" style={{ margin: '0 auto' }}>
+              View full portfolio <span>→</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- TESTIMONIALS ---------- */}
+      <section className="ed-depts" style={{ paddingTop: 0 }}>
+        <div className="ed-shell">
+          <div className="ed-sec-head">
+            <div className="ed-sec-label" style={{ marginBottom: 0 }}>Testimonials</div>
+            <h2 className="ed-rv">
+              Trusted by<br />businesses <em>like yours.</em>
+            </h2>
+          </div>
+          {reviews.length ? (
+            <div className="ed-testi-grid">
+              {reviews.slice(0, 3).map((rv) => (
+                <figure key={rv.id} className="ed-testi-card ed-rv">
+                  <div className="ed-stars">{"★".repeat(rv.rating || 5)}</div>
+                  <blockquote>"{rv.content}"</blockquote>
+                  <figcaption>
+                    <b>{rv.clientName}</b>
+                    {rv.clientCompany ? <span> — {rv.clientCompany}</span> : null}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          ) : (
+            <div className="ed-dept-empty">Client reviews coming soon.</div>
+          )}
+        </div>
+      </section>
+
+      {/* ---------- BLOG / INSIGHTS ---------- */}
+      <section className="ed-statement" style={{ background: '#eae7df' }}>
+        <div className="ed-shell">
+          <div className="ed-sec-head">
+            <div className="ed-sec-label" style={{ marginBottom: 0 }}>Insights</div>
+            <h2 className="ed-rv">
+              From the <em>bench.</em>
+            </h2>
+          </div>
+          {posts.length ? (
+            <div className="ed-blog-grid">
+              {posts.map((b) => (
+                <Link href={`/blog/${b.slug}`} key={b.id} className="ed-blog-card ed-rv">
+                  {b.imageUrl ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={b.imageUrl} alt={b.title} />
+                  ) : (
+                    <div className="ed-blog-ph">RAMEDIC</div>
+                  )}
+                  <div className="ed-blog-body">
+                    <h3>{b.title}</h3>
+                    <p>{b.excerpt?.slice(0, 110) || 'Read the full article on the blog.'}</p>
+                    <span className="ed-panel-cta">Read more →</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="ed-dept-empty">New articles are on the way.</div>
+          )}
         </div>
       </section>
 
