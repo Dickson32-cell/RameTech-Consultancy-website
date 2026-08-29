@@ -1138,3 +1138,7 @@ video::-webkit-media-controls-fullscreen-button {
   .ed-nav .ed-logo img { height: 28px; }
   .ed-proc-grid { grid-template-columns: 1fr; }
 }
+
+
+/* ---------- Editorial homepage: hide the default site header (ed-nav replaces it) ---------- */
+body:has(.ed-root) > header:first-of-type { display: none !important; }
