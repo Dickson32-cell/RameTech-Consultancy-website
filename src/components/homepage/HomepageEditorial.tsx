@@ -74,14 +74,41 @@ const PANEL_SHADES = ['ed-sp1', 'ed-sp2', 'ed-sp3', 'ed-sp4', 'ed-sp5', 'ed-sp6'
 // Background word for each panel (fallback, from service name)
 const bgWord = (name: string) => name.split(' ')[0].toUpperCase()
 
-export default function HomepageEditorial() {
-  const [settings, setSettings] = useState<SiteSettings | null>(null)
+type PubItem = {
+  id: string
+  title: string
+  description?: string | null
+  authors?: string | null
+  journal?: string | null
+  type?: string | null
+  pdfUrl?: string | null
+  url?: string | null
+  publicationDate?: string | null
+}
+
+type EditorialInitialData = {
+  settings: SiteSettings | null
+  services: Service[]
+  departments: Department[]
+  projects: Project[]
+  posts: BlogPost[]
+  reviews: ReviewItem[]
+  publications?: unknown[]
+}
+
+export default function HomepageEditorial({
+  initialData = null,
+}: {
+  initialData?: EditorialInitialData | null
+}) {
+  const [settings, setSettings] = useState<SiteSettings | null>(initialData?.settings ?? null)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [services, setServices] = useState<Service[]>([])
-  const [departments, setDepartments] = useState<Department[]>([])
-  const [projects, setProjects] = useState<Project[]>([])
-  const [posts, setPosts] = useState<BlogPost[]>([])
-  const [reviews, setReviews] = useState<ReviewItem[]>([])
+  const [services, setServices] = useState<Service[]>(initialData?.services ?? [])
+  const [departments, setDepartments] = useState<Department[]>(initialData?.departments ?? [])
+  const [projects, setProjects] = useState<Project[]>(initialData?.projects ?? [])
+  const [posts, setPosts] = useState<BlogPost[]>(initialData?.posts ?? [])
+  const [reviews, setReviews] = useState<ReviewItem[]>(initialData?.reviews ?? [])
+  const [publications, setPublications] = useState<PubItem[]>((initialData?.publications as PubItem[] | undefined) ?? [])
   const heroBgRef = useRef<HTMLDivElement>(null)
   const wmWordRef = useRef<HTMLDivElement>(null)
   const wmTagRef = useRef<HTMLDivElement>(null)
@@ -95,6 +122,7 @@ export default function HomepageEditorial() {
 
   /* ---------- Data fetching (all with graceful fallbacks) ---------- */
   useEffect(() => {
+    if (initialData) return
     const fetchJSON = async (url: string) => {
       try {
         const res = await fetch(`${url}?t=${Date.now()}`, { cache: 'no-store' })
@@ -105,13 +133,14 @@ export default function HomepageEditorial() {
       }
     }
     ;(async () => {
-      const [s, sv, d, p, b, rv] = await Promise.all([
+      const [s, sv, d, p, b, rv, pb] = await Promise.all([
         fetchJSON('/api/v1/settings'),
         fetchJSON('/api/v1/services'),
         fetchJSON('/api/v1/departments'),
         fetchJSON('/api/v1/portfolio'),
         fetchJSON('/api/v1/blog'),
         fetchJSON('/api/v1/reviews'),
+        fetchJSON('/api/v1/publications'),
       ])
       if (s) setSettings(s)
       if (sv) setServices(sv.slice(0, 8))
@@ -119,6 +148,7 @@ export default function HomepageEditorial() {
       if (p) setProjects(p.slice(0, 6))
       if (b) setPosts(b.slice(0, 3))
       if (rv) setReviews(rv.filter((r: { isApproved?: boolean }) => r.isApproved !== false).slice(0, 6))
+      if (pb) setPublications(pb.slice(0, 3))
     })()
   }, [])
 
@@ -621,6 +651,44 @@ export default function HomepageEditorial() {
       </section>
 
       {/* ---------- CTA ---------- */}
+      
+      <section className="ed-pubs" style={{ background: '#eae7df' }}>
+        <div className="ed-shell">
+          <div className="ed-sec-head">
+            <div className="ed-sec-label" style={{ marginBottom: 0 }}>Publications</div>
+            <h2 className="ed-rv">
+              Research &amp; <em>publications.</em>
+            </h2>
+          </div>
+          {publications.length ? (
+            <div className="ed-pub-grid">
+              {publications.slice(0, 3).map((pub) => (
+                <a
+                  key={pub.id}
+                  href={pub.pdfUrl || pub.url || '/publications'}
+                  target={pub.pdfUrl || pub.url ? '_blank' : undefined}
+                  rel="noreferrer"
+                  className="ed-pub-card ed-rv"
+                >
+                  <div className="ed-pub-meta">
+                    <span>{pub.journal || pub.type || 'Publication'}</span>
+                    <span>{pub.publicationDate ? String(pub.publicationDate).slice(0, 4) : ''}</span>
+                  </div>
+                  <h3>{pub.title}</h3>
+                  <p>{pub.description?.slice(0, 120) || pub.authors || 'Read the full publication.'}</p>
+                  <span className="ed-panel-cta">Read &rarr;</span>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="ed-dept-empty">
+              Publications are being catalogued — see the{' '}
+              <a href="/publications" style={{ textDecoration: 'underline' }}>full list</a>.
+            </div>
+          )}
+        </div>
+      </section>
+
       <section className="ed-cta" id="ed-contact">
         <h2 className="ed-rv">
           Ready to build
