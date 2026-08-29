@@ -187,6 +187,21 @@ async function main() {
       isActive: true
     },
     {
+      name: 'Academic Research',
+      slug: 'academic-research',
+      description: 'Academic writing, data collection & analysis, literature reviews, and full research project support from proposal to defense.',
+      icon: 'FaGraduationCap',
+      features: [
+        'Research Proposals',
+        'Literature Reviews',
+        'Data Collection & Analysis',
+        'Thesis & Dissertation Support',
+        'Publications & Proofreading'
+      ],
+      order: 7,
+      isActive: true
+    },
+    {
       name: 'Kraft Paper Bags',
       slug: 'kraft-paper-bags',
       description: 'Custom-designed paper bags for weddings, funerals, parties, food deliveries, engagements, and more. Based in Koforidua, Eastern Region.',

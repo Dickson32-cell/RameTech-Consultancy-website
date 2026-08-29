@@ -760,6 +760,34 @@ video::-webkit-media-controls-fullscreen-button {
   padding: 0 20px;
 }
 
+/* Admin-uploaded flyers rotating inside the wordmark pin */
+.ed-flyer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  will-change: opacity, transform;
+  z-index: 3;
+  padding: 7vh 20px;
+}
+.ed-flyer img {
+  max-height: 86%;
+  max-width: min(78vw, 560px);
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  background: var(--ed-paper);
+}
+@media (max-width: 960px) {
+  .ed-flyer { padding: 6vh 16px; }
+  .ed-flyer img {
+    max-height: 80%;
+    max-width: min(86vw, 440px);
+  }
+}
+
 /* ---------- Marquee ---------- */
 .ed-marquee {
   background: var(--ed-gold);
@@ -922,7 +950,9 @@ video::-webkit-media-controls-fullscreen-button {
 .ed-sp2 { background: #10141b; }
 .ed-sp3 { background: #131a24; }
 .ed-sp4 { background: #0f1a2e; }
-.ed-sp5 { background: var(--ed-blue-deep); }
+.ed-sp5 { background: #12305e; }
+.ed-sp6 { background: var(--ed-blue-deep); }
+.ed-sp7 { background: var(--ed-blue); }
 
 /* ---------- Departments ---------- */
 .ed-depts {

@@ -18,6 +18,10 @@ interface SiteSettings {
   statsExperience: string
   statsSupport: string
   logoUrl?: string | null
+  flyer1Url?: string | null
+  flyer2Url?: string | null
+  flyer3Url?: string | null
+  flyer4Url?: string | null
 }
 
 interface Service {
@@ -46,7 +50,7 @@ interface Project {
 const DEFAULT_HERO_BG = '/ed/hero-bg.jpg'
 
 // Service panel palette shades (progressive depth)
-const PANEL_SHADES = ['ed-sp1', 'ed-sp2', 'ed-sp3', 'ed-sp4', 'ed-sp5']
+const PANEL_SHADES = ['ed-sp1', 'ed-sp2', 'ed-sp3', 'ed-sp4', 'ed-sp5', 'ed-sp6', 'ed-sp7']
 
 // Background word for each panel (fallback, from service name)
 const bgWord = (name: string) => name.split(' ')[0].toUpperCase()
@@ -60,6 +64,7 @@ export default function HomepageEditorial() {
   const wmWordRef = useRef<HTMLDivElement>(null)
   const wmTagRef = useRef<HTMLDivElement>(null)
   const wmCapRef = useRef<HTMLDivElement>(null)
+  const flyerRefs = useRef<(HTMLDivElement | null)[]>([])
   const wmSecRef = useRef<HTMLElement>(null)
   const navRef = useRef<HTMLElement>(null)
   const panelsRef = useRef<HTMLDivElement[]>([])
@@ -185,6 +190,36 @@ export default function HomepageEditorial() {
           wmTag.style.transform = 'none'
           wmCap.style.opacity = '1'
         }
+
+        // Flyer rotation: 4 flyers cycle across the pin progress (p 0.12 → 0.95)
+        const flyers = flyerRefs.current.filter(Boolean) as HTMLDivElement[]
+        const n = flyers.length
+        if (n > 0) {
+          const seg = 0.95 - 0.12
+          flyers.forEach((el, i) => {
+            const start = 0.12 + (seg * i) / n
+            const end = start + seg / n
+            // fade in at start of its window, out at end (except first fades from p=0.05, last holds till end)
+            let vis = 0
+            let ty = 40
+            if (p >= start && p < end) {
+              const local = (p - start) / (end - start)
+              vis = clamp(local * 4, 0, 1) * clamp((1 - local) * 4, 0, 1)
+              ty = (1 - clamp(local * 4, 0, 1)) * 40 + (1 - clamp((1 - local) * 4, 0, 1)) * -40
+              vis = Math.min(1, vis === 0 ? 1 : vis) // hold full visibility mid-window
+              if (local > 0.2 && local < 0.8) vis = 1
+              ty = local < 0.5 ? (0.5 - local) * 2 * 40 : -(local - 0.5) * 2 * 40
+            } else if (i === 0 && p < start) {
+              vis = clamp(p / 0.08, 0, 1) * (0) // not yet
+              vis = 0
+            } else if (i === n - 1 && p >= end) {
+              vis = 1; ty = 0
+            }
+            el.style.opacity = String(vis)
+            el.style.transform = `translateY(${ty}px) scale(${0.92 + vis * 0.08})`
+            el.style.pointerEvents = vis > 0.5 ? 'auto' : 'none'
+          })
+        }
       }
 
       // Stacking panels
@@ -258,6 +293,18 @@ export default function HomepageEditorial() {
     </>
   )
 
+  const panelServices = services.length
+    ? services.slice(0, 7)
+    : [
+        { id: 'f1', name: 'Software Development', slug: 'software-development', description: 'Custom web platforms, mobile apps and internal tools — engineered to production standard, not prototype standard.', startingPrice: null },
+        { id: 'f2', name: 'Hardware & IT', slug: 'hardware-it', description: 'Workstations, networks, POS systems — and the on-call support that keeps them running day after day.', startingPrice: null },
+        { id: 'f3', name: 'Creative Services', slug: 'creative-services', description: 'Brand identity, print and packaging — kraft paper bags, nylon, the works. Design people remember.', startingPrice: null },
+        { id: 'f4', name: 'Research & Data', slug: 'research', description: 'Marketing research, advanced analytics and academic-grade studies that turn questions into decisions.', startingPrice: null },
+        { id: 'f5', name: 'AI & Automation', slug: 'ai-automation', description: 'Chatbots, workflow automation and AI integrations that give small teams the leverage of big ones.', startingPrice: null },
+        { id: 'f6', name: 'Academic Research', slug: 'academic-research', description: 'Academic writing, data collection & analysis, and full research support from proposal to defense.', startingPrice: null },
+        { id: 'f7', name: 'Kraft Paper Bags', slug: 'kraft-paper-bags', description: 'Custom-designed kraft paper bags for weddings, funerals, parties, food deliveries, engagements, and more.', startingPrice: 'From GHS 4.00' },
+      ]
+
   return (
     <div ref={revealRootRef} className="ed-root">
       {/* ---------- EDITORIAL NAV (replaces header visual on homepage only) ---------- */}
@@ -328,19 +375,37 @@ export default function HomepageEditorial() {
           <div ref={wmCapRef} className="ed-wm-caption">
             RAMEDIC Consultancy &amp; Creative Ltd — Koforidua, Eastern Region
           </div>
+
+          {/* Admin-uploaded company flyers — rotate with scroll */}
+          {[
+            settings?.flyer1Url,
+            settings?.flyer2Url,
+            settings?.flyer3Url,
+            settings?.flyer4Url,
+          ]
+            .filter((u): u is string => !!u)
+            .map((url, i) => (
+              <div
+                key={url}
+                ref={(el) => { flyerRefs.current[i] = el }}
+                className="ed-flyer"
+                style={{ opacity: 0 }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt={`RAMEDIC flyer ${i + 1}`} />
+              </div>
+            ))}
         </div>
       </section>
 
       {/* ---------- MARQUEE ---------- */}
       <div className="ed-marquee" aria-hidden="true">
         <div className="ed-mq-track">
-          {(services.length ? services : [{ name: 'Software Development' }, { name: 'Hardware & IT' }, { name: 'Creative Services' }, { name: 'Research & Data' }, { name: 'AI & Automation' }]).map(
-            (s, i) => (
-              <span key={i} className="ed-mq-item">
-                {s.name}
-              </span>
-            )
-          )}
+          {panelServices.map((s, i) => (
+            <span key={i} className="ed-mq-item">
+              {s.name}
+            </span>
+          ))}
         </div>
       </div>
 
@@ -360,20 +425,14 @@ export default function HomepageEditorial() {
 
       {/* ---------- STACKING SERVICES ---------- */}
       <div className="ed-stack" id="ed-services">
-        {(services.length ? services : [
-          { id: 'f1', name: 'Software Development', slug: 'software-development', description: 'Custom web platforms, mobile apps and internal tools — engineered to production standard, not prototype standard.', startingPrice: null },
-          { id: 'f2', name: 'Hardware & IT', slug: 'hardware-it', description: 'Workstations, networks, POS systems — and the on-call support that keeps them running day after day.', startingPrice: null },
-          { id: 'f3', name: 'Creative Services', slug: 'creative-services', description: 'Brand identity, print and packaging — kraft paper bags, nylon, the works. Design people remember.', startingPrice: null },
-          { id: 'f4', name: 'Research & Data', slug: 'research', description: 'Marketing research, advanced analytics and academic-grade studies that turn questions into decisions.', startingPrice: null },
-          { id: 'f5', name: 'AI & Automation', slug: 'ai-automation', description: 'Chatbots, workflow automation and AI integrations that give small teams the leverage of big ones.', startingPrice: null },
-        ]).slice(0, 5).map((s, i) => (
+        {panelServices.map((s, i) => (
           <div
             key={s.id}
             className={`ed-panel ${PANEL_SHADES[i % PANEL_SHADES.length]}`}
             ref={(el) => { if (el) panelsRef.current[i] = el as HTMLDivElement }}
           >
             <div className="ed-bg-word">{bgWord(s.name)}</div>
-            <div className="ed-num">{String(i + 1).padStart(2, '0')} — {String(Math.min(5, Math.max(services.length, 5))).padStart(2, '0')}</div>
+            <div className="ed-num">{String(i + 1).padStart(2, '0')} — {String(panelServices.length).padStart(2, '0')}</div>
             <div className="ed-word">{s.name}</div>
             <div className="ed-desc">{s.description}</div>
             <Link href={`/services/${s.slug}`} className="ed-panel-cta">
@@ -388,7 +447,7 @@ export default function HomepageEditorial() {
         ))}
       </div>
 
-      {/* ---------- DEPARTMENTS ---------- */}
+{/* ---------- DEPARTMENTS ---------- */}
       <section className="ed-depts" id="ed-work">
         <div className="ed-shell">
           <div className="ed-sec-head">
