@@ -578,8 +578,8 @@ video::-webkit-media-controls-fullscreen-button {
 }
 .ed-nav .ed-links a:hover { opacity: 1; }
 .ed-nav .ed-cta {
-  background: var(--ed-gold);
-  color: var(--ed-ink);
+  background: var(--ed-blue);
+  color: #ffffff;
   padding: 11px 24px;
   border-radius: 100px;
   font-size: 13.5px;
@@ -609,7 +609,7 @@ video::-webkit-media-controls-fullscreen-button {
 .ed-hero-veil {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(12,15,19,0.5) 0%, rgba(12,15,19,0.18) 42%, rgba(12,15,19,0.9) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(244,248,255,0.72) 42%, rgba(255,255,255,0.94) 100%);
 }
 .ed-hero-inner {
   position: relative;
@@ -627,14 +627,14 @@ video::-webkit-media-controls-fullscreen-button {
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ed-gold);
+  color: var(--ed-blue);
   margin-bottom: 22px;
 }
 .ed-eyebrow::before {
   content: "";
   width: 30px;
   height: 2px;
-  background: var(--ed-gold);
+  background: var(--ed-blue);
 }
 .ed-hero h1 {
   font-family: 'Fraunces', Georgia, serif;
@@ -643,11 +643,11 @@ video::-webkit-media-controls-fullscreen-button {
   line-height: 0.97;
   letter-spacing: -0.03em;
   max-width: 13ch;
-  color: var(--ed-paper);
+  color: var(--ed-ink);
 }
 .ed-hero h1 em {
   font-style: italic;
-  color: var(--ed-gold);
+  color: var(--ed-blue);
 }
 .ed-hero-foot {
   display: flex;
@@ -661,7 +661,7 @@ video::-webkit-media-controls-fullscreen-button {
   max-width: 42ch;
   font-size: 15px;
   line-height: 1.65;
-  color: rgba(244, 242, 237, 0.84);
+  color: rgba(21, 83, 192, 0.85);
 }
 .ed-hero-ctas {
   display: flex;
@@ -680,10 +680,10 @@ video::-webkit-media-controls-fullscreen-button {
   gap: 10px;
 }
 .ed-btn:hover { transform: scale(1.05); }
-.ed-btn-primary { background: var(--ed-gold); color: var(--ed-ink); }
+.ed-btn-primary { background: var(--ed-blue); color: #ffffff; }
 .ed-btn-ghost {
-  border: 1px solid rgba(244, 242, 237, 0.4);
-  color: var(--ed-paper);
+  border: 1px solid rgba(21, 83, 192, 0.45);
+  color: var(--ed-blue);
 }
 .ed-scroll-hint {
   display: flex;
