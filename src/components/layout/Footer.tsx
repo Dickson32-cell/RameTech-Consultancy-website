@@ -288,7 +288,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className="text-white font-medium">WhatsApp</p>
-                  <a href="https://wa.me/233537400179" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer">+233 53 740 0179</a>
+                  <a href="https://wa.me/message/AR7PJXCCXFXGD1" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer">WhatsApp Business</a>
                 </div>
               </li>
               <li className="flex items-start gap-3">

@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     // Check if NVIDIA API key exists
     if (!NVIDIA_API_KEY) {
       return NextResponse.json({
-        response: 'AI service not configured. Please contact us via WhatsApp: wa.me/233537400179',
+        response: 'AI service not configured. Please contact us via WhatsApp: wa.me/message/AR7PJXCCXFXGD1',
         error: 'NVIDIA API key missing'
       }, { status: 500 })
     }
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const systemPrompt = `You are a team member at RAMEDIC Consultancy and Creative LTD in Ghana. Speak as "we" and "our". Be friendly, professional, and brief (under 150 tokens). Stay focused on RAMEDIC services only. Contact: WhatsApp wa.me/233537400179, Phone +233 55 733 2615, Email info@ramedic.com. For off-topic questions, redirect to WhatsApp.${ragContext ? `\n\nCompany data:\n${ragContext}` : ''}`
+    const systemPrompt = `You are a team member at RAMEDIC Consultancy and Creative LTD in Ghana. Speak as "we" and "our". Be friendly, professional, and brief (under 150 tokens). Stay focused on RAMEDIC services only. Contact: WhatsApp wa.me/message/AR7PJXCCXFXGD1, Phone +233 55 733 2615, Email info@ramedic.com. For off-topic questions, redirect to WhatsApp.${ragContext ? `\n\nCompany data:\n${ragContext}` : ''}`
 
     // Call NVIDIA AI API (OpenAI-compatible)
     const response = await fetch(NVIDIA_API_URL, {
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     console.error('AI API Error:', error)
     
     return NextResponse.json({
-      response: "I'm having trouble connecting right now. For immediate help, please WhatsApp us: wa.me/233537400179",
+      response: "I'm having trouble connecting right now. For immediate help, please WhatsApp us: wa.me/message/AR7PJXCCXFXGD1",
       error: error.message || 'Unknown error'
     })
   }

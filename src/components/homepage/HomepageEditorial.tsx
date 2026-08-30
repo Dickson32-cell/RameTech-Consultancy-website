@@ -746,7 +746,7 @@ export default function HomepageEditorial({
           <Link href="/contact" className="ed-btn ed-btn-primary">
             Start Your Project
           </Link>
-          <a href="https://wa.me/233537400179" className="ed-btn ed-btn-ghost">
+          <a href="https://wa.me/message/AR7PJXCCXFXGD1" className="ed-btn ed-btn-ghost">
             WhatsApp Us
           </a>
         </div>
