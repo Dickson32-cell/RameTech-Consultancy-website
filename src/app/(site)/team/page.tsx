@@ -11,6 +11,66 @@ interface TeamMember {
   photoUrl: string | null
 }
 
+// Structured data: the RAMEDIC team as schema.org Person entities.
+// Static (not from the API) so Google indexes it reliably; update here if roles change.
+const TEAM_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'RAMEDIC Consultancy and Creative Ltd — Our Team',
+  url: 'https://ramedicconsultancyandcreativeltd.org/team',
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'RAMEDIC Consultancy and Creative Ltd',
+    url: 'https://ramedicconsultancyandcreativeltd.org',
+    foundingDate: '2026-05-10',
+    foundingLocation: { '@type': 'Place', name: 'Koforidua, Eastern Region, Ghana' },
+    founder: {
+      '@type': 'Person',
+      name: 'Abdul Rashid Dickson',
+      jobTitle: 'Chief Executive Officer',
+      worksFor: { '@type': 'Organization', name: 'RAMEDIC Consultancy and Creative Ltd' },
+      url: 'https://ramedicconsultancyandcreativeltd.org/team',
+      sameAs: [
+        'https://www.linkedin.com/in/abdul-rashid-dickson-61ba80142',
+        'https://github.com/Dickson32-cell',
+      ],
+      spouse: {
+        '@type': 'Person',
+        name: 'Emefa Harriet Asonkey',
+        alternateName: 'Harriet Emefa Asonkey',
+        jobTitle: 'Administrator',
+        worksFor: { '@type': 'Organization', name: 'RAMEDIC Consultancy and Creative Ltd' },
+      },
+    },
+    employee: [
+      {
+        '@type': 'Person',
+        name: 'Emefa Harriet Asonkey',
+        jobTitle: 'Administrator',
+        worksFor: { '@type': 'Organization', name: 'RAMEDIC Consultancy and Creative Ltd' },
+      },
+      {
+        '@type': 'Person',
+        name: 'Dickson Abdul-Wahab',
+        jobTitle: 'Researcher',
+        worksFor: { '@type': 'Organization', name: 'RAMEDIC Consultancy and Creative Ltd' },
+      },
+      {
+        '@type': 'Person',
+        name: 'Anyetei Sowah Joseph',
+        jobTitle: 'Graphic Designer',
+        worksFor: { '@type': 'Organization', name: 'RAMEDIC Consultancy and Creative Ltd' },
+      },
+      {
+        '@type': 'Person',
+        name: 'David Tetteh',
+        jobTitle: 'Hardware Technician',
+        worksFor: { '@type': 'Organization', name: 'RAMEDIC Consultancy and Creative Ltd' },
+      },
+    ],
+  },
+}
+
 export default function TeamPage() {
   const [members, setMembers] = useState<TeamMember[]>([])
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -32,6 +92,11 @@ export default function TeamPage() {
 
   return (
     <div>
+      {/* Structured data for Google / AI Overviews — team + spouse association */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(TEAM_SCHEMA) }}
+      />
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-primary via-secondary to-primary text-white py-20 md:py-28 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -45,7 +110,7 @@ export default function TeamPage() {
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mb-6">Our Team</h1>
           <p className="text-xl text-white/80 max-w-2xl mx-auto">
-            Meet the talented people behind RAME Tech Consultancy who make it all happen.
+            Meet the talented people behind RAMEDIC Consultancy and Creative Ltd who make it all happen.
           </p>
         </div>
       </section>

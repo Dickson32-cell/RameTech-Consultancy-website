@@ -13,7 +13,7 @@ async function main() {
   // ============================================
   // ADMIN USER
   // ============================================
-  const adminPassword = await bcrypt.hash('Admin@123', 12)
+  const adminPassword = await bcrypt.hash(process.env.SEED_ADMIN_PASSWORD || 'ChangeMeOnFirstLogin!', 12)
   await prisma.portalUser.upsert({
     where: { email: 'admin@ramedic.com' },
     update: { passwordHash: adminPassword },
